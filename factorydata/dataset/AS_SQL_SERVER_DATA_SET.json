@@ -1,0 +1,12 @@
+{
+	"name": "AS_SQL_SERVER_DATA_SET",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AS_SQL_SERVER_LIKED_SERVER",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": []
+	}
+}
