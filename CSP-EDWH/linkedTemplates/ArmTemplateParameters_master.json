@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "CSP-EDWH"
+		},
+		"AS_SQL_SERVER_LIKED_SERVER_connectionString": {
+			"value": ""
+		},
+		"AS_SQL_SERVER_LIKED_SERVER_password": {
+			"value": ""
+		},
+		"CSP_EDWH_LINKED_SERVER_connectionString": {
+			"value": ""
+		},
+		"AS_SQL_SERVER_LIKED_SERVER_properties_typeProperties_userName": {
+			"value": "ITAdmin"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
