@@ -1,0 +1,23 @@
+{
+	"name": "CSP_EDWH_DATA_SET",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CSP_EDWH_LINKED_SERVER",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"ImproveTableName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().ImproveTableName",
+				"type": "Expression"
+			}
+		}
+	}
+}
