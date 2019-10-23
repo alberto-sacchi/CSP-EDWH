@@ -1,0 +1,17 @@
+{
+	"name": "AS_SQL_SERVER_LIKED_SERVER",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"connectionString": "integrated security=True;data source=L-IT-15601\\SQLEXPRESS;initial catalog=SISime_cspto_Prod",
+			"userName": "ITAdmin",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIzYjg2YjQ1MC00M2ExLTQyOWEtYmE0YS02MjM1YTA0NmM1MTQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "AS-PC-IR",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

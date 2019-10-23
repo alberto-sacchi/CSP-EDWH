@@ -1,0 +1,6 @@
+{
+	"name": "AS-PC-IR",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}
