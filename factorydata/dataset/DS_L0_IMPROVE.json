@@ -5,7 +5,9 @@
 			"referenceName": "ImproveSource",
 			"type": "LinkedServiceReference"
 		},
-		"annotations": [],
+		"annotations": [
+			"LOAD L0 TABLE FROM IMPROVE"
+		],
 		"type": "SqlServerTable",
 		"schema": []
 	}
