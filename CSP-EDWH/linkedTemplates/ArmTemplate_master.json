@@ -19,6 +19,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'CSP_EDWH_LINKED_SERVER'"
 		},
+		"ImproveSource_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ImproveSource'"
+		},
+		"LS_CSPTO_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_CSPTO'"
+		},
 		"AS_SQL_SERVER_LIKED_SERVER_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "ITAdmin"
@@ -52,6 +60,12 @@
 					},
 					"CSP_EDWH_LINKED_SERVER_connectionString": {
 						"value": "[parameters('CSP_EDWH_LINKED_SERVER_connectionString')]"
+					},
+					"ImproveSource_connectionString": {
+						"value": "[parameters('ImproveSource_connectionString')]"
+					},
+					"LS_CSPTO_connectionString": {
+						"value": "[parameters('LS_CSPTO_connectionString')]"
 					},
 					"AS_SQL_SERVER_LIKED_SERVER_connectionString": {
 						"value": "[parameters('AS_SQL_SERVER_LIKED_SERVER_connectionString')]"
