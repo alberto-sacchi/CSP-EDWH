@@ -1,5 +1,5 @@
 {
-	"name": "DS_L0_IMPROVE",
+	"name": "DS_L0_TABLE_IMPROVE",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ImproveSource",
