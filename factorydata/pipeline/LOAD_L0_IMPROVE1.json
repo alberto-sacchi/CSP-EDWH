@@ -40,7 +40,7 @@
 							}
 						},
 						{
-							"name": "LOOKUP_NEW_LOAD",
+							"name": "READ_DT_L0_TABLE",
 							"type": "Lookup",
 							"dependsOn": [],
 							"policy": {
@@ -53,14 +53,10 @@
 							"userProperties": [],
 							"typeProperties": {
 								"source": {
-									"type": "SqlServerSource",
-									"sqlReaderQuery": {
-										"value": "select MAX(@{item().WaterMark_Column}) as NewWatermarkvalue from @{item().TABLE_NAME}",
-										"type": "Expression"
-									}
+									"type": "AzureSqlSource"
 								},
 								"dataset": {
-									"referenceName": "AS_SQL_SERVER_DATA_SET",
+									"referenceName": "DS_L0_TABLE_EDWH",
 									"type": "DatasetReference"
 								}
 							}
@@ -76,7 +72,7 @@
 									]
 								},
 								{
-									"activity": "LOOKUP_NEW_LOAD",
+									"activity": "READ_DT_L0_TABLE",
 									"dependencyConditions": [
 										"Succeeded"
 									]
