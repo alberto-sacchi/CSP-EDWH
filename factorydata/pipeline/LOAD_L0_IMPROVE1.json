@@ -63,7 +63,7 @@
 							}
 						},
 						{
-							"name": "INCREMENTAL_COPY_ACTIVITY",
+							"name": "IMPROVE_INCREMENTAL_COPY_ACTIVITY",
 							"type": "Copy",
 							"dependsOn": [
 								{
@@ -91,7 +91,7 @@
 								"source": {
 									"type": "SqlServerSource",
 									"sqlReaderQuery": {
-										"value": "select * from @{item().TABLE_NAME} where @{item().WaterMark_Column} > '@{activity('LOOKUP_OLD_LOAD').output.firstRow.WatermarkValue}' and @{item().WaterMark_Column} <= '@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewWatermarkvalue}'",
+										"value": "select * from @{item().TABLE_NAME} where @{item().DT_CCOLUMN} > '@{activity('READ_DT_MD_TABLE').output.firstRow.DT_LAST_LOAD}' and @{item().DT_CCOLUMN} <= '@{activity('READ_DT_L0_TABLE').output.firstRow.NEW_DT_VALUE}'",
 										"type": "Expression"
 									}
 								},
@@ -114,17 +114,14 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "AS_SQL_SERVER_DATA_SET",
+									"referenceName": "DS_L0_TABLE_IMPROVE",
 									"type": "DatasetReference"
 								}
 							],
 							"outputs": [
 								{
-									"referenceName": "CSP_EDWH_DATA_SET",
-									"type": "DatasetReference",
-									"parameters": {
-										"ImproveTableName": "@{item().TABLE_NAME}"
-									}
+									"referenceName": "DS_L0_TABLE_EDWH",
+									"type": "DatasetReference"
 								}
 							]
 						},
@@ -133,7 +130,7 @@
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
-									"activity": "INCREMENTAL_COPY_ACTIVITY",
+									"activity": "IMPROVE_INCREMENTAL_COPY_ACTIVITY",
 									"dependencyConditions": [
 										"Succeeded"
 									]
