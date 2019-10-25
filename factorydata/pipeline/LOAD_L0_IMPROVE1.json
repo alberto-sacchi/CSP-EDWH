@@ -14,7 +14,7 @@
 					},
 					"activities": [
 						{
-							"name": "LOOKUP_OLD_LOAD",
+							"name": "READ_DT_MD_TABLE",
 							"type": "Lookup",
 							"dependsOn": [],
 							"policy": {
@@ -29,12 +29,12 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "select * from watermarktable where TableName  =  '@{item().TABLE_NAME}'",
+										"value": "select * from MD_IMPROVE_STAG_TABLES where DN_SOURCE_TABLE  =  '@{item().TABLE_NAME}'",
 										"type": "Expression"
 									}
 								},
 								"dataset": {
-									"referenceName": "CSP_INCREMENTAL_LOAD",
+									"referenceName": "DS_L0_INCREMENTAL_LOAD_TABLE",
 									"type": "DatasetReference"
 								}
 							}
@@ -70,7 +70,7 @@
 							"type": "Copy",
 							"dependsOn": [
 								{
-									"activity": "LOOKUP_OLD_LOAD",
+									"activity": "READ_DT_MD_TABLE",
 									"dependencyConditions": [
 										"Succeeded"
 									]
