@@ -1,5 +1,5 @@
 {
-	"name": "DS_L0_TARGET_EDWH",
+	"name": "DS_L0_TABLE_EDWH",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "CSP_EDWH_LINKED_SERVER",
