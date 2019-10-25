@@ -54,7 +54,7 @@
 							"typeProperties": {
 								"source": {
 									"type": "AzureSqlSource",
-									"sqlReaderQuery": "select MAX(@{item().WaterMark_Column}) as NewWatermarkvalue from @{item().TABLE_NAME}"
+									"sqlReaderQuery": "select MAX(@{item().DT_CCOLUMN}) as NEW_DT_VALUE from @{item().TABLE_NAME}"
 								},
 								"dataset": {
 									"referenceName": "DS_L0_TABLE_EDWH",
