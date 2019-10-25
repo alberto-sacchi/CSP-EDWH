@@ -7,6 +7,21 @@
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
-		"schema": []
+		"schema": [
+			{
+				"name": "DN_SOURCE_TABLE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DT_LAST_LOAD",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "MD_IMPROVE_STAG_TABLES"
+		}
 	}
 }
