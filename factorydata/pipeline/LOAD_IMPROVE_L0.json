@@ -1,0 +1,11 @@
+{
+	"name": "LOAD_IMPROVE_L0",
+	"properties": {
+		"parameters": {
+			"tablesList": {
+				"type": "object"
+			}
+		},
+		"annotations": []
+	}
+}
