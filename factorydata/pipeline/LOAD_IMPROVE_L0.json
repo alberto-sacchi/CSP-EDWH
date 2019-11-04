@@ -1,6 +1,41 @@
 {
 	"name": "LOAD_IMPROVE_L0",
 	"properties": {
+		"activities": [
+			{
+				"name": "IterateSqlTables",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"activities": [
+						{
+							"name": "Lookup1",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": "select * from dbo.MD_IMPR_STAG_TABLES where TableName  =  '@{item().TABLE_NAME}'"
+								},
+								"dataset": {
+									"referenceName": "CSP_INCREMENTAL_LOAD",
+									"type": "DatasetReference"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
 		"parameters": {
 			"tablesList": {
 				"type": "object"
