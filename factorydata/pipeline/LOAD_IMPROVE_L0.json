@@ -147,7 +147,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "dbo.usp_upsert_L0_IMPR_ImpTimesheets"
+								"storedProcedureName": "dbo.usp_write_rif_value"
 							},
 							"linkedServiceName": {
 								"referenceName": "CSP_EDWH_LINKED_SERVER",
