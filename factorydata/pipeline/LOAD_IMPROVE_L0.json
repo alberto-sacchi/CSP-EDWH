@@ -154,11 +154,11 @@
 								"storedProcedureName": "dbo.usp_write_rif_value",
 								"storedProcedureParameters": {
 									"LastModifiedtime": {
-										"value": "@{activity('LOOKUP_NEW_LOAD').output.firstRow.RIF_VALUE}",
+										"value": "@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewRifValue}",
 										"type": "Datetime"
 									},
 									"TableName": {
-										"value": "@{activity('LOOKUP_OLD_LOAD').output.firstRow.NewRifValue}",
+										"value": "@{item().TABLE_NAME}",
 										"type": "String"
 									}
 								}
