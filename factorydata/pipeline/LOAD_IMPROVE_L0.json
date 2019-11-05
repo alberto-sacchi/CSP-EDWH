@@ -128,7 +128,7 @@
 							]
 						},
 						{
-							"name": "StoredProceduretoMergeStagingTable",
+							"name": "UpdateRifValue",
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
