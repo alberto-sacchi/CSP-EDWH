@@ -54,7 +54,10 @@
 							"typeProperties": {
 								"source": {
 									"type": "AzureSqlSource",
-									"sqlReaderQuery": "select MAX(@{item().DT_CCOLUMN}) as NEW_DT_VALUE from @{item().TABLE_NAME}"
+									"sqlReaderQuery": {
+										"value": "select MAX(@{item().DT_CCOLUMN}) as NEW_DT_VALUE from @{item().TABLE_NAME}",
+										"type": "Expression"
+									}
 								},
 								"dataset": {
 									"referenceName": "DS_L0_TABLE_EDWH",
@@ -121,7 +124,10 @@
 							"outputs": [
 								{
 									"referenceName": "DS_L0_TABLE_EDWH",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"ImproveTableName": "@{item().TABLE_NAME}"
+									}
 								}
 							]
 						},
