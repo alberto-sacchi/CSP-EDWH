@@ -36,7 +36,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('GetExecParam').output.TABLE_NAME",
+						"value": "@activity('GetExecParam').output.value.TABLE_NAME",
 						"type": "Expression"
 					},
 					"isSequential": false,
