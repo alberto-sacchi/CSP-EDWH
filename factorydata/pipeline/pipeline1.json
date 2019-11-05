@@ -36,7 +36,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@{activity('GetExecParam').output.firstRow.TABLE_NAME",
+						"value": "@{activity('GetExecParam').output.TABLE_NAME",
 						"type": "Expression"
 					},
 					"activities": [
@@ -50,7 +50,13 @@
 									"referenceName": "LOAD_IMPROVE_L0",
 									"type": "PipelineReference"
 								},
-								"waitOnCompletion": true
+								"waitOnCompletion": true,
+								"parameters": {
+									"TABLE_NAME": "@{activity('GetExecParam').output.TABLE_NAME",
+									"Rif_Column": "@{activity('GetExecParam').output.RIF_COLUMN",
+									"TableType": "@{activity('GetExecParam').output.TABLE_TYPE",
+									"StoredProcedureNameForMergeOperation": "@{activity('GetExecParam').output.STORED_PROCEDURE"
+								}
 							}
 						}
 					]
