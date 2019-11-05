@@ -21,7 +21,10 @@
 						"storedProcedureParameters": {
 							"TableName": {
 								"type": "String",
-								"value": "{item().TABLE_NAME}"
+								"value": {
+									"value": "@pipeline().parameters.TABLE_NAME",
+									"type": "Expression"
+								}
 							}
 						}
 					},
