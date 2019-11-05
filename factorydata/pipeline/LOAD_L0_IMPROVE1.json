@@ -61,7 +61,10 @@
 								},
 								"dataset": {
 									"referenceName": "DS_L0_TABLE_EDWH",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"ImproveTableName": "@{item().TABLE_NAME}"
+									}
 								}
 							}
 						},
