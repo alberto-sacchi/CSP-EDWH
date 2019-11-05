@@ -1,27 +1,7 @@
 {
-	"name": "pipeline1",
+	"name": "ExtractData",
 	"properties": {
 		"activities": [
-			{
-				"name": "GetExecParam",
-				"type": "SqlServerStoredProcedure",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"storedProcedureName": "[dbo].[usp_get_exec_params]"
-				},
-				"linkedServiceName": {
-					"referenceName": "CSP_EDWH_LINKED_SERVER",
-					"type": "LinkedServiceReference"
-				}
-			},
 			{
 				"name": "ForEach1",
 				"type": "ForEach",
@@ -64,6 +44,29 @@
 							}
 						}
 					]
+				}
+			},
+			{
+				"name": "GetExecParam",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[usp_get_exec_params]"
+					},
+					"dataset": {
+						"referenceName": "CSP_INCREMENTAL_LOAD",
+						"type": "DatasetReference"
+					}
 				}
 			}
 		],
