@@ -24,7 +24,10 @@
 							"typeProperties": {
 								"source": {
 									"type": "AzureSqlSource",
-									"sqlReaderQuery": "select MAX(@{item().WaterMark_Column}) as NewWatermarkvalue from @{item().TABLE_NAME}"
+									"sqlReaderQuery": {
+										"value": "select MAX(@{item().Rif_Column}) as OldRifValue from @{item().TABLE_NAME}",
+										"type": "Expression"
+									}
 								},
 								"dataset": {
 									"referenceName": "CSP_INCREMENTAL_LOAD",
@@ -47,7 +50,10 @@
 							"typeProperties": {
 								"source": {
 									"type": "SqlServerSource",
-									"sqlReaderQuery": "select MAX(@{item().WaterMark_Column}) as NewWatermarkvalue from @{item().TABLE_NAME}"
+									"sqlReaderQuery": {
+										"value": "select MAX(@{item().Rif_Column}) as NewRifValue from @{item().TABLE_NAME}",
+										"type": "Expression"
+									}
 								},
 								"dataset": {
 									"referenceName": "DS_L0_TABLE_IMPROVE",
@@ -83,13 +89,25 @@
 							"typeProperties": {
 								"source": {
 									"type": "SqlServerSource",
-									"sqlReaderQuery": "select * from @{item().TABLE_NAME} where @{item().WaterMark_Column} > '@{activity('LOOKUP_OLD_LOAD').output.firstRow.WatermarkValue}' and @{item().WaterMark_Column} <= '@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewWatermarkvalue}'"
+									"sqlReaderQuery": {
+										"value": "select * from @{item().TABLE_NAME} where @{item().Rif_Column} > '@{activity('LOOKUP_OLD_LOAD').output.firstRow.OldRifValue}' and @{item().WaterMark_Column} <= '@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewRifValue}'",
+										"type": "Expression"
+									}
 								},
 								"sink": {
 									"type": "AzureSqlSink",
-									"sqlWriterStoredProcedureName": "@{item().StoredProcedureNameForMergeOperation}",
-									"sqlWriterTableType": "@{item().TableType}",
-									"storedProcedureTableTypeParameterName": "@{item().TABLE_NAME}"
+									"sqlWriterStoredProcedureName": {
+										"value": "@{item().StoredProcedureNameForMergeOperation}",
+										"type": "Expression"
+									},
+									"sqlWriterTableType": {
+										"value": "@{item().TableType}",
+										"type": "Expression"
+									},
+									"storedProcedureTableTypeParameterName": {
+										"value": "@{item().TABLE_NAME}",
+										"type": "Expression"
+									}
 								},
 								"enableStaging": false
 							},
@@ -110,7 +128,7 @@
 							]
 						},
 						{
-							"name": "StoredProceduretoWriteWatermarkActivity",
+							"name": "StoredProceduretoMergeStagingTable",
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
@@ -129,7 +147,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[dbo].[usp_write_watermark]"
+								"storedProcedureName": "dbo.usp_upsert_L0_IMPR_ImpTimesheets"
 							},
 							"linkedServiceName": {
 								"referenceName": "CSP_EDWH_LINKED_SERVER",
