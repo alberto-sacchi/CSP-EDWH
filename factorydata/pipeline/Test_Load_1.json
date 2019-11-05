@@ -1,0 +1,184 @@
+{
+	"name": "Test_Load_1",
+	"properties": {
+		"activities": [
+			{
+				"name": "LOOKUP_OLD_LOAD",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[usp_get_rif_value]",
+						"storedProcedureParameters": {
+							"TableName": {
+								"type": "String",
+								"value": "{item().TABLE_NAME}"
+							}
+						}
+					},
+					"dataset": {
+						"referenceName": "CSP_INCREMENTAL_LOAD",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "LOOKUP_NEW_LOAD",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": {
+							"value": "@select MAX(pipeline().parameters.Rif_Column) as NewRifValue from pipeline().parameters.TABLE_NAME",
+							"type": "Expression"
+						}
+					},
+					"dataset": {
+						"referenceName": "DS_L0_TABLE_IMPROVE",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "INCREMENTAL_COPY_ACTIVITY",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "LOOKUP_NEW_LOAD",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "LOOKUP_OLD_LOAD",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": {
+							"value": "select * from pipeline().parameters.TABLE_NAME where pipeline().parameters.Rif_Column > '@{activity('LOOKUP_OLD_LOAD').output.firstRow.RIF_VALUE}' and pipeline().parameters.Rif_Column <= '@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewRifValue}'",
+							"type": "Expression"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"sqlWriterStoredProcedureName": {
+							"value": "@pipeline().parameters.StoredProcedureNameForMergeOperation",
+							"type": "Expression"
+						},
+						"sqlWriterTableType": {
+							"value": "@pipeline().parameters.TableType",
+							"type": "Expression"
+						},
+						"storedProcedureTableTypeParameterName": {
+							"value": "@pipeline().parameters.TABLE_NAME",
+							"type": "Expression"
+						},
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_L0_TABLE_IMPROVE",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CSP_EDWH_DATA_SET",
+						"type": "DatasetReference",
+						"parameters": {
+							"ImproveTableName": {
+								"value": "@pipeline().parameters.TABLE_NAME",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "UpdateRifValue",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "INCREMENTAL_COPY_ACTIVITY",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "dbo.usp_write_rif_value",
+					"storedProcedureParameters": {
+						"LastRefValue": {
+							"value": "@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewRifValue}",
+							"type": "Datetime"
+						},
+						"TableName": {
+							"value": "@{item().TABLE_NAME}",
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "CSP_EDWH_LINKED_SERVER",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"TABLE_NAME": {
+				"type": "string"
+			},
+			"Rif_Column": {
+				"type": "string"
+			},
+			"TableType": {
+				"type": "string"
+			},
+			"StoredProcedureNameForMergeOperation": {
+				"type": "string"
+			}
+		},
+		"annotations": []
+	}
+}
