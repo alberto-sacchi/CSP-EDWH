@@ -28,9 +28,12 @@
 							"typeProperties": {
 								"source": {
 									"type": "AzureSqlSource",
-									"sqlReaderQuery": {
-										"value": "select * from dbo.T_LAST_REF_VALUE where TABLE_NAME = '@{item().TABLE_NAME}'",
-										"type": "Expression"
+									"sqlReaderStoredProcedureName": "[dbo].[usp_get_rif_value]",
+									"storedProcedureParameters": {
+										"TableName": {
+											"type": "String",
+											"value": "{item().TABLE_NAME}"
+										}
 									}
 								},
 								"dataset": {
