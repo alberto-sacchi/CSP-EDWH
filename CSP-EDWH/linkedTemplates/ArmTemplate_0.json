@@ -311,7 +311,7 @@
 										"source": {
 											"type": "AzureSqlSource",
 											"sqlReaderQuery": {
-												"value": "select * from dbo.T_LAST_RIF_VALUE where TABLE_NAME = @{item().TABLE_NAME}",
+												"value": "select * from dbo.T_LAST_RIF_VALUE where TABLE_NAME = '@{item().TABLE_NAME}'",
 												"type": "Expression"
 											}
 										},
@@ -378,7 +378,7 @@
 										"source": {
 											"type": "SqlServerSource",
 											"sqlReaderQuery": {
-												"value": "select * from @{item().TABLE_NAME} where @{item().Rif_Column} > '@{activity('LOOKUP_OLD_LOAD').output.firstRow.RIF_VALUE}' and @{item().WaterMark_Column} <= '@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewRifValue}'",
+												"value": "select * from @{item().TABLE_NAME} where @{item().Rif_Column} > '@{activity('LOOKUP_OLD_LOAD').output.firstRow.RIF_VALUE}' and @{item().Rif_Column}  <= '@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewRifValue}'",
 												"type": "Expression"
 											}
 										},
@@ -439,11 +439,11 @@
 										"storedProcedureName": "dbo.usp_write_rif_value",
 										"storedProcedureParameters": {
 											"LastModifiedtime": {
-												"value": "@{activity('LOOKUP_NEW_LOAD').output.firstRow.RIF_VALUE}",
+												"value": "@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewRifValue}",
 												"type": "Datetime"
 											},
 											"TableName": {
-												"value": "@{activity('LOOKUP_OLD_LOAD').output.firstRow.NewRifValue}",
+												"value": "@{item().TABLE_NAME}",
 												"type": "String"
 											}
 										}
