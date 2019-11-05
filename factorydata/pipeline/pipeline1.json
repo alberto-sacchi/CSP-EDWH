@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Stored Procedure1",
+				"name": "GetExecParam",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [],
 				"policy": {
@@ -27,7 +27,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Stored Procedure1",
+						"activity": "GetExecParam",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -35,6 +35,10 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
+					"items": {
+						"value": "@{activity('GetExecParam').output.firstRow.TABLE_NAME",
+						"type": "Expression"
+					},
 					"activities": [
 						{
 							"name": "Execute Pipeline1",
