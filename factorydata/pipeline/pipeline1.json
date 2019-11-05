@@ -53,7 +53,10 @@
 								},
 								"waitOnCompletion": true,
 								"parameters": {
-									"TABLE_NAME": "'@{activity('GetExecParam').output.TABLE_NAME}'",
+									"TABLE_NAME": {
+										"value": "@activity('GetExecParam').output.TABLE_NAME",
+										"type": "Expression"
+									},
 									"Rif_Column": "'@{activity('GetExecParam').output.RIF_COLUMN}'",
 									"TableType": "'@{activity('GetExecParam').output.TABLE_TYPE}'",
 									"StoredProcedureNameForMergeOperation": "'@{activity('GetExecParam').output.STORED_PROCEDURE}'"
