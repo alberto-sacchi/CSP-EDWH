@@ -25,7 +25,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "select MAX(@{item().Rif_Column}) as OldRifValue from @{item().TABLE_NAME}",
+										"value": "select MAX(@{item().Rif_Column}) as OldRifValue from dbo.T_LAST_RIF_VALUE where TABLE_NAME = @{item().TABLE_NAME}",
 										"type": "Expression"
 									}
 								},
@@ -147,7 +147,17 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "dbo.usp_write_rif_value"
+								"storedProcedureName": "dbo.usp_write_rif_value",
+								"storedProcedureParameters": {
+									"LastModifiedtime": {
+										"value": "@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewWatermarkvalue}",
+										"type": "Datetime"
+									},
+									"TableName": {
+										"value": "@{activity('LOOKUP_OLD_LOAD').output.firstRow.TableName}",
+										"type": "String"
+									}
+								}
 							},
 							"linkedServiceName": {
 								"referenceName": "CSP_EDWH_LINKED_SERVER",
