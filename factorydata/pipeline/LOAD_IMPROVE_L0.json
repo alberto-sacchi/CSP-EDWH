@@ -94,7 +94,7 @@
 								"source": {
 									"type": "SqlServerSource",
 									"sqlReaderQuery": {
-										"value": "select * from @{item().TABLE_NAME} where @{item().Rif_Column} > '@{activity('LOOKUP_OLD_LOAD').output.firstRow.RIF_VALUE}' and @{item().WaterMark_Column} <= '@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewRifValue}'",
+										"value": "select * from @{item().TABLE_NAME} where @{item().Rif_Column} > '@{activity('LOOKUP_OLD_LOAD').output.firstRow.RIF_VALUE}' and @{item().Rif_Column}  <= '@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewRifValue}'",
 										"type": "Expression"
 									}
 								},
