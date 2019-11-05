@@ -29,7 +29,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "select * from dbo.T_LAST_RIF_VALUE where TABLE_NAME = @{item().TABLE_NAME}",
+										"value": "select * from dbo.T_LAST_RIF_VALUE where TABLE_NAME = '@{item().TABLE_NAME}'",
 										"type": "Expression"
 									}
 								},
