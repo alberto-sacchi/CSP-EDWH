@@ -29,7 +29,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "select * from dbo.T_LAST_RIF_VALUE where TABLE_NAME = '@{item().TABLE_NAME}'",
+										"value": "select * from dbo.T_LAST_REF_VALUE where TABLE_NAME = '@{item().TABLE_NAME}'",
 										"type": "Expression"
 									}
 								},
@@ -148,7 +148,7 @@
 							"typeProperties": {
 								"storedProcedureName": "dbo.usp_write_rif_value",
 								"storedProcedureParameters": {
-									"LastModifiedtime": {
+									"LastRefValue": {
 										"value": "@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewRifValue}",
 										"type": "Datetime"
 									},
