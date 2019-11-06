@@ -63,7 +63,7 @@
 					"source": {
 						"type": "SqlServerSource",
 						"sqlReaderQuery": {
-							"value": " \n select * from @{pipeline().parameters.TABLE_NAME} where @{pipeline().parameters.Rif_Column} > \n '@{activity('LOOKUP_OLD_LOAD').output.firstRow.DT_START}'",
+							"value": " \n select * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.Rif_Column} > \n '@{activity('LOOKUP_OLD_LOAD').output.firstRow.DT_START}'",
 							"type": "Expression"
 						}
 					},
