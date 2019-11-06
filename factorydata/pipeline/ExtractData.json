@@ -39,7 +39,11 @@
 									},
 									"DN_RIF_COLUMN": "@item().DN_RIF_COLUMN",
 									"DN_TABLE_TYPE": "@item().DN_TABLE_TYPE",
-									"DN_STORED_PROCEDURE": "@item().DN_STORED_PROCEDURE"
+									"DN_STORED_PROCEDURE": "@item().DN_STORED_PROCEDURE",
+									"DN_SOURCE": {
+										"value": "@pipeline().parameters.DN_SOURCE",
+										"type": "Expression"
+									}
 								}
 							}
 						}
@@ -61,7 +65,16 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderStoredProcedureName": "[dbo].[LOAD_L0]"
+						"sqlReaderStoredProcedureName": "[dbo].[LOAD_L0]",
+						"storedProcedureParameters": {
+							"DN_SOURCE": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.DN_SOURCE",
+									"type": "Expression"
+								}
+							}
+						}
 					},
 					"dataset": {
 						"referenceName": "CSP_INCREMENTAL_LOAD",
