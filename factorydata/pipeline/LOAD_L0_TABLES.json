@@ -19,7 +19,7 @@
 						"type": "AzureSqlSource",
 						"sqlReaderStoredProcedureName": "[dbo].[GET_RIF_COLUMN]",
 						"storedProcedureParameters": {
-							"pDN_STEP": {
+							"pDN_TABLE_NAME": {
 								"type": "String",
 								"value": {
 									"value": "'@pipeline().parameters.DN_TABLE_NAME'",
@@ -63,7 +63,7 @@
 					"source": {
 						"type": "SqlServerSource",
 						"sqlReaderQuery": {
-							"value": " \n select * from @{pipeline().parameters.TABLE_NAME} where @{pipeline().parameters.Rif_Column} > \n '@{activity('LOOKUP_OLD_LOAD').output.firstRow.RIF_VALUE}'",
+							"value": " \n select * from @{pipeline().parameters.TABLE_NAME} where @{pipeline().parameters.Rif_Column} > \n '@{activity('LOOKUP_OLD_LOAD').output.firstRow.DT_START}'",
 							"type": "Expression"
 						}
 					},
@@ -80,15 +80,6 @@
 						"storedProcedureTableTypeParameterName": {
 							"value": "@pipeline().parameters.DN_TABLE_NAME",
 							"type": "Expression"
-						},
-						"storedProcedureParameters": {
-							"DN_SOURCE": {
-								"type": "String",
-								"value": {
-									"value": "@pipeline().parameters.DN_SOURCE",
-									"type": "Expression"
-								}
-							}
 						},
 						"disableMetricsCollection": false
 					},
