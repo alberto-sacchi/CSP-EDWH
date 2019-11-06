@@ -65,7 +65,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderStoredProcedureName": "[dbo].[LOAD_L0]",
+						"sqlReaderStoredProcedureName": "[dbo].[MD_LOAD_L0_PARAMS]",
 						"storedProcedureParameters": {
 							"DN_SOURCE": {
 								"type": "String",
