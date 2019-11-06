@@ -38,8 +38,8 @@
 										"type": "Expression"
 									},
 									"Rif_Column": "@item().RIF_COLUMN",
-									"TableType": "@item().TABLE_TYPE}",
-									"StoredProcedureNameForMergeOperation": "@item().STORED_PROCEDURE}"
+									"TableType": "@item().TABLE_TYPE",
+									"StoredProcedureNameForMergeOperation": "@item().STORED_PROCEDURE"
 								}
 							}
 						}
