@@ -34,12 +34,12 @@
 								"waitOnCompletion": true,
 								"parameters": {
 									"TABLE_NAME": {
-										"value": "activity('GetExecParam').output.value.TABLE_NAME",
+										"value": "@activity('GetExecParam').output.value.TABLE_NAME",
 										"type": "Expression"
 									},
-									"Rif_Column": "activity('GetExecParam').output.value.RIF_COLUMN",
-									"TableType": "activity('GetExecParam').output.value.TABLE_TYPE",
-									"StoredProcedureNameForMergeOperation": "activity('GetExecParam').output.value.STORED_PROCEDURE"
+									"Rif_Column": "@activity('GetExecParam').output.value.RIF_COLUMN",
+									"TableType": "@activity('GetExecParam').output.value.TABLE_TYPE",
+									"StoredProcedureNameForMergeOperation": "@activity('GetExecParam').output.value.STORED_PROCEDURE"
 								}
 							}
 						}
