@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderStoredProcedureName": "[dbo].[GET_RIF_COLUMN]",
+						"sqlReaderStoredProcedureName": "[dbo].[GET_START_DATE]",
 						"storedProcedureParameters": {
 							"pDN_TABLE_NAME": {
 								"type": "String",
