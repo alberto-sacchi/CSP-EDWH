@@ -22,7 +22,7 @@
 					"isSequential": true,
 					"activities": [
 						{
-							"name": "Execute Pipeline1",
+							"name": "Execute_Load_L0",
 							"type": "ExecutePipeline",
 							"dependsOn": [],
 							"userProperties": [],
