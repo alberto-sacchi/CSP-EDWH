@@ -22,7 +22,7 @@
 							"TableName": {
 								"type": "String",
 								"value": {
-									"value": "'@pipeline().parameters.TABLE_NAME'",
+									"value": "'@pipeline().parameters.DN_TABLE_NAME'",
 									"type": "Expression"
 								}
 							}
@@ -64,15 +64,15 @@
 					"sink": {
 						"type": "AzureSqlSink",
 						"sqlWriterStoredProcedureName": {
-							"value": "@pipeline().parameters.StoredProcedureNameForMergeOperation",
+							"value": "@pipeline().parameters.DN_STORED_PROCEDURE",
 							"type": "Expression"
 						},
 						"sqlWriterTableType": {
-							"value": "@pipeline().parameters.TableType",
+							"value": "@pipeline().parameters.DN_TABLE_TYPE",
 							"type": "Expression"
 						},
 						"storedProcedureTableTypeParameterName": {
-							"value": "@pipeline().parameters.TABLE_NAME",
+							"value": "@pipeline().parameters.DN_TABLE_NAME",
 							"type": "Expression"
 						},
 						"disableMetricsCollection": false
@@ -91,7 +91,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"ImproveTableName": {
-								"value": "@pipeline().parameters.TABLE_NAME",
+								"value": "@pipeline().parameters.DN_TABLE_NAME",
 								"type": "Expression"
 							}
 						}
@@ -100,16 +100,16 @@
 			}
 		],
 		"parameters": {
-			"TABLE_NAME": {
+			"DN_TABLE_NAME": {
 				"type": "string"
 			},
-			"Rif_Column": {
+			"DN_RIF_COLUMN": {
 				"type": "string"
 			},
-			"TableType": {
+			"DN_TABLE_TYPE": {
 				"type": "string"
 			},
-			"StoredProcedureNameForMergeOperation": {
+			"DN_STORED_PROCEDURE": {
 				"type": "string"
 			}
 		},
