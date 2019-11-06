@@ -15,10 +15,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ImproveSource'"
 		},
-		"LS_CSPTO_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'LS_CSPTO'"
-		},
 		"AS_SQL_SERVER_LIKED_SERVER_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AS_SQL_SERVER_LIKED_SERVER'"
@@ -26,6 +22,10 @@
 		"AS_SQL_SERVER_LIKED_SERVER_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'AS_SQL_SERVER_LIKED_SERVER'"
+		},
+		"LS_CSPTO_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_CSPTO'"
 		},
 		"AS_SQL_SERVER_LIKED_SERVER_properties_typeProperties_userName": {
 			"type": "string",
@@ -58,19 +58,6 @@
 				"type": "SqlServer",
 				"typeProperties": {
 					"connectionString": "[parameters('ImproveSource_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LS_CSPTO')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"connectionString": "[parameters('LS_CSPTO_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -279,6 +266,25 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LS_CSPTO')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('LS_CSPTO_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "IR-SOURCE-CSPTO",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/IR-SOURCE-CSPTO')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/LOAD_IMPROVE_L0')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -310,9 +316,12 @@
 									"typeProperties": {
 										"source": {
 											"type": "AzureSqlSource",
-											"sqlReaderQuery": {
-												"value": "select * from dbo.T_LAST_RIF_VALUE where TABLE_NAME = '@{item().TABLE_NAME}'",
-												"type": "Expression"
+											"sqlReaderStoredProcedureName": "[[dbo].[usp_get_rif_value]",
+											"storedProcedureParameters": {
+												"TableName": {
+													"type": "String",
+													"value": "{item().TABLE_NAME}"
+												}
 											}
 										},
 										"dataset": {
@@ -395,7 +404,8 @@
 											"storedProcedureTableTypeParameterName": {
 												"value": "@{item().TABLE_NAME}",
 												"type": "Expression"
-											}
+											},
+											"disableMetricsCollection": false
 										},
 										"enableStaging": false
 									},
@@ -438,12 +448,18 @@
 									"typeProperties": {
 										"storedProcedureName": "dbo.usp_write_rif_value",
 										"storedProcedureParameters": {
-											"LastModifiedtime": {
-												"value": "@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewRifValue}",
+											"LastRefValue": {
+												"value": {
+													"value": "@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewRifValue}",
+													"type": "Expression"
+												},
 												"type": "Datetime"
 											},
 											"TableName": {
-												"value": "@{item().TABLE_NAME}",
+												"value": {
+													"value": "@{item().TABLE_NAME}",
+													"type": "Expression"
+												},
 												"type": "String"
 											}
 										}
@@ -666,6 +682,279 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LOAD_L0_TABLES')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LOOKUP_OLD_LOAD",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderStoredProcedureName": "[[dbo].[MD_GET_START_DATE]",
+								"storedProcedureParameters": {
+									"pDN_TABLE_NAME": {
+										"type": "String",
+										"value": {
+											"value": "'@pipeline().parameters.DN_TABLE_NAME'",
+											"type": "Expression"
+										}
+									},
+									"pDN_SOURCE": {
+										"value": {
+											"value": "@pipeline().parameters.DN_SOURCE",
+											"type": "Expression"
+										}
+									}
+								}
+							},
+							"dataset": {
+								"referenceName": "CSP_INCREMENTAL_LOAD",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					},
+					{
+						"name": "INCREMENTAL_COPY_ACTIVITY",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "LOOKUP_OLD_LOAD",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": {
+									"value": "select * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOOKUP_OLD_LOAD').output.firstRow.DT_START}'",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"sqlWriterStoredProcedureName": {
+									"value": "@pipeline().parameters.DN_STORED_PROCEDURE",
+									"type": "Expression"
+								},
+								"sqlWriterTableType": {
+									"value": "@pipeline().parameters.DN_TABLE_TYPE",
+									"type": "Expression"
+								},
+								"storedProcedureTableTypeParameterName": {
+									"value": "@pipeline().parameters.DN_TABLE_NAME",
+									"type": "Expression"
+								},
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"parallelCopies": 1
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_L0_TABLE_IMPROVE",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CSP_EDWH_DATA_SET",
+								"type": "DatasetReference",
+								"parameters": {
+									"ImproveTableName": {
+										"value": "@pipeline().parameters.DN_TABLE_NAME",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"parameters": {
+					"DN_TABLE_NAME": {
+						"type": "string"
+					},
+					"DN_RIF_COLUMN": {
+						"type": "string"
+					},
+					"DN_TABLE_TYPE": {
+						"type": "string"
+					},
+					"DN_STORED_PROCEDURE": {
+						"type": "string"
+					},
+					"DN_SOURCE": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/CSP_INCREMENTAL_LOAD')]",
+				"[concat(variables('factoryId'), '/datasets/DS_L0_TABLE_IMPROVE')]",
+				"[concat(variables('factoryId'), '/datasets/CSP_EDWH_DATA_SET')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LOAD_L0_TABLES_1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LOOKUP_OLD_LOAD",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderStoredProcedureName": "[[dbo].[MD_GET_START_DATE]",
+								"storedProcedureParameters": {
+									"pDN_TABLE_NAME": {
+										"type": "String",
+										"value": {
+											"value": "'@pipeline().parameters.DN_TABLE_NAME'",
+											"type": "Expression"
+										}
+									},
+									"pDN_SOURCE": {
+										"value": {
+											"value": "@pipeline().parameters.DN_SOURCE",
+											"type": "Expression"
+										}
+									}
+								}
+							},
+							"dataset": {
+								"referenceName": "CSP_INCREMENTAL_LOAD",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					},
+					{
+						"name": "INCREMENTAL_COPY_ACTIVITY",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "LOOKUP_OLD_LOAD",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": {
+									"value": "select * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOOKUP_OLD_LOAD').output.firstRow.DT_START}'",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"sqlWriterStoredProcedureName": {
+									"value": "@pipeline().parameters.DN_STORED_PROCEDURE",
+									"type": "Expression"
+								},
+								"sqlWriterTableType": {
+									"value": "@pipeline().parameters.DN_TABLE_TYPE",
+									"type": "Expression"
+								},
+								"storedProcedureTableTypeParameterName": {
+									"value": "@pipeline().parameters.DN_TABLE_NAME",
+									"type": "Expression"
+								},
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_L0_TABLE_IMPROVE",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CSP_EDWH_DATA_SET",
+								"type": "DatasetReference",
+								"parameters": {
+									"ImproveTableName": {
+										"value": "@pipeline().parameters.DN_TABLE_NAME",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"parameters": {
+					"DN_TABLE_NAME": {
+						"type": "string"
+					},
+					"DN_RIF_COLUMN": {
+						"type": "string"
+					},
+					"DN_TABLE_TYPE": {
+						"type": "string"
+					},
+					"DN_STORED_PROCEDURE": {
+						"type": "string"
+					},
+					"DN_SOURCE": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/CSP_INCREMENTAL_LOAD')]",
+				"[concat(variables('factoryId'), '/datasets/DS_L0_TABLE_IMPROVE')]",
+				"[concat(variables('factoryId'), '/datasets/CSP_EDWH_DATA_SET')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AS_SQL_SERVER_DATA_SET')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -681,6 +970,116 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AS_SQL_SERVER_LIKED_SERVER')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ExtractData')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Loop_Load_Tables",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "GetExecParam",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetExecParam').output.value",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "Execute_Load_L0",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "LOAD_L0_TABLES",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {
+											"DN_TABLE_NAME": {
+												"value": "@item().DN_TABLE_NAME",
+												"type": "Expression"
+											},
+											"DN_RIF_COLUMN": {
+												"value": "@item().DN_RIF_COLUMN",
+												"type": "Expression"
+											},
+											"DN_TABLE_TYPE": {
+												"value": "@item().DN_TABLE_TYPE",
+												"type": "Expression"
+											},
+											"DN_STORED_PROCEDURE": {
+												"value": "@item().DN_STORED_PROCEDURE",
+												"type": "Expression"
+											},
+											"DN_SOURCE": {
+												"value": "@pipeline().parameters.DN_SOURCE",
+												"type": "Expression"
+											}
+										}
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "GetExecParam",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderStoredProcedureName": "[[dbo].[MD_LOAD_L0_PARAMS]",
+								"storedProcedureParameters": {
+									"DN_SOURCE": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.DN_SOURCE",
+											"type": "Expression"
+										}
+									}
+								}
+							},
+							"dataset": {
+								"referenceName": "CSP_INCREMENTAL_LOAD",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					}
+				],
+				"parameters": {
+					"DN_SOURCE": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/CSP_INCREMENTAL_LOAD')]",
+				"[concat(variables('factoryId'), '/pipelines/LOAD_L0_TABLES')]"
 			]
 		},
 		{

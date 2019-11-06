@@ -64,14 +64,14 @@
 					"ImproveSource_connectionString": {
 						"value": "[parameters('ImproveSource_connectionString')]"
 					},
-					"LS_CSPTO_connectionString": {
-						"value": "[parameters('LS_CSPTO_connectionString')]"
-					},
 					"AS_SQL_SERVER_LIKED_SERVER_connectionString": {
 						"value": "[parameters('AS_SQL_SERVER_LIKED_SERVER_connectionString')]"
 					},
 					"AS_SQL_SERVER_LIKED_SERVER_password": {
 						"value": "[parameters('AS_SQL_SERVER_LIKED_SERVER_password')]"
+					},
+					"LS_CSPTO_connectionString": {
+						"value": "[parameters('LS_CSPTO_connectionString')]"
 					},
 					"AS_SQL_SERVER_LIKED_SERVER_properties_typeProperties_userName": {
 						"value": "[parameters('AS_SQL_SERVER_LIKED_SERVER_properties_typeProperties_userName')]"
