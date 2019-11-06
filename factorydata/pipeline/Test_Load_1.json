@@ -50,7 +50,7 @@
 					"source": {
 						"type": "SqlServerSource",
 						"sqlReaderQuery": {
-							"value": "select MAX(@pipeline().parameters.Rif_Column) as NewRifValue from pipeline().parameters.TABLE_NAME",
+							"value": "select MAX(pipeline().parameters.Rif_Column) as NewRifValue from pipeline().parameters.TABLE_NAME",
 							"type": "Expression"
 						}
 					},
