@@ -83,7 +83,8 @@
 						},
 						"disableMetricsCollection": false
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"parallelCopies": 1
 				},
 				"inputs": [
 					{
