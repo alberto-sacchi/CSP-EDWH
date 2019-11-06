@@ -19,10 +19,16 @@
 						"type": "AzureSqlSource",
 						"sqlReaderStoredProcedureName": "[dbo].[GET_RIF_COLUMN]",
 						"storedProcedureParameters": {
-							"DN_STEP": {
+							"pDN_STEP": {
 								"type": "String",
 								"value": {
 									"value": "'@pipeline().parameters.DN_TABLE_NAME'",
+									"type": "Expression"
+								}
+							},
+							"pDN_SOURCE": {
+								"value": {
+									"value": "@pipeline().parameters.DN_SOURCE",
 									"type": "Expression"
 								}
 							}
