@@ -111,6 +111,9 @@
 			},
 			"DN_STORED_PROCEDURE": {
 				"type": "string"
+			},
+			"DN_SOURCE": {
+				"type": "string"
 			}
 		},
 		"annotations": []
