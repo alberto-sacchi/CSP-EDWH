@@ -89,7 +89,7 @@
 					"source": {
 						"type": "SqlServerSource",
 						"sqlReaderQuery": {
-							"value": " select * from @pipeline().parameters.TABLE_NAME where @pipeline().parameters.Rif_Column > \n '@{activity('LOOKUP_OLD_LOAD').output.firstRow.RIF_VALUE}' and @pipeline().parameters.Rif_Column <= '@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewRifValue}'",
+							"value": " \n select * from @{pipeline().parameters.TABLE_NAME} where @{pipeline().parameters.Rif_Column} > \n '@{activity('LOOKUP_OLD_LOAD').output.firstRow.RIF_VALUE}' and @{pipeline().parameters.Rif_Column} <= '@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewRifValue}'",
 							"type": "Expression"
 						}
 					},
