@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "ForEach1",
+				"name": "Loop_Load_Tables",
 				"type": "ForEach",
 				"dependsOn": [
 					{
@@ -34,12 +34,12 @@
 								"waitOnCompletion": true,
 								"parameters": {
 									"TABLE_NAME": {
-										"value": "@item().TABLE_NAME",
+										"value": "@item().DN_TABLE_NAME",
 										"type": "Expression"
 									},
-									"Rif_Column": "@item().RIF_COLUMN",
-									"TableType": "@item().TABLE_TYPE",
-									"StoredProcedureNameForMergeOperation": "@item().STORED_PROCEDURE"
+									"Rif_Column": "@item().DN_RIF_COLUMN",
+									"TableType": "@item().DN_TABLE_TYPE",
+									"StoredProcedureNameForMergeOperation": "@item().DN_STORED_PROCEDURE"
 								}
 							}
 						}
