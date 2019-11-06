@@ -6,7 +6,11 @@
 		"type": "SqlServer",
 		"typeProperties": {
 			"connectionString": "integrated security=False;data source=STRSRV-SQLALFAB\\ALFA2016;initial catalog=SISime_cspto;user id=csptostanco",
-			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkNTUC1FRFdIXzY3YmI2N2EwLTMyZTQtNDA3Yi05YjAyLTcyY2M0OTM4ZDM0YiINCn0="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI3ZGY4OGE0OC0zMDVkLTQ1ZGUtOWI2ZC0yYjMyYmJjYTJmOWQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "IR-SOURCE-CSPTO",
+			"type": "IntegrationRuntimeReference"
 		}
 	}
 }
