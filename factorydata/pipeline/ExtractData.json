@@ -39,7 +39,11 @@
 									},
 									"DN_RIF_COLUMN": "@item().DN_RIF_COLUMN",
 									"DN_TABLE_TYPE": "@item().DN_TABLE_TYPE",
-									"DN_STORED_PROCEDURE": "@item().DN_STORED_PROCEDURE"
+									"DN_STORED_PROCEDURE": "@item().DN_STORED_PROCEDURE",
+									"DN_SOURCE": {
+										"value": "@pipeline().parameters.DN_SOURCE",
+										"type": "Expression"
+									}
 								}
 							}
 						}
