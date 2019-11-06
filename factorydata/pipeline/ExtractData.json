@@ -61,7 +61,12 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderStoredProcedureName": "[dbo].[usp_get_exec_params]"
+						"sqlReaderStoredProcedureName": "[dbo].[LOAD_L0]",
+						"storedProcedureParameters": {
+							"DN_SOURCE": {
+								"type": "String"
+							}
+						}
 					},
 					"dataset": {
 						"referenceName": "CSP_INCREMENTAL_LOAD",
