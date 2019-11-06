@@ -28,18 +28,18 @@
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "Test_Load_1",
+									"referenceName": "LOAD_L0_TABLES",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true,
 								"parameters": {
-									"TABLE_NAME": {
+									"DN_TABLE_NAME": {
 										"value": "@item().DN_TABLE_NAME",
 										"type": "Expression"
 									},
-									"Rif_Column": "@item().DN_RIF_COLUMN",
-									"TableType": "@item().DN_TABLE_TYPE",
-									"StoredProcedureNameForMergeOperation": "@item().DN_STORED_PROCEDURE"
+									"DN_RIF_COLUMN": "@item().DN_RIF_COLUMN",
+									"DN_TABLE_TYPE": "@item().DN_TABLE_TYPE",
+									"DN_STORED_PROCEDURE": "@item().DN_STORED_PROCEDURE"
 								}
 							}
 						}

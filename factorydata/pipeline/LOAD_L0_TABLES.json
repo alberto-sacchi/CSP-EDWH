@@ -1,5 +1,5 @@
 {
-	"name": "Test_Load_1",
+	"name": "LOAD_L0_TABLES",
 	"properties": {
 		"activities": [
 			{
@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderStoredProcedureName": "[dbo].[usp_get_rif_value]",
+						"sqlReaderStoredProcedureName": "[dbo].[GET_RIF_COLUMN]",
 						"storedProcedureParameters": {
 							"TableName": {
 								"type": "String",
@@ -35,41 +35,9 @@
 				}
 			},
 			{
-				"name": "LOOKUP_NEW_LOAD",
-				"type": "Lookup",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "SqlServerSource",
-						"sqlReaderQuery": {
-							"value": "select MAX(@{pipeline().parameters.Rif_Column}) as NewRifValue from @{pipeline().parameters.TABLE_NAME}",
-							"type": "Expression"
-						}
-					},
-					"dataset": {
-						"referenceName": "DS_L0_TABLE_IMPROVE",
-						"type": "DatasetReference"
-					}
-				}
-			},
-			{
 				"name": "INCREMENTAL_COPY_ACTIVITY",
 				"type": "Copy",
 				"dependsOn": [
-					{
-						"activity": "LOOKUP_NEW_LOAD",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					},
 					{
 						"activity": "LOOKUP_OLD_LOAD",
 						"dependencyConditions": [
@@ -89,7 +57,7 @@
 					"source": {
 						"type": "SqlServerSource",
 						"sqlReaderQuery": {
-							"value": " \n select * from @{pipeline().parameters.TABLE_NAME} where @{pipeline().parameters.Rif_Column} > \n '@{activity('LOOKUP_OLD_LOAD').output.firstRow.RIF_VALUE}' and @{pipeline().parameters.Rif_Column} <= '@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewRifValue}'",
+							"value": " \n select * from @{pipeline().parameters.TABLE_NAME} where @{pipeline().parameters.Rif_Column} > \n '@{activity('LOOKUP_OLD_LOAD').output.firstRow.RIF_VALUE}'",
 							"type": "Expression"
 						}
 					},
@@ -129,49 +97,6 @@
 						}
 					}
 				]
-			},
-			{
-				"name": "UpdateRifValue",
-				"type": "SqlServerStoredProcedure",
-				"dependsOn": [
-					{
-						"activity": "INCREMENTAL_COPY_ACTIVITY",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"storedProcedureName": "dbo.usp_write_rif_value",
-					"storedProcedureParameters": {
-						"LastRefValue": {
-							"value": {
-								"value": "@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewRifValue}",
-								"type": "Expression"
-							},
-							"type": "Datetime"
-						},
-						"TableName": {
-							"value": {
-								"value": "@pipeline().parameters.TABLE_NAME",
-								"type": "Expression"
-							},
-							"type": "String"
-						}
-					}
-				},
-				"linkedServiceName": {
-					"referenceName": "CSP_EDWH_LINKED_SERVER",
-					"type": "LinkedServiceReference"
-				}
 			}
 		],
 		"parameters": {
