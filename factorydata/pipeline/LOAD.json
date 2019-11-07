@@ -42,7 +42,7 @@
 						}
 					},
 					"dataset": {
-						"referenceName": "CSP_INCREMENTAL_LOAD",
+						"referenceName": "EDWH_DB",
 						"type": "DatasetReference"
 					}
 				}
