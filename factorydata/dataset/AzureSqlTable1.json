@@ -1,0 +1,81 @@
+{
+	"name": "AzureSqlTable1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CSP_EDWH_LINKED_SERVER",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"DN_OUT_TABLE_NAME": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TenantId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "IsActive",
+				"type": "bit"
+			},
+			{
+				"name": "LastModificationTime",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "LastModifierUserId",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "CreationTime",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatorUserId",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "EmployeeId",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TimeFlowId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SignedByEmployee",
+				"type": "bit"
+			},
+			{
+				"name": "SignedByEmployeeInDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": {
+				"value": "@dataset().DN_OUT_TABLE_NAME",
+				"type": "Expression"
+			}
+		}
+	}
+}
