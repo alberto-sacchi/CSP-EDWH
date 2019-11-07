@@ -69,7 +69,10 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "delete from @{pipeline().parameters.DN_OUT_TABLE_NAME}",
+						"preCopyScript": {
+							"value": "delete from @{pipeline().parameters.DN_OUT_TABLE_NAME}",
+							"type": "Expression"
+						},
 						"tableOption": "autoCreate",
 						"disableMetricsCollection": false
 					},
@@ -84,10 +87,13 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "CSP_EDWH_DATA_SET",
+						"referenceName": "AzureSqlTable1",
 						"type": "DatasetReference",
 						"parameters": {
-							"ImproveTableName": "@{pipeline().parameters.DN_OUT_TABLE_NAME}"
+							"DN_OUT_TABLE_NAME": {
+								"value": "@pipeline().parameters.DN_OUT_TABLE_NAME",
+								"type": "Expression"
+							}
 						}
 					}
 				]
