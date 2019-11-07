@@ -69,6 +69,7 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
+						"preCopyScript": "select * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOOKUP_OLD_LOAD').output.firstRow.DT_START}'",
 						"sqlWriterStoredProcedureName": {
 							"value": "@pipeline().parameters.DN_STORED_PROCEDURE",
 							"type": "Expression"
