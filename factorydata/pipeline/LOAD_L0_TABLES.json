@@ -116,6 +116,9 @@
 			},
 			"DN_SOURCE": {
 				"type": "string"
+			},
+			"DN_OUT_TABLE_NAME": {
+				"type": "string"
 			}
 		},
 		"annotations": []
