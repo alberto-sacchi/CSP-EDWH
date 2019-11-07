@@ -69,18 +69,7 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"sqlWriterStoredProcedureName": {
-							"value": "@pipeline().parameters.DN_STORED_PROCEDURE",
-							"type": "Expression"
-						},
-						"sqlWriterTableType": {
-							"value": "@pipeline().parameters.DN_TABLE_TYPE",
-							"type": "Expression"
-						},
-						"storedProcedureTableTypeParameterName": {
-							"value": "@pipeline().parameters.DN_TABLE_NAME",
-							"type": "Expression"
-						},
+						"tableOption": "autoCreate",
 						"disableMetricsCollection": false
 					},
 					"enableStaging": false
