@@ -173,11 +173,19 @@
 							},
 							"type": "int"
 						},
-						"pROWS_NR": {
+						"pROWS_READ": {
 							"value": {
-								"value": "@activity('INCREMENTAL_COPY_ACTIVITY').output.rowsCopied",
+								"value": "@activity('INCREMENTAL_COPY_ACTIVITY').output.rowsRead",
 								"type": "Expression"
 							},
+							"type": "int"
+						},
+						"pROWS_WRITTEN": {
+							"value": "@activity('INCREMENTAL_COPY_ACTIVITY').output.rowsCopied",
+							"type": "int"
+						},
+						"pCOPY_DURATION": {
+							"value": "@activity('INCREMENTAL_COPY_ACTIVITY').output.copyDuration",
 							"type": "int"
 						}
 					}
