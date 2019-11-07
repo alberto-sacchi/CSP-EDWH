@@ -28,7 +28,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "COPY_L0",
+									"referenceName": "LOAD",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true,
