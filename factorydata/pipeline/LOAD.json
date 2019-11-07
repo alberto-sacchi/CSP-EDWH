@@ -1,5 +1,5 @@
 {
-	"name": "SET_END_KO",
+	"name": "LOAD",
 	"properties": {
 		"activities": [
 			{
@@ -181,7 +181,7 @@
 				}
 			},
 			{
-				"name": "SET_END_KO",
+				"name": "LOAD_L0",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
