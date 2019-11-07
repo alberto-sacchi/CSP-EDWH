@@ -168,7 +168,7 @@
 					"storedProcedureParameters": {
 						"pID_RUN": {
 							"value": {
-								"value": "@activity('SET_START').output",
+								"value": "@activity('SET_START').outputactivity('SET_START').output.ID_RUN",
 								"type": "Expression"
 							},
 							"type": "String"
