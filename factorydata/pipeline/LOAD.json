@@ -211,7 +211,7 @@
 						},
 						"pErrorMessage": {
 							"value": {
-								"value": "@activity('INCREMENTAL_COPY_ACTIVITY').output.FirstRow.error.message",
+								"value": "@activity('INCREMENTAL_COPY_ACTIVITY').output.errors.message",
 								"type": "Expression"
 							},
 							"type": "string"
