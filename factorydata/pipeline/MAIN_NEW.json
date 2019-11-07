@@ -1,0 +1,107 @@
+{
+	"name": "MAIN_NEW",
+	"properties": {
+		"activities": [
+			{
+				"name": "Loop_Load_Tables",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "GetExecParam",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetExecParam').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Execute_Load_L0",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "pipeline1",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"DN_TABLE_NAME": {
+										"value": "@item().DN_TABLE_NAME",
+										"type": "Expression"
+									},
+									"DN_RIF_COLUMN": {
+										"value": "@item().DN_RIF_COLUMN",
+										"type": "Expression"
+									},
+									"DN_TABLE_TYPE": {
+										"value": "@item().DN_TABLE_TYPE",
+										"type": "Expression"
+									},
+									"DN_STORED_PROCEDURE": {
+										"value": "@item().DN_STORED_PROCEDURE",
+										"type": "Expression"
+									},
+									"DN_SOURCE": {
+										"value": "@pipeline().parameters.DN_SOURCE",
+										"type": "Expression"
+									},
+									"DN_OUT_TABLE_NAME": {
+										"value": "@item().DN_OUT_TABLE_NAME",
+										"type": "Expression"
+									}
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "GetExecParam",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[MD_LOAD_L0_PARAMS]",
+						"storedProcedureParameters": {
+							"DN_SOURCE": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.DN_SOURCE",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"dataset": {
+						"referenceName": "CSP_INCREMENTAL_LOAD",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			}
+		],
+		"parameters": {
+			"DN_SOURCE": {
+				"type": "string"
+			}
+		},
+		"annotations": []
+	}
+}
