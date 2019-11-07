@@ -139,14 +139,8 @@
 						}
 					},
 					"dataset": {
-						"referenceName": "AzureSqlTable1",
-						"type": "DatasetReference",
-						"parameters": {
-							"DN_OUT_TABLE_NAME": {
-								"value": "@pipeline().parameters.DN_OUT_TABLE_NAME",
-								"type": "Expression"
-							}
-						}
+						"referenceName": "AzureSqlTable2",
+						"type": "DatasetReference"
 					}
 				}
 			},
