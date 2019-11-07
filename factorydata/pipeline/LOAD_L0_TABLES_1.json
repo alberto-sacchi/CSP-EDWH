@@ -41,16 +41,9 @@
 				}
 			},
 			{
-				"name": "INCREMENTAL_COPY_ACTIVITY",
+				"name": "Copy data1",
 				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "LOOKUP_OLD_LOAD",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -62,15 +55,11 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlServerSource",
-						"sqlReaderQuery": {
-							"value": "select * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOOKUP_OLD_LOAD').output.firstRow.DT_START}'",
-							"type": "Expression"
-						}
+						"sqlReaderQuery": "select * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOOKUP_OLD_LOAD').output.firstRow.DT_START}'"
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"tableOption": "autoCreate",
-						"disableMetricsCollection": false
+						"tableOption": "autoCreate"
 					},
 					"enableStaging": false
 				},
@@ -82,7 +71,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "CSP_EDWH_DATA_SET",
+						"referenceName": "DS_L0_INCREMENTAL_LOAD_TABLE",
 						"type": "DatasetReference"
 					}
 				]
