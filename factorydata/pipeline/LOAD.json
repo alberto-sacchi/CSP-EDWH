@@ -94,7 +94,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "AzureSqlTable1",
+						"referenceName": "EDWH_LOAD_L0",
 						"type": "DatasetReference",
 						"parameters": {
 							"DN_OUT_TABLE_NAME": {
@@ -139,7 +139,7 @@
 						}
 					},
 					"dataset": {
-						"referenceName": "AzureSqlTable2",
+						"referenceName": "EDWH_DB",
 						"type": "DatasetReference"
 					}
 				}
