@@ -1,5 +1,5 @@
 {
-	"name": "AzureSqlTable2",
+	"name": "EDWH_DB",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "CSP_EDWH_LINKED_SERVER",
