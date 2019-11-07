@@ -171,7 +171,7 @@
 								"value": "@activity('SET_START').output.FirstRow.ID_RUN",
 								"type": "Expression"
 							},
-							"type": "String"
+							"type": "int"
 						}
 					}
 				},
