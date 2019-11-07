@@ -125,7 +125,7 @@
 							"pDN_STEP": {
 								"type": "String",
 								"value": {
-									"value": "'LOAD_' + @pipeline().parameters.DN_TABLE_NAME",
+									"value": "'LOAD_' + '@{pipeline().parameters.DN_TABLE_NAME}'",
 									"type": "Expression"
 								}
 							},
@@ -168,7 +168,7 @@
 					"storedProcedureParameters": {
 						"pID_RUN": {
 							"value": {
-								"value": "'@{activity('SET_START').output.firstRow.ID_RUN}'",
+								"value": "@activity('SET_START').output.FirstRow.ID_RUN",
 								"type": "Expression"
 							},
 							"type": "String"
