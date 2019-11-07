@@ -523,7 +523,7 @@
 									"pDN_STEP": {
 										"type": "String",
 										"value": {
-											"value": "@concat('LOAD_' ,pipeline().parameters.DN_TABLE_NAME)",
+											"value": "@concat('LOAD_' ,pipeline().parameters.DN_SOURCE,'_',pipeline().parameters.DN_TABLE_NAME)",
 											"type": "Expression"
 										}
 									},
