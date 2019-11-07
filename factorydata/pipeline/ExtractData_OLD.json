@@ -1,5 +1,5 @@
 {
-	"name": "ExtractData",
+	"name": "ExtractData_OLD",
 	"properties": {
 		"activities": [
 			{
@@ -53,7 +53,10 @@
 										"value": "@pipeline().parameters.DN_SOURCE",
 										"type": "Expression"
 									},
-									"DN_OUT_TABLE_NAME": "@item().DN_OUT_TABLE_NAME"
+									"DN_OUT_TABLE_NAME": {
+										"value": "@item().DN_OUT_TABLE_NAME",
+										"type": "Expression"
+									}
 								}
 							}
 						}
