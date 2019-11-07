@@ -175,7 +175,7 @@
 						},
 						"pROWS_NR": {
 							"value": {
-								"value": "@activity('INCREMENTAL_COPY_ACTIVITY').output.dataWritten",
+								"value": "@activity('INCREMENTAL_COPY_ACTIVITY').output.rowsCopied",
 								"type": "Expression"
 							},
 							"type": "int"
