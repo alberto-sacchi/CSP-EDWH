@@ -5,7 +5,14 @@
 			{
 				"name": "LOOKUP_OLD_LOAD",
 				"type": "Lookup",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "SET_START",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -111,7 +118,20 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"storedProcedureName": "[dbo].[MD_ERROR_SET_START]"
+					"storedProcedureName": "[dbo].[MD_ERROR_SET_START]",
+					"storedProcedureParameters": {
+						"pDN_STEP": {
+							"value": {
+								"value": "'LOAD_' + @pipeline().parameters.DN_TABLE_NAME",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"pDN_STEP_DETAIL": {
+							"value": "'LOAD_L0_' + @pipeline().parameters.DN_OUT_TABLE_NAME",
+							"type": "String"
+						}
+					}
 				},
 				"linkedServiceName": {
 					"referenceName": "CSP_EDWH_LINKED_SERVER",
