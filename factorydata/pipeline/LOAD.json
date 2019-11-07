@@ -120,7 +120,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderStoredProcedureName": "[dbo].[MD_ERROR_SET_START_NEW]",
+						"sqlReaderStoredProcedureName": "[dbo].[MD_ERROR_SET_START]",
 						"storedProcedureParameters": {
 							"pDN_STEP": {
 								"type": "String",
