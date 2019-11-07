@@ -181,7 +181,7 @@
 				}
 			},
 			{
-				"name": "LOAD_L0",
+				"name": "SET_END_KO",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
@@ -211,7 +211,7 @@
 						},
 						"pErrorMessage": {
 							"value": {
-								"value": "@activity('INCREMENTAL_COPY_ACTIVITY').output.error.message",
+								"value": "@activity('INCREMENTAL_COPY_ACTIVITY').output.FirstRow.error.message",
 								"type": "Expression"
 							},
 							"type": "string"
