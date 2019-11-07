@@ -214,7 +214,7 @@
 								"value": "@activity('INCREMENTAL_COPY_ACTIVITY').output.errors[0].message",
 								"type": "Expression"
 							},
-							"type": "string"
+							"type": "int"
 						}
 					}
 				},
