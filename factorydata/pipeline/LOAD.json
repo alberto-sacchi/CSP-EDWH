@@ -208,6 +208,13 @@
 								"type": "Expression"
 							},
 							"type": "string"
+						},
+						"pErrorMessage": {
+							"value": {
+								"value": "@activity('INCREMENTAL_COPY_ACTIVITY').output.error.message",
+								"type": "Expression"
+							},
+							"type": "string"
 						}
 					}
 				},
