@@ -214,14 +214,14 @@
 								"value": "@activity('SET_START').output.FirstRow.ID_RUN",
 								"type": "Expression"
 							},
-							"type": "string"
+							"type": "int"
 						},
 						"pErrorMessage": {
 							"value": {
 								"value": "@activity('INCREMENTAL_COPY_ACTIVITY').output.errors[0].message",
 								"type": "Expression"
 							},
-							"type": "int"
+							"type": "string"
 						}
 					}
 				},
