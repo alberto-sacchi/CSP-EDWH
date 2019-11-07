@@ -172,6 +172,13 @@
 								"type": "Expression"
 							},
 							"type": "int"
+						},
+						"pROWS_NR": {
+							"value": {
+								"value": "@activity('INCREMENTAL_COPY_ACTIVITY').output.FirstRow.dataWritten",
+								"type": "Expression"
+							},
+							"type": "int"
 						}
 					}
 				},
