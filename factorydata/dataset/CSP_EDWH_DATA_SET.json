@@ -17,7 +17,8 @@
 			"schema": {
 				"value": "@dataset().ImproveTableName",
 				"type": "Expression"
-			}
+			},
+			"table": "@{pipeline().parameters.DN_OUT_TABLE_NAME}"
 		}
 	}
 }
