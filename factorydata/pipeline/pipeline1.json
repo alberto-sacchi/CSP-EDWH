@@ -125,7 +125,7 @@
 							"pDN_STEP": {
 								"type": "String",
 								"value": {
-									"value": "'LOAD_' + '@{pipeline().parameters.DN_TABLE_NAME}'",
+									"value": "concat('LOAD_' ,@pipeline().parameters.DN_TABLE_NAME)",
 									"type": "Expression"
 								}
 							},
