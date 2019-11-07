@@ -28,7 +28,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "pipeline1",
+									"referenceName": "COPY_L0",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true,
