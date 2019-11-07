@@ -149,6 +149,42 @@
 						}
 					}
 				}
+			},
+			{
+				"name": "Stored Procedure1",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "INCREMENTAL_COPY_ACTIVITY",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[MD_ERROR_END_OK]",
+					"storedProcedureParameters": {
+						"pID_RUN": {
+							"value": {
+								"value": "@activity('SET_START').output",
+								"type": "Expression"
+							},
+							"type": "Int"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "CSP_EDWH_LINKED_SERVER",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
 		"parameters": {
