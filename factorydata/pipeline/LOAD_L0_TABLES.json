@@ -45,10 +45,6 @@
 										"value": "@item().DN_TABLE_TYPE",
 										"type": "Expression"
 									},
-									"DN_STORED_PROCEDURE": {
-										"value": "@item().DN_STORED_PROCEDURE",
-										"type": "Expression"
-									},
 									"DN_SOURCE": {
 										"value": "@pipeline().parameters.DN_SOURCE",
 										"type": "Expression"
