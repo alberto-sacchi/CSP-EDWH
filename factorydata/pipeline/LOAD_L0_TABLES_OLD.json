@@ -1,5 +1,5 @@
 {
-	"name": "LOAD_L0_TABLES",
+	"name": "LOAD_L0_TABLES_OLD",
 	"properties": {
 		"activities": [
 			{
@@ -69,7 +69,10 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "delete from @{pipeline().parameters.DN_OUT_TABLE_NAME}",
+						"preCopyScript": {
+							"value": "delete from @{pipeline().parameters.DN_OUT_TABLE_NAME}",
+							"type": "Expression"
+						},
 						"sqlWriterStoredProcedureName": {
 							"value": "@pipeline().parameters.DN_STORED_PROCEDURE",
 							"type": "Expression"
