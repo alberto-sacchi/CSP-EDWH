@@ -29,7 +29,7 @@
 							"pDN_TABLE_NAME": {
 								"type": "String",
 								"value": {
-									"value": "'@pipeline().parameters.DN_TABLE_NAME'",
+									"value": "@pipeline().parameters.DN_TABLE_NAME",
 									"type": "Expression"
 								}
 							},
@@ -181,11 +181,17 @@
 							"type": "int"
 						},
 						"pROWS_WRITTEN": {
-							"value": "@activity('INCREMENTAL_COPY_ACTIVITY').output.rowsCopied",
+							"value": {
+								"value": "@activity('INCREMENTAL_COPY_ACTIVITY').output.rowsCopied",
+								"type": "Expression"
+							},
 							"type": "int"
 						},
 						"pCOPY_DURATION": {
-							"value": "@activity('INCREMENTAL_COPY_ACTIVITY').output.copyDuration",
+							"value": {
+								"value": "@activity('INCREMENTAL_COPY_ACTIVITY').output.copyDuration",
+								"type": "Expression"
+							},
 							"type": "int"
 						}
 					}
