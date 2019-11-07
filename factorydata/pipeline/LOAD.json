@@ -164,7 +164,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"storedProcedureName": "[dbo].[MD_ERROR_END_OK_NEW]",
+					"storedProcedureName": "[dbo].[MD_ERROR_END_OK]",
 					"storedProcedureParameters": {
 						"pID_RUN": {
 							"value": {
@@ -200,7 +200,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"storedProcedureName": "[dbo].[MD_ERROR_END_KO_NEW]",
+					"storedProcedureName": "[dbo].[MD_ERROR_END_KO]",
 					"storedProcedureParameters": {
 						"pID_RUN": {
 							"value": {
