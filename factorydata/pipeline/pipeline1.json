@@ -5,7 +5,14 @@
 			{
 				"name": "LOOKUP_OLD_LOAD",
 				"type": "Lookup",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "SET_START",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -113,7 +120,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderStoredProcedureName": "[dbo].[MD_ERROR_SET_START]",
+						"sqlReaderStoredProcedureName": "[dbo].[MD_ERROR_SET_START_NEW]",
 						"storedProcedureParameters": {
 							"pDN_STEP": {
 								"type": "String",
@@ -133,7 +140,13 @@
 					},
 					"dataset": {
 						"referenceName": "AzureSqlTable1",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"DN_OUT_TABLE_NAME": {
+								"value": "@pipeline().parameters.DN_OUT_TABLE_NAME",
+								"type": "Expression"
+							}
+						}
 					}
 				}
 			}
