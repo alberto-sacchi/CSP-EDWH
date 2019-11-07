@@ -28,7 +28,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "LOAD_L0_TABLES",
+									"referenceName": "LOAD_L0_TABLES_OLD",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true,
