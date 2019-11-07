@@ -70,7 +70,7 @@
 					"source": {
 						"type": "SqlServerSource",
 						"sqlReaderQuery": {
-							"value": "select 1 from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOOKUP_OLD_LOAD').output.firstRow.DT_START}'",
+							"value": "select * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOOKUP_OLD_LOAD').output.firstRow.DT_START}'",
 							"type": "Expression"
 						}
 					},
@@ -239,9 +239,6 @@
 				"type": "string"
 			},
 			"DN_TABLE_TYPE": {
-				"type": "string"
-			},
-			"DN_STORED_PROCEDURE": {
 				"type": "string"
 			},
 			"DN_SOURCE": {
