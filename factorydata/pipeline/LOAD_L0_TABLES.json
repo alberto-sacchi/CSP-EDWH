@@ -96,7 +96,10 @@
 				"outputs": [
 					{
 						"referenceName": "CSP_EDWH_DATA_SET",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"ImproveTableName": "@{pipeline().parameters.DN_TABLE_NAME}"
+						}
 					}
 				]
 			}
