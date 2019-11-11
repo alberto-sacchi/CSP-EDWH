@@ -118,7 +118,8 @@
 							"userProperties": [],
 							"typeProperties": {
 								"source": {
-									"type": "SqlServerSource"
+									"type": "SqlServerSource",
+									"sqlReaderQuery": "select * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_IMPR_SOURCE_TABLES').output.firstRow.DT_START}'"
 								},
 								"sink": {
 									"type": "AzureSqlSink",
