@@ -13,74 +13,58 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/ExtractData_OLD')]",
+			"name": "[concat(parameters('factoryName'), '/LOAD_IMPR')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Loop_Load_Tables",
-						"type": "ForEach",
+						"name": "LOAD_IMPR_SOURCE_TABLES",
+						"type": "Lookup",
 						"dependsOn": [
 							{
-								"activity": "GetExecParam",
+								"activity": "SET_START",
 								"dependencyConditions": [
 									"Succeeded"
 								]
 							}
 						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
 						"userProperties": [],
 						"typeProperties": {
-							"items": {
-								"value": "@activity('GetExecParam').output.value",
-								"type": "Expression"
-							},
-							"isSequential": true,
-							"activities": [
-								{
-									"name": "Execute_Load_L0",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "LOAD_L0_TABLES_OLD",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {
-											"DN_TABLE_NAME": {
-												"value": "@item().DN_TABLE_NAME",
-												"type": "Expression"
-											},
-											"DN_RIF_COLUMN": {
-												"value": "@item().DN_RIF_COLUMN",
-												"type": "Expression"
-											},
-											"DN_TABLE_TYPE": {
-												"value": "@item().DN_TABLE_TYPE",
-												"type": "Expression"
-											},
-											"DN_STORED_PROCEDURE": {
-												"value": "@item().DN_STORED_PROCEDURE",
-												"type": "Expression"
-											},
-											"DN_SOURCE": {
-												"value": "@pipeline().parameters.DN_SOURCE",
-												"type": "Expression"
-											},
-											"DN_OUT_TABLE_NAME": {
-												"value": "@item().DN_OUT_TABLE_NAME",
-												"type": "Expression"
-											}
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderStoredProcedureName": "[[dbo].[MD_GET_START_DATE]",
+								"storedProcedureParameters": {
+									"pDN_TABLE_NAME": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.DN_TABLE_NAME",
+											"type": "Expression"
+										}
+									},
+									"pDN_SOURCE": {
+										"value": {
+											"value": "@pipeline().parameters.DN_SOURCE",
+											"type": "Expression"
 										}
 									}
 								}
-							]
+							},
+							"dataset": {
+								"referenceName": "EDWH_DB",
+								"type": "DatasetReference"
+							}
 						}
 					},
 					{
-						"name": "GetExecParam",
+						"name": "SET_START",
 						"type": "Lookup",
 						"dependsOn": [],
 						"policy": {
@@ -94,34 +78,378 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderStoredProcedureName": "[[dbo].[MD_LOAD_L0_PARAMS]",
+								"sqlReaderStoredProcedureName": "[[dbo].[MD_ERROR_SET_START]",
 								"storedProcedureParameters": {
-									"DN_SOURCE": {
+									"pDN_STEP": {
 										"type": "String",
 										"value": {
-											"value": "@pipeline().parameters.DN_SOURCE",
+											"value": "@concat('LOAD_' ,pipeline().parameters.DN_SOURCE,'_',pipeline().parameters.DN_TABLE_NAME)",
+											"type": "Expression"
+										}
+									},
+									"pDN_STEP_DETAIL": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.DN_TARGET",
 											"type": "Expression"
 										}
 									}
 								}
 							},
 							"dataset": {
-								"referenceName": "CSP_INCREMENTAL_LOAD",
-								"type": "DatasetReference",
-								"parameters": {}
+								"referenceName": "EDWH_DB",
+								"type": "DatasetReference"
+							}
+						}
+					},
+					{
+						"name": "If Condition1",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "LOAD_IMPR_SOURCE_TABLES",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@equals(pipeline().parameters.DN_RIF_COLUMN,'ALL')",
+								"type": "Expression"
 							},
-							"firstRowOnly": false
+							"ifFalseActivities": [
+								{
+									"name": "LOAD_IMPR_TARGET_TABLES",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SqlServerSource",
+											"sqlReaderQuery": {
+												"value": "select * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_IMPR_SOURCE_TABLES').output.firstRow.DT_START}'",
+												"type": "Expression"
+											}
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"preCopyScript": {
+												"value": "delete from @{pipeline().parameters.DN_TARGET}",
+												"type": "Expression"
+											},
+											"tableOption": "autoCreate",
+											"disableMetricsCollection": false
+										},
+										"enableStaging": false,
+										"parallelCopies": 1
+									},
+									"inputs": [
+										{
+											"referenceName": "DS_L0_TABLE_IMPROVE",
+											"type": "DatasetReference"
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "EDWH_LOAD_L0",
+											"type": "DatasetReference",
+											"parameters": {
+												"DN_TARGET": {
+													"value": "@pipeline().parameters.DN_TARGET",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "SET_END_OK_copy1_copy1",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "LOAD_IMPR_TARGET_TABLES",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[dbo].[MD_ERROR_END_OK]",
+										"storedProcedureParameters": {
+											"pID_RUN": {
+												"value": {
+													"value": "@activity('SET_START').output.FirstRow.ID_RUN",
+													"type": "Expression"
+												},
+												"type": "int"
+											},
+											"pROWS_READ": {
+												"value": {
+													"value": "@activity('LOAD_IMPR_TARGET_TABLES').output.rowsRead",
+													"type": "Expression"
+												},
+												"type": "int"
+											},
+											"pROWS_WRITTEN": {
+												"value": {
+													"value": "@activity('LOAD_IMPR_TARGET_TABLES').output.rowsCopied",
+													"type": "Expression"
+												},
+												"type": "int"
+											},
+											"pCOPY_DURATION": {
+												"value": {
+													"value": "@activity('LOAD_IMPR_TARGET_TABLES').output.copyDuration",
+													"type": "Expression"
+												},
+												"type": "int"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "CSP_EDWH_LINKED_SERVER",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "SET_END_KO_copy1_copy1",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "LOAD_IMPR_TARGET_TABLES",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[dbo].[MD_ERROR_END_KO]",
+										"storedProcedureParameters": {
+											"pID_RUN": {
+												"value": {
+													"value": "@activity('SET_START').output.FirstRow.ID_RUN",
+													"type": "Expression"
+												},
+												"type": "int"
+											},
+											"pErrorMessage": {
+												"value": {
+													"value": "@activity('LOAD_IMPR_TARGET_TABLES').output.errors[0].message",
+													"type": "Expression"
+												},
+												"type": "string"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "CSP_EDWH_LINKED_SERVER",
+										"type": "LinkedServiceReference"
+									}
+								}
+							],
+							"ifTrueActivities": [
+								{
+									"name": "LOAD_IMPR_ALL_TARGET_TABLES",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SqlServerSource",
+											"sqlReaderQuery": {
+												"value": "select * from @{pipeline().parameters.DN_TABLE_NAME} ",
+												"type": "Expression"
+											}
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"preCopyScript": {
+												"value": "delete from @{pipeline().parameters.DN_TARGET}",
+												"type": "Expression"
+											},
+											"tableOption": "autoCreate",
+											"disableMetricsCollection": false
+										},
+										"enableStaging": false,
+										"parallelCopies": 1
+									},
+									"inputs": [
+										{
+											"referenceName": "DS_L0_TABLE_IMPROVE",
+											"type": "DatasetReference"
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "EDWH_LOAD_L0",
+											"type": "DatasetReference",
+											"parameters": {
+												"DN_TARGET": {
+													"value": "@pipeline().parameters.DN_TARGET",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "SET_END_OK_copy1",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "LOAD_IMPR_ALL_TARGET_TABLES",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[dbo].[MD_ERROR_END_OK]",
+										"storedProcedureParameters": {
+											"pID_RUN": {
+												"value": {
+													"value": "@activity('SET_START').output.FirstRow.ID_RUN",
+													"type": "Expression"
+												},
+												"type": "int"
+											},
+											"pROWS_READ": {
+												"value": {
+													"value": "@activity('LOAD_IMPR_ALL_TARGET_TABLES').output.rowsRead",
+													"type": "Expression"
+												},
+												"type": "int"
+											},
+											"pROWS_WRITTEN": {
+												"value": {
+													"value": "@activity('LOAD_IMPR_ALL_TARGET_TABLES').output.rowsCopied",
+													"type": "Expression"
+												},
+												"type": "int"
+											},
+											"pCOPY_DURATION": {
+												"value": {
+													"value": "@activity('LOAD_IMPR_ALL_TARGET_TABLES').output.copyDuration",
+													"type": "Expression"
+												},
+												"type": "int"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "CSP_EDWH_LINKED_SERVER",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "SET_END_KO_copy1",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "LOAD_IMPR_ALL_TARGET_TABLES",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[dbo].[MD_ERROR_END_KO]",
+										"storedProcedureParameters": {
+											"pID_RUN": {
+												"value": {
+													"value": "@activity('SET_START').output.FirstRow.ID_RUN",
+													"type": "Expression"
+												},
+												"type": "int"
+											},
+											"pErrorMessage": {
+												"value": {
+													"value": "@activity('LOAD_IMPR_ALL_TARGET_TABLES').output.errors[0].message",
+													"type": "Expression"
+												},
+												"type": "string"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "CSP_EDWH_LINKED_SERVER",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
 						}
 					}
 				],
 				"parameters": {
+					"DN_TABLE_NAME": {
+						"type": "string"
+					},
+					"DN_RIF_COLUMN": {
+						"type": "string"
+					},
+					"DN_TABLE_TYPE": {
+						"type": "string"
+					},
 					"DN_SOURCE": {
+						"type": "string"
+					},
+					"DN_TARGET": {
 						"type": "string"
 					}
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/EDWH_LOAD_L0')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/LOAD_IMPROVE_L0')]",
@@ -214,8 +542,7 @@
 							},
 							"dataset": {
 								"referenceName": "CSP_INCREMENTAL_LOAD",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							},
 							"firstRowOnly": false
 						}
@@ -229,22 +556,24 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/LOAD_IMPR')]"
+			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/LOAD_L0_IMPROVE')]",
+			"name": "[concat(parameters('factoryName'), '/LOAD_IMPROVE_L0_OLD')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "IterateSQLTables",
+						"name": "IterateSqlTables",
 						"type": "ForEach",
 						"dependsOn": [],
 						"userProperties": [],
 						"typeProperties": {
 							"items": {
-								"value": "@pipeline().parameters.tableList",
+								"value": "@pipeline().parameters.tablesList",
 								"type": "Expression"
 							},
 							"activities": [
@@ -263,15 +592,17 @@
 									"typeProperties": {
 										"source": {
 											"type": "AzureSqlSource",
-											"sqlReaderQuery": {
-												"value": "select * from watermarktable where TableName  =  '@{item().TABLE_NAME}'",
-												"type": "Expression"
+											"sqlReaderStoredProcedureName": "[[dbo].[usp_get_rif_value]",
+											"storedProcedureParameters": {
+												"TableName": {
+													"type": "String",
+													"value": "{item().TABLE_NAME}"
+												}
 											}
 										},
 										"dataset": {
 											"referenceName": "CSP_INCREMENTAL_LOAD",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									}
 								},
@@ -291,14 +622,13 @@
 										"source": {
 											"type": "SqlServerSource",
 											"sqlReaderQuery": {
-												"value": "select MAX(@{item().WaterMark_Column}) as NewWatermarkvalue from @{item().TABLE_NAME}",
+												"value": "select MAX(@{item().Rif_Column}) as NewRifValue from @{item().TABLE_NAME}",
 												"type": "Expression"
 											}
 										},
 										"dataset": {
-											"referenceName": "AS_SQL_SERVER_DATA_SET",
-											"type": "DatasetReference",
-											"parameters": {}
+											"referenceName": "DS_L0_TABLE_IMPROVE",
+											"type": "DatasetReference"
 										}
 									}
 								},
@@ -331,7 +661,7 @@
 										"source": {
 											"type": "SqlServerSource",
 											"sqlReaderQuery": {
-												"value": "select * from @{item().TABLE_NAME} where @{item().WaterMark_Column} > '@{activity('LOOKUP_OLD_LOAD').output.firstRow.WatermarkValue}' and @{item().WaterMark_Column} <= '@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewWatermarkvalue}'",
+												"value": "select * from @{item().TABLE_NAME} where @{item().Rif_Column} > '@{activity('LOOKUP_OLD_LOAD').output.firstRow.RIF_VALUE}' and @{item().Rif_Column}  <= '@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewRifValue}'",
 												"type": "Expression"
 											}
 										},
@@ -348,15 +678,15 @@
 											"storedProcedureTableTypeParameterName": {
 												"value": "@{item().TABLE_NAME}",
 												"type": "Expression"
-											}
+											},
+											"disableMetricsCollection": false
 										},
 										"enableStaging": false
 									},
 									"inputs": [
 										{
-											"referenceName": "AS_SQL_SERVER_DATA_SET",
-											"type": "DatasetReference",
-											"parameters": {}
+											"referenceName": "DS_L0_TABLE_IMPROVE",
+											"type": "DatasetReference"
 										}
 									],
 									"outputs": [
@@ -370,7 +700,7 @@
 									]
 								},
 								{
-									"name": "StoredProceduretoWriteWatermarkActivity",
+									"name": "UpdateRifValue",
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [
 										{
@@ -389,18 +719,18 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"storedProcedureName": "[[dbo].[usp_write_watermark]",
+										"storedProcedureName": "dbo.usp_write_rif_value",
 										"storedProcedureParameters": {
-											"LastModifiedtime": {
+											"LastRefValue": {
 												"value": {
-													"value": "@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewWatermarkvalue}",
+													"value": "@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewRifValue}",
 													"type": "Expression"
 												},
-												"type": "DateTime"
+												"type": "Datetime"
 											},
 											"TableName": {
 												"value": {
-													"value": "@{activity('LOOKUP_OLD_LOAD').output.firstRow.TableName}",
+													"value": "@{item().TABLE_NAME}",
 													"type": "Expression"
 												},
 												"type": "String"
@@ -417,7 +747,7 @@
 					}
 				],
 				"parameters": {
-					"tableList": {
+					"tablesList": {
 						"type": "object"
 					}
 				},
@@ -472,8 +802,7 @@
 							},
 							"dataset": {
 								"referenceName": "EDWH_DB",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						}
 					},
@@ -512,8 +841,7 @@
 							},
 							"dataset": {
 								"referenceName": "EDWH_DB",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						}
 					},
@@ -570,8 +898,7 @@
 									"inputs": [
 										{
 											"referenceName": "DS_L0_TABLE_ROL",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									],
 									"outputs": [
@@ -724,8 +1051,7 @@
 									"inputs": [
 										{
 											"referenceName": "DS_L0_TABLE_ROL",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									],
 									"outputs": [
@@ -864,7 +1190,10 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_L0_TABLE_ROL')]",
+				"[concat(variables('factoryId'), '/datasets/EDWH_LOAD_L0')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/LOAD_ROL_L0')]",
@@ -957,8 +1286,7 @@
 							},
 							"dataset": {
 								"referenceName": "CSP_INCREMENTAL_LOAD",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							},
 							"firstRowOnly": false
 						}
@@ -975,6 +1303,105 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/LOAD_ROL')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_L0_TABLE_ROL')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_CSPTO",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/EDWH_LOAD_L0')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CSP_EDWH_LINKED_SERVER",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"DN_TARGET": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "TenantId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "IsActive",
+						"type": "bit"
+					},
+					{
+						"name": "LastModificationTime",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "LastModifierUserId",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "CreationTime",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "CreatorUserId",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "EmployeeId",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "TimeFlowId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SignedByEmployee",
+						"type": "bit"
+					},
+					{
+						"name": "SignedByEmployeeInDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": {
+						"value": "@dataset().DN_TARGET",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
 		}
 	]
 }
