@@ -28,7 +28,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "LOAD",
+									"referenceName": "LOAD_ROL",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true,
