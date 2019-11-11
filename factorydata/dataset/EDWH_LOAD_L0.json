@@ -6,7 +6,7 @@
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
-			"DN_OUT_TABLE_NAME": {
+			"DN_TARGET": {
 				"type": "string"
 			}
 		},
@@ -73,7 +73,7 @@
 		"typeProperties": {
 			"schema": "dbo",
 			"table": {
-				"value": "@dataset().DN_OUT_TABLE_NAMEdataset().DN_TARGET",
+				"value": "@dataset().DN_TARGET",
 				"type": "Expression"
 			}
 		}
