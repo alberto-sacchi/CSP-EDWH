@@ -118,7 +118,8 @@
 							"userProperties": [],
 							"typeProperties": {
 								"source": {
-									"type": "AzureSqlSource"
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": "select * from @{pipeline().parameters.DN_TABLE_NAME} \n"
 								},
 								"sink": {
 									"type": "AzureSqlSink",
