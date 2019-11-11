@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "LOAD_ROL_SOURCE_TABLES",
+				"name": "GET_REF_DATE",
 				"type": "Lookup",
 				"dependsOn": [
 					{
@@ -87,11 +87,11 @@
 				}
 			},
 			{
-				"name": "If Condition1",
+				"name": "LOAD_ROL_TABLES",
 				"type": "IfCondition",
 				"dependsOn": [
 					{
-						"activity": "LOAD_ROL_SOURCE_TABLES",
+						"activity": "GET_REF_DATE",
 						"dependencyConditions": [
 							"Succeeded"
 						]
