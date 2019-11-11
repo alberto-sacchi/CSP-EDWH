@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "LOOKUP_OLD_LOAD",
+				"name": "LOAD_IMPROVE_SOURCE_TABLES",
 				"type": "Lookup",
 				"dependsOn": [
 					{
@@ -48,11 +48,11 @@
 				}
 			},
 			{
-				"name": "INCREMENTAL_COPY_ACTIVITY",
+				"name": "LOAD_IMPROVE_TARGET_TABLES",
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "LOOKUP_OLD_LOAD",
+						"activity": "LOAD_IMPROVE_SOURCE_TABLES",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -149,7 +149,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "INCREMENTAL_COPY_ACTIVITY",
+						"activity": "LOAD_IMPROVE_TARGET_TABLES",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -206,7 +206,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "INCREMENTAL_COPY_ACTIVITY",
+						"activity": "LOAD_IMPROVE_TARGET_TABLES",
 						"dependencyConditions": [
 							"Failed"
 						]
