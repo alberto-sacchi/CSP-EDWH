@@ -119,7 +119,7 @@
 							"typeProperties": {
 								"source": {
 									"type": "AzureSqlSource",
-									"sqlReaderQuery": "select * from @{pipeline().parameters.DN_TABLE_NAME} \n"
+									"sqlReaderQuery": "select * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_ROL_SOURCE_TABLES').output.firstRow.DT_START}'"
 								},
 								"sink": {
 									"type": "AzureSqlSink",
