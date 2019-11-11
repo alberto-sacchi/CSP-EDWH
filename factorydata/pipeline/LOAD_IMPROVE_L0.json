@@ -49,7 +49,7 @@
 										"value": "@pipeline().parameters.DN_SOURCE",
 										"type": "Expression"
 									},
-									"DN_OUT_TABLE_NAME": {
+									"DN_TARGET": {
 										"value": "@item().DN_TARGET",
 										"type": "Expression"
 									}
