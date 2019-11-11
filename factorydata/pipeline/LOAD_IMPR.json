@@ -274,7 +274,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"source": {
-									"type": "AzureSqlSource"
+									"type": "SqlServerSource"
 								},
 								"sink": {
 									"type": "AzureSqlSink",
@@ -290,14 +290,8 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "EDWH_LOAD_L0",
-									"type": "DatasetReference",
-									"parameters": {
-										"DN_TARGET": {
-											"value": "@pipeline().parameters.DN_TARGET",
-											"type": "Expression"
-										}
-									}
+									"referenceName": "DS_L0_TABLE_IMPROVE",
+									"type": "DatasetReference"
 								}
 							],
 							"outputs": [
