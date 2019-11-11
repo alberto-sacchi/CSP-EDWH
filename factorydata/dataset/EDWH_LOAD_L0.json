@@ -73,7 +73,7 @@
 		"typeProperties": {
 			"schema": "dbo",
 			"table": {
-				"value": "@dataset().DN_OUT_TABLE_NAME",
+				"value": "@dataset().DN_OUT_TABLE_NAMEdataset().DN_TARGET",
 				"type": "Expression"
 			}
 		}
