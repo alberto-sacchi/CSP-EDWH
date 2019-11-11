@@ -95,7 +95,8 @@
 		],
 		"parameters": {
 			"DN_SOURCE": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "ROL"
 			}
 		},
 		"annotations": []
