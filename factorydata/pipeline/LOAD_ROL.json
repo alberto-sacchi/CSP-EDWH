@@ -56,6 +56,12 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
+					},
+					{
+						"activity": "If Condition1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
 					}
 				],
 				"policy": {
@@ -242,6 +248,78 @@
 				"linkedServiceName": {
 					"referenceName": "CSP_EDWH_LINKED_SERVER",
 					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "If Condition1",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "LOAD_ROL_SOURCE_TABLES",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(pipeline().parameters.DN_RIF_COLUMN,'ALL')",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "LOAD_ROL_TARGET_TABLES_copy1",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderQuery": {
+										"value": "if @{pipeline().parameters.DN_RIF_COLUMN} is null\nselect * from @{pipeline().parameters.DN_TABLE_NAME} \n\nelse\n\nselect * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_ROL_SOURCE_TABLES').output.firstRow.DT_START}'\n",
+										"type": "Expression"
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": {
+										"value": "delete from @{pipeline().parameters.DN_TARGET}",
+										"type": "Expression"
+									},
+									"tableOption": "autoCreate",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"parallelCopies": 1
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_L0_TABLE_ROL",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "EDWH_LOAD_L0",
+									"type": "DatasetReference",
+									"parameters": {
+										"DN_TARGET": {
+											"value": "@pipeline().parameters.DN_TARGET",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
 				}
 			}
 		],
