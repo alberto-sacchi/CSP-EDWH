@@ -271,11 +271,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"source": {
-									"type": "SqlServerSource",
-									"sqlReaderQuery": {
-										"value": "select * from @{pipeline().parameters.DN_TABLE_NAME} \n",
-										"type": "Expression"
-									}
+									"type": "AzureSqlSource"
 								},
 								"sink": {
 									"type": "AzureSqlSink",
@@ -291,7 +287,7 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "DS_L0_TABLE_ROL",
+									"referenceName": "EDWH_LOAD_L0",
 									"type": "DatasetReference"
 								}
 							],
