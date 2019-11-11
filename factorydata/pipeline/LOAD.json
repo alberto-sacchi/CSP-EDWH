@@ -97,7 +97,7 @@
 						"referenceName": "EDWH_LOAD_L0",
 						"type": "DatasetReference",
 						"parameters": {
-							"DN_OUT_TABLE_NAME": {
+							"DN_TARGET": {
 								"value": "@pipeline().parameters.DN_OUT_TABLE_NAME",
 								"type": "Expression"
 							}
@@ -258,7 +258,7 @@
 			"DN_SOURCE": {
 				"type": "string"
 			},
-			"DN_OUT_TABLE_NAME": {
+			"DN_TARGET": {
 				"type": "string"
 			}
 		},
