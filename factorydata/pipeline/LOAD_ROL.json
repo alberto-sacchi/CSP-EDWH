@@ -48,70 +48,6 @@
 				}
 			},
 			{
-				"name": "LOAD_ROL_TARGET_TABLES",
-				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "LOAD_ROL_SOURCE_TABLES",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					},
-					{
-						"activity": "If Condition1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "SqlServerSource",
-						"sqlReaderQuery": {
-							"value": "if @{pipeline().parameters.DN_RIF_COLUMN} is null\nselect * from @{pipeline().parameters.DN_TABLE_NAME} \n\nelse\n\nselect * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_ROL_SOURCE_TABLES').output.firstRow.DT_START}'\n",
-							"type": "Expression"
-						}
-					},
-					"sink": {
-						"type": "AzureSqlSink",
-						"preCopyScript": {
-							"value": "delete from @{pipeline().parameters.DN_TARGET}",
-							"type": "Expression"
-						},
-						"tableOption": "autoCreate",
-						"disableMetricsCollection": false
-					},
-					"enableStaging": false,
-					"parallelCopies": 1
-				},
-				"inputs": [
-					{
-						"referenceName": "DS_L0_TABLE_ROL",
-						"type": "DatasetReference"
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "EDWH_LOAD_L0",
-						"type": "DatasetReference",
-						"parameters": {
-							"DN_TARGET": {
-								"value": "@pipeline().parameters.DN_TARGET",
-								"type": "Expression"
-							}
-						}
-					}
-				]
-			},
-			{
 				"name": "SET_START",
 				"type": "Lookup",
 				"dependsOn": [],
@@ -153,14 +89,7 @@
 			{
 				"name": "SET_END_OK",
 				"type": "SqlServerStoredProcedure",
-				"dependsOn": [
-					{
-						"activity": "LOAD_ROL_TARGET_TABLES",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -210,14 +139,7 @@
 			{
 				"name": "SET_END_KO",
 				"type": "SqlServerStoredProcedure",
-				"dependsOn": [
-					{
-						"activity": "LOAD_ROL_TARGET_TABLES",
-						"dependencyConditions": [
-							"Failed"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -267,9 +189,9 @@
 						"value": "@equals(pipeline().parameters.DN_RIF_COLUMN,'ALL')",
 						"type": "Expression"
 					},
-					"ifTrueActivities": [
+					"ifFalseActivities": [
 						{
-							"name": "LOAD_ROL_TARGET_TABLES_copy1",
+							"name": "LOAD_ROL_TARGET_TABLES_copy2",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -284,7 +206,60 @@
 								"source": {
 									"type": "SqlServerSource",
 									"sqlReaderQuery": {
-										"value": "if @{pipeline().parameters.DN_RIF_COLUMN} is null\nselect * from @{pipeline().parameters.DN_TABLE_NAME} \n\nelse\n\nselect * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_ROL_SOURCE_TABLES').output.firstRow.DT_START}'\n",
+										"value": "select * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_ROL_SOURCE_TABLES').output.firstRow.DT_START}'\n",
+										"type": "Expression"
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": {
+										"value": "delete from @{pipeline().parameters.DN_TARGET}",
+										"type": "Expression"
+									},
+									"tableOption": "autoCreate",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"parallelCopies": 1
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_L0_TABLE_ROL",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "EDWH_LOAD_L0",
+									"type": "DatasetReference",
+									"parameters": {
+										"DN_TARGET": {
+											"value": "@pipeline().parameters.DN_TARGET",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "LOAD_ROL_ALL_TARGET_TABLES",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderQuery": {
+										"value": "select * from @{pipeline().parameters.DN_TABLE_NAME} \n",
 										"type": "Expression"
 									}
 								},
