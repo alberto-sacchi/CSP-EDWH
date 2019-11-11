@@ -77,7 +77,7 @@
 					"sink": {
 						"type": "AzureSqlSink",
 						"preCopyScript": {
-							"value": "delete from @{pipeline().parameters.DN_OUT_TABLE_NAME}",
+							"value": "delete from @{pipeline().parameters.DN_TARGET}",
 							"type": "Expression"
 						},
 						"tableOption": "autoCreate",
@@ -98,7 +98,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"DN_TARGET": {
-								"value": "@pipeline().parameters.DN_OUT_TABLE_NAME",
+								"value": "@pipeline().parameters.DN_TARGET",
 								"type": "Expression"
 							}
 						}
