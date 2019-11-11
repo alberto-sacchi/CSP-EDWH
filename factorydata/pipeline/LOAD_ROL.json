@@ -105,7 +105,7 @@
 					},
 					"ifFalseActivities": [
 						{
-							"name": "LOAD_ROL_TARGET_TABLES_copy2",
+							"name": "LOAD_ROL_TARGET_TABLES",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -160,7 +160,7 @@
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
-									"activity": "LOAD_ROL_TARGET_TABLES_copy2",
+									"activity": "LOAD_ROL_TARGET_TABLES",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -217,7 +217,7 @@
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
-									"activity": "LOAD_ROL_TARGET_TABLES_copy2",
+									"activity": "LOAD_ROL_TARGET_TABLES",
 									"dependencyConditions": [
 										"Failed"
 									]
