@@ -1,5 +1,5 @@
 {
-	"name": "LOAD_IMPROVE_L0",
+	"name": "LOAD_IMPROVE_L0_OLD",
 	"properties": {
 		"activities": [
 			{
@@ -107,8 +107,14 @@
 										"value": "@{item().StoredProcedureNameForMergeOperation}",
 										"type": "Expression"
 									},
-									"sqlWriterTableType": "@{item().TableType}",
-									"storedProcedureTableTypeParameterName": "@{item().TABLE_NAME}",
+									"sqlWriterTableType": {
+										"value": "@{item().TableType}",
+										"type": "Expression"
+									},
+									"storedProcedureTableTypeParameterName": {
+										"value": "@{item().TABLE_NAME}",
+										"type": "Expression"
+									},
 									"disableMetricsCollection": false
 								},
 								"enableStaging": false
@@ -152,11 +158,17 @@
 								"storedProcedureName": "dbo.usp_write_rif_value",
 								"storedProcedureParameters": {
 									"LastRefValue": {
-										"value": "@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewRifValue}",
+										"value": {
+											"value": "@{activity('LOOKUP_NEW_LOAD').output.firstRow.NewRifValue}",
+											"type": "Expression"
+										},
 										"type": "Datetime"
 									},
 									"TableName": {
-										"value": "@{item().TABLE_NAME}",
+										"value": {
+											"value": "@{item().TABLE_NAME}",
+											"type": "Expression"
+										},
 										"type": "String"
 									}
 								}
