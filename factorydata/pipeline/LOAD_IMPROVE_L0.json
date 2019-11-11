@@ -28,7 +28,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "LOAD",
+									"referenceName": "LOAD_IMPR",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true,
