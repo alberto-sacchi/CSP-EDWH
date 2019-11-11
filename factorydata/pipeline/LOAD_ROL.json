@@ -70,7 +70,7 @@
 					"source": {
 						"type": "SqlServerSource",
 						"sqlReaderQuery": {
-							"value": "if @{pipeline().parameters.DN_RIF_COLUMN} is null begin \nselect * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_ROL_SOURCE_TABLES').output.firstRow.DT_START}'\nend\nelse\nbegin\nselect * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_ROL_SOURCE_TABLES').output.firstRow.DT_START}'\nend",
+							"value": "if @{pipeline().parameters.DN_RIF_COLUMN} = 'ALL' begin \nselect * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_ROL_SOURCE_TABLES').output.firstRow.DT_START}'\nend\nelse\nbegin\nselect * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_ROL_SOURCE_TABLES').output.firstRow.DT_START}'\nend",
 							"type": "Expression"
 						}
 					},
@@ -175,21 +175,21 @@
 						},
 						"pROWS_READ": {
 							"value": {
-								"value": "@activity('LOAD_IMPROVE_TARGET_TABLES').output.rowsRead",
+								"value": "@activity('LOAD_ROL_TARGET_TABLES').output.rowsRead",
 								"type": "Expression"
 							},
 							"type": "int"
 						},
 						"pROWS_WRITTEN": {
 							"value": {
-								"value": "@activity('LOAD_IMPROVE_TARGET_TABLES').output.rowsCopied",
+								"value": "@activity('LOAD_ROL_TARGET_TABLES').output.rowsCopied",
 								"type": "Expression"
 							},
 							"type": "int"
 						},
 						"pCOPY_DURATION": {
 							"value": {
-								"value": "@activity('LOAD_IMPROVE_TARGET_TABLES').output.copyDuration",
+								"value": "@activity('LOAD_ROL_TARGET_TABLES').output.copyDuration",
 								"type": "Expression"
 							},
 							"type": "int"
@@ -232,7 +232,7 @@
 						},
 						"pErrorMessage": {
 							"value": {
-								"value": "@activity('LOAD_IMPROVE_TARGET_TABLES').output.errors[0].message",
+								"value": "@activity('LOAD_ROL_TARGET_TABLES').output.errors[0].message",
 								"type": "Expression"
 							},
 							"type": "string"
