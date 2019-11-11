@@ -118,11 +118,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"source": {
-									"type": "SqlServerSource",
-									"sqlReaderQuery": {
-										"value": "select * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_IMPR_SOURCE_TABLES').output.firstRow.DT_START}'",
-										"type": "Expression"
-									}
+									"type": "AzureSqlSource"
 								},
 								"sink": {
 									"type": "AzureSqlSink",
@@ -138,7 +134,7 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "DS_L0_TABLE_ROL",
+									"referenceName": "EDWH_LOAD_L0",
 									"type": "DatasetReference"
 								}
 							],
