@@ -70,7 +70,7 @@
 					"source": {
 						"type": "SqlServerSource",
 						"sqlReaderQuery": {
-							"value": "if '@{pipeline().parameters.DN_RIF_COLUMN}' is null\nselect * from @{pipeline().parameters.DN_TABLE_NAME} \n\nelse\n\nselect * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_ROL_SOURCE_TABLES').output.firstRow.DT_START}'\n",
+							"value": "if @{pipeline().parameters.DN_RIF_COLUMN} is null\nselect * from @{pipeline().parameters.DN_TABLE_NAME} \n\nelse\n\nselect * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_ROL_SOURCE_TABLES').output.firstRow.DT_START}'\n",
 							"type": "Expression"
 						}
 					},
