@@ -70,7 +70,7 @@
 					"source": {
 						"type": "SqlServerSource",
 						"sqlReaderQuery": {
-							"value": "if @{pipeline().parameters.DN_RIF_COLUMN} = 'ALL' begin \nselect * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_ROL_SOURCE_TABLES').output.firstRow.DT_START}'\nend\nelse\nbegin\nselect * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_ROL_SOURCE_TABLES').output.firstRow.DT_START}'\nend",
+							"value": "if @{pipeline().parameters.DN_RIF_COLUMN} = \"ALL\" begin \nselect * from @{pipeline().parameters.DN_TABLE_NAME} \nend\nelse\nbegin\nselect * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_ROL_SOURCE_TABLES').output.firstRow.DT_START}'\nend",
 							"type": "Expression"
 						}
 					},
