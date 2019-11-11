@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "LOAD_IMPROVE_SOURCE_TABLES",
+				"name": "LOAD_ROL_SOURCE_TABLES",
 				"type": "Lookup",
 				"dependsOn": [
 					{
@@ -48,11 +48,11 @@
 				}
 			},
 			{
-				"name": "LOAD_IMPROVE_TARGET_TABLES",
+				"name": "LOAD_ROL_TARGET_TABLES",
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "LOAD_IMPROVE_SOURCE_TABLES",
+						"activity": "LOAD_ROL_SOURCE_TABLES",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -70,7 +70,7 @@
 					"source": {
 						"type": "SqlServerSource",
 						"sqlReaderQuery": {
-							"value": "select * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_IMPROVE_SOURCE_TABLES').output.firstRow.DT_START}'",
+							"value": "select * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_ROL_SOURCE_TABLES').output.firstRow.DT_START}'",
 							"type": "Expression"
 						}
 					},
@@ -149,7 +149,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "LOAD_IMPROVE_TARGET_TABLES",
+						"activity": "LOAD_ROL_TARGET_TABLES",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -206,7 +206,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "LOAD_IMPROVE_TARGET_TABLES",
+						"activity": "LOAD_ROL_TARGET_TABLES",
 						"dependencyConditions": [
 							"Failed"
 						]
