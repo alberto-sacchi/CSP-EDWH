@@ -105,7 +105,7 @@
 					},
 					"ifFalseActivities": [
 						{
-							"name": "LOAD_ROL_TARGET_TABLES",
+							"name": "LOAD_IMPR_TARGET_TABLES",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -160,7 +160,7 @@
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
-									"activity": "LOAD_ROL_TARGET_TABLES",
+									"activity": "LOAD_IMPR_TARGET_TABLES",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -186,21 +186,21 @@
 									},
 									"pROWS_READ": {
 										"value": {
-											"value": "@activity('LOAD_ROL_TARGET_TABLES').output.rowsRead",
+											"value": "@activity('LOAD_IMPR_TARGET_TABLES').output.rowsRead",
 											"type": "Expression"
 										},
 										"type": "int"
 									},
 									"pROWS_WRITTEN": {
 										"value": {
-											"value": "@activity('LOAD_ROL_TARGET_TABLES').output.rowsCopied",
+											"value": "@activity('LOAD_IMPR_TARGET_TABLES').output.rowsCopied",
 											"type": "Expression"
 										},
 										"type": "int"
 									},
 									"pCOPY_DURATION": {
 										"value": {
-											"value": "@activity('LOAD_ROL_TARGET_TABLES').output.copyDuration",
+											"value": "@activity('LOAD_IMPR_TARGET_TABLES').output.copyDuration",
 											"type": "Expression"
 										},
 										"type": "int"
@@ -217,7 +217,7 @@
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
-									"activity": "LOAD_ROL_TARGET_TABLES",
+									"activity": "LOAD_IMPR_TARGET_TABLES",
 									"dependencyConditions": [
 										"Failed"
 									]
@@ -243,7 +243,7 @@
 									},
 									"pErrorMessage": {
 										"value": {
-											"value": "@activity('LOAD_ROL_TARGET_TABLES').output.errors[0].message",
+											"value": "@activity('LOAD_IMPR_TARGET_TABLES').output.errors[0].message",
 											"type": "Expression"
 										},
 										"type": "string"
