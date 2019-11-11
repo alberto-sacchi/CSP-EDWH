@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "LOAD_IMPR_SOURCE_TABLES",
+				"name": "GET_REF_DATE",
 				"type": "Lookup",
 				"dependsOn": [
 					{
@@ -87,11 +87,11 @@
 				}
 			},
 			{
-				"name": "If Condition1",
+				"name": "LOAD_IMPR_TARGET_TABLES",
 				"type": "IfCondition",
 				"dependsOn": [
 					{
-						"activity": "LOAD_IMPR_SOURCE_TABLES",
+						"activity": "GET_REF_DATE",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -119,7 +119,10 @@
 							"typeProperties": {
 								"source": {
 									"type": "SqlServerSource",
-									"sqlReaderQuery": "select * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_IMPR_SOURCE_TABLES').output.firstRow.DT_START}'"
+									"sqlReaderQuery": {
+										"value": "select * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('LOAD_IMPR_SOURCE_TABLES').output.firstRow.DT_START}'",
+										"type": "Expression"
+									}
 								},
 								"sink": {
 									"type": "AzureSqlSink",
@@ -269,7 +272,10 @@
 							"typeProperties": {
 								"source": {
 									"type": "SqlServerSource",
-									"sqlReaderQuery": "select * from @{pipeline().parameters.DN_TABLE_NAME} "
+									"sqlReaderQuery": {
+										"value": "select * from @{pipeline().parameters.DN_TABLE_NAME} ",
+										"type": "Expression"
+									}
 								},
 								"sink": {
 									"type": "AzureSqlSink",
