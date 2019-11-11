@@ -284,7 +284,13 @@
 							"inputs": [
 								{
 									"referenceName": "EDWH_LOAD_L0",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"DN_TARGET": {
+											"value": "@pipeline().parameters.DN_TARGET",
+											"type": "Expression"
+										}
+									}
 								}
 							],
 							"outputs": [
