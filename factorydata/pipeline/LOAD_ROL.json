@@ -4,6 +4,7 @@
 		"activities": [
 			{
 				"name": "SET_START",
+				"description": "Inserisce un'occorrenza sulla tabella di LOG impostando DT_START con getdate()",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -43,6 +44,7 @@
 			},
 			{
 				"name": "LOAD_ROL_TARGET",
+				"description": "Processo di caricamento dei dati sulle tabelle di staging (L0) del source ROL",
 				"type": "IfCondition",
 				"dependsOn": [
 					{
