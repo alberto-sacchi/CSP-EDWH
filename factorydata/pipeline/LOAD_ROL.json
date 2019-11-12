@@ -221,6 +221,7 @@
 						},
 						{
 							"name": "GET_REF_DATE",
+							"description": "Estrae dal DB la data di riferimento per l'estrazione del passo successivo",
 							"type": "Lookup",
 							"dependsOn": [],
 							"policy": {
