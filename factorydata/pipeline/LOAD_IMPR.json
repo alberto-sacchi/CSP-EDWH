@@ -314,7 +314,7 @@
 							]
 						},
 						{
-							"name": "SET_END_OK",
+							"name": "SET_END_OK_ALL",
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
@@ -378,7 +378,7 @@
 							}
 						},
 						{
-							"name": "SET_END_KO",
+							"name": "SET_END_KO_ALL",
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
