@@ -166,6 +166,10 @@
 											"type": "Expression"
 										},
 										"type": "int"
+									},
+									"pDATA_WRITTEN": {
+										"value": "@activity('LOAD_IMPR_ALL_TARGET_TABLES').output.dataWritten",
+										"type": "Int64"
 									}
 								}
 							},
