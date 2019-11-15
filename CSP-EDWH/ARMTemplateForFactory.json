@@ -208,6 +208,10 @@
 													"type": "Expression"
 												},
 												"type": "int"
+											},
+											"pDATA_WRITTEN": {
+												"value": "@activity('LOAD_IMPR_ALL_TARGET_TABLES').output.dataWritten",
+												"type": "Int64"
 											}
 										}
 									},
@@ -354,7 +358,7 @@
 									]
 								},
 								{
-									"name": "SET_END_OK_copy1",
+									"name": "SET_END_OK_ALL",
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [
 										{
@@ -402,6 +406,13 @@
 													"type": "Expression"
 												},
 												"type": "int"
+											},
+											"pDATA_WRITTEN": {
+												"value": {
+													"value": "@activity('LOAD_IMPR_ALL_TARGET_TABLES').output.dataWritten",
+													"type": "Expression"
+												},
+												"type": "Int64"
 											}
 										}
 									},
@@ -411,7 +422,7 @@
 									}
 								},
 								{
-									"name": "SET_END_KO_copy1",
+									"name": "SET_END_KO_ALL",
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [
 										{
@@ -768,6 +779,10 @@
 													"type": "Expression"
 												},
 												"type": "int"
+											},
+											"pDATA_WRITTEN": {
+												"value": "@activity('LOAD_ROL_ALL_TARGET_TABLES').output.dataWritten",
+												"type": "Int64"
 											}
 										}
 									},
@@ -914,7 +929,7 @@
 									]
 								},
 								{
-									"name": "SET_END_OK_copy1",
+									"name": "SET_END_OK_ALL",
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [
 										{
@@ -962,6 +977,10 @@
 													"type": "Expression"
 												},
 												"type": "int"
+											},
+											"pDATA_WRITTEB": {
+												"value": "@activity('LOAD_ROL_ALL_TARGET_TABLES').output.dataWritten",
+												"type": "Int64"
 											}
 										}
 									},
@@ -971,7 +990,7 @@
 									}
 								},
 								{
-									"name": "SET_END_KO_copy1",
+									"name": "SET_END_KO_ALL",
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [
 										{
