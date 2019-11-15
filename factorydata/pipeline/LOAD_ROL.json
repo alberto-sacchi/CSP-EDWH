@@ -365,7 +365,7 @@
 										},
 										"type": "int"
 									},
-									"pDATA_WRITTEB": {
+									"pDATA_WRITTEN": {
 										"value": "@activity('LOAD_ROL_ALL_TARGET_TABLES').output.dataWritten",
 										"type": "Int64"
 									}
