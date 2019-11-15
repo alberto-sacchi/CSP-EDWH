@@ -310,7 +310,7 @@
 							]
 						},
 						{
-							"name": "SET_END_OK_copy1",
+							"name": "SET_END_OK",
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
@@ -367,7 +367,7 @@
 							}
 						},
 						{
-							"name": "SET_END_KO_copy1",
+							"name": "SET_END_KO",
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
