@@ -35,7 +35,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"storedProcedureName": {
-									"value": "@activity('GET_STORED_PROC').output.DN_STORED_NAME",
+									"value": "@activity('GET_STORED_PROC').output",
 									"type": "Expression"
 								}
 							},
