@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "CALL_STORED_PROC",
+				"name": "LOOP_OVER_PROC_NAMES",
 				"type": "ForEach",
 				"dependsOn": [
 					{
