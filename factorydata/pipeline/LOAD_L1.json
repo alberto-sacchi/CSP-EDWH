@@ -7,7 +7,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "GET_STORED_PROC",
+						"activity": "GET_STORED_NAMES",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -48,7 +48,7 @@
 				}
 			},
 			{
-				"name": "GET_STORED_PROC",
+				"name": "GET_STORED_NAMES",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
