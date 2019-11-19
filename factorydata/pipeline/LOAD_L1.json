@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "ForEach1",
+				"name": "CALL_STORED_PROC",
 				"type": "ForEach",
 				"dependsOn": [
 					{
@@ -22,7 +22,7 @@
 					"isSequential": true,
 					"activities": [
 						{
-							"name": "Stored Procedure1",
+							"name": "EXEC_STORED_PROC",
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [],
 							"policy": {
