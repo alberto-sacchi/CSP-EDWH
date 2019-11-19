@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('GET_STORED_PROC').output.value",
+						"value": "@activity('GET_STORED_NAMES').output.value",
 						"type": "Expression"
 					},
 					"isSequential": true,
