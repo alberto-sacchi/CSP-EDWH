@@ -103,7 +103,7 @@
 											"source": {
 												"type": "SqlServerSource",
 												"sqlReaderQuery": {
-													"value": "select * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('GET_REF_DATE').output.firstRow.DT_START}'",
+													"value": "select * from @{item().DN_TABLE_NAME} where @{item().DN_RIF_COLUMN} > \n '@{activity('GET_REF_DATE').output.firstRow.DT_START}'",
 													"type": "Expression"
 												}
 											},
@@ -194,6 +194,10 @@
 														"type": "Expression"
 													},
 													"type": "Int64"
+												},
+												"pDESCR": {
+													"value": null,
+													"type": "String"
 												}
 											}
 										},
@@ -266,7 +270,7 @@
 													"pDN_TABLE_NAME": {
 														"type": "String",
 														"value": {
-															"value": "@pipeline().parameters.DN_TABLE_NAME",
+															"value": "@item().DN_TABLE_NAME",
 															"type": "Expression"
 														}
 													},
