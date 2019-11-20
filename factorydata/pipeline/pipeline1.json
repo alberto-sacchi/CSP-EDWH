@@ -101,14 +101,14 @@
 											"source": {
 												"type": "SqlServerSource",
 												"sqlReaderQuery": {
-													"value": "select * from @{pipeline().parameters.DN_TABLE_NAME} where @{pipeline().parameters.DN_RIF_COLUMN} > \n '@{activity('GET_REF_DATE').output.firstRow.DT_START}'",
+													"value": "select * from @{item().DN_TABLE_NAME} where @{item().DN_RIF_COLUMN} > \n '@{activity('GET_REF_DATE').output.firstRow.DT_START}'",
 													"type": "Expression"
 												}
 											},
 											"sink": {
 												"type": "AzureSqlSink",
 												"preCopyScript": {
-													"value": "delete from @{pipeline().parameters.DN_TARGET}",
+													"value": "delete from @{item().DN_TARGET}",
 													"type": "Expression"
 												},
 												"tableOption": "autoCreate",
@@ -129,7 +129,7 @@
 												"type": "DatasetReference",
 												"parameters": {
 													"DN_TARGET": {
-														"value": "@pipeline().parameters.DN_TARGET",
+														"value": "@item().DN_TARGET",
 														"type": "Expression"
 													}
 												}
@@ -264,7 +264,7 @@
 													"pDN_TABLE_NAME": {
 														"type": "String",
 														"value": {
-															"value": "@pipeline().parameters.DN_TABLE_NAME",
+															"value": "@item().DN_TABLE_NAME",
 															"type": "Expression"
 														}
 													},
