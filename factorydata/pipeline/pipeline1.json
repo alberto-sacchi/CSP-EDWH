@@ -192,6 +192,10 @@
 														"type": "Expression"
 													},
 													"type": "Int64"
+												},
+												"pDESCR": {
+													"value": null,
+													"type": "String"
 												}
 											}
 										},
@@ -391,6 +395,10 @@
 														"type": "Expression"
 													},
 													"type": "Int64"
+												},
+												"pDESCR": {
+													"value": null,
+													"type": "String"
 												}
 											}
 										},
