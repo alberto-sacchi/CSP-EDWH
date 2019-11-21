@@ -1265,7 +1265,7 @@
 									}
 								},
 								{
-									"name": "SET_END_OK_ALL",
+									"name": "SET_END_OK",
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [
 										{
