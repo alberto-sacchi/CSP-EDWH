@@ -42,7 +42,7 @@
 										"pDN_STEP": {
 											"type": "String",
 											"value": {
-												"value": "'LOAD_L1_TABLES'",
+												"value": "LOAD_L1_TABLES",
 												"type": "Expression"
 											}
 										},
