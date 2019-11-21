@@ -24,7 +24,14 @@
 						{
 							"name": "EXEC_STORED_PROC",
 							"type": "SqlServerStoredProcedure",
-							"dependsOn": [],
+							"dependsOn": [
+								{
+									"activity": "SET_START",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
 							"policy": {
 								"timeout": "7.00:00:00",
 								"retry": 0,
@@ -37,6 +44,148 @@
 								"storedProcedureName": {
 									"value": "@item().DN_STORED_NAME",
 									"type": "Expression"
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "CSP_EDWH_LINKED_SERVER",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "SET_START",
+							"description": "Inserisce un'occorrenza sulla tabella di LOG impostando DT_START con getdate()",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderStoredProcedureName": "[dbo].[MD_ERROR_SET_START]",
+									"storedProcedureParameters": {
+										"pDN_STEP": {
+											"type": "String",
+											"value": {
+												"value": "'LOAD_L1_TABLES'",
+												"type": "Expression"
+											}
+										},
+										"pDN_STEP_DETAIL": {
+											"type": "String",
+											"value": {
+												"value": "@item().DN_STORED_NAME",
+												"type": "Expression"
+											}
+										}
+									}
+								},
+								"dataset": {
+									"referenceName": "EDWH_DB",
+									"type": "DatasetReference"
+								}
+							}
+						},
+						{
+							"name": "SET_END_OK",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "EXEC_STORED_PROC",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[MD_ERROR_END_OK]",
+								"storedProcedureParameters": {
+									"pID_RUN": {
+										"value": {
+											"value": "@activity('SET_START').output.FirstRow.ID_RUN",
+											"type": "Expression"
+										},
+										"type": "int"
+									},
+									"pROWS_READ": {
+										"value": null,
+										"type": "String"
+									},
+									"pROWS_WRITTEN": {
+										"value": null,
+										"type": "String"
+									},
+									"pCOPY_DURATION": {
+										"value": null,
+										"type": "String"
+									},
+									"pDATA_WRITTEN": {
+										"value": null,
+										"type": "String"
+									},
+									"pDESCR": {
+										"value": {
+											"value": "@activity('EXEC_STORED_PROC').output.FirstRow.DESCR",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "CSP_EDWH_LINKED_SERVER",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "SET_END_KO",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "EXEC_STORED_PROC",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[MD_ERROR_END_KO]",
+								"storedProcedureParameters": {
+									"pID_RUN": {
+										"value": {
+											"value": "@activity('SET_START').output.FirstRow.ID_RUN",
+											"type": "Expression"
+										},
+										"type": "int"
+									},
+									"pErrorMessage": {
+										"value": {
+											"value": "@activity('EXEC_STORED_PROC').output.FirstRow.ERR_MESSAGE",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
 								}
 							},
 							"linkedServiceName": {
