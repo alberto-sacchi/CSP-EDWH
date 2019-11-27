@@ -14,14 +14,26 @@
 		"CSP_EDWH_LINKED_SERVER_connectionString": {
 			"value": ""
 		},
+		"CSP_EDWH_PROD_LINKED_SERVER_connectionString": {
+			"value": ""
+		},
 		"ImproveSource_connectionString": {
 			"value": ""
 		},
 		"LS_CSPTO_connectionString": {
 			"value": ""
 		},
+		"LS_CSPTO_PROD_connectionString": {
+			"value": ""
+		},
+		"LS_CSPTO_PROD_password": {
+			"value": ""
+		},
 		"AS_SQL_SERVER_LIKED_SERVER_properties_typeProperties_userName": {
 			"value": "ITAdmin"
+		},
+		"LS_CSPTO_PROD_properties_typeProperties_userName": {
+			"value": "SICLOUD\\stanco"
 		},
 		"containerUri": {
 			"value": ""

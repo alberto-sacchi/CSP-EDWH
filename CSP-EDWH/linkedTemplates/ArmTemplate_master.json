@@ -19,6 +19,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'CSP_EDWH_LINKED_SERVER'"
 		},
+		"CSP_EDWH_PROD_LINKED_SERVER_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'CSP_EDWH_PROD_LINKED_SERVER'"
+		},
 		"ImproveSource_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ImproveSource'"
@@ -27,9 +31,21 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_CSPTO'"
 		},
+		"LS_CSPTO_PROD_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_CSPTO_PROD'"
+		},
+		"LS_CSPTO_PROD_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_CSPTO_PROD'"
+		},
 		"AS_SQL_SERVER_LIKED_SERVER_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "ITAdmin"
+		},
+		"LS_CSPTO_PROD_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "SICLOUD\\stanco"
 		},
 		"containerUri": {
 			"type": "string",
@@ -61,6 +77,9 @@
 					"CSP_EDWH_LINKED_SERVER_connectionString": {
 						"value": "[parameters('CSP_EDWH_LINKED_SERVER_connectionString')]"
 					},
+					"CSP_EDWH_PROD_LINKED_SERVER_connectionString": {
+						"value": "[parameters('CSP_EDWH_PROD_LINKED_SERVER_connectionString')]"
+					},
 					"ImproveSource_connectionString": {
 						"value": "[parameters('ImproveSource_connectionString')]"
 					},
@@ -73,12 +92,41 @@
 					"LS_CSPTO_connectionString": {
 						"value": "[parameters('LS_CSPTO_connectionString')]"
 					},
+					"LS_CSPTO_PROD_connectionString": {
+						"value": "[parameters('LS_CSPTO_PROD_connectionString')]"
+					},
+					"LS_CSPTO_PROD_password": {
+						"value": "[parameters('LS_CSPTO_PROD_password')]"
+					},
 					"AS_SQL_SERVER_LIKED_SERVER_properties_typeProperties_userName": {
 						"value": "[parameters('AS_SQL_SERVER_LIKED_SERVER_properties_typeProperties_userName')]"
+					},
+					"LS_CSPTO_PROD_properties_typeProperties_userName": {
+						"value": "[parameters('LS_CSPTO_PROD_properties_typeProperties_userName')]"
 					}
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_0')]"
+			]
 		}
 	]
 }
