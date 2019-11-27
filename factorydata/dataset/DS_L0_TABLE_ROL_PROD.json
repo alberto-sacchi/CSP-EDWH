@@ -1,0 +1,12 @@
+{
+	"name": "DS_L0_TABLE_ROL_PROD",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_CSPTO_PROD",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": []
+	}
+}
