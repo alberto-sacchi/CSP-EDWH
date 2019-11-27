@@ -1,0 +1,17 @@
+{
+	"name": "LS_CSPTO_PROD",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"connectionString": "integrated security=True;data source=DB02;initial catalog=SISime_cspto",
+			"userName": "SICLOUD\\stanco",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI3ODg2MDBjMy0wYWNlLTRmZDMtOGJmZC1hODQyYjY1YzJhZjQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "IR-SOURCE-CSPTO-PROD",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
