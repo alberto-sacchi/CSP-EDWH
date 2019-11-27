@@ -330,13 +330,10 @@
 										],
 										"outputs": [
 											{
-												"referenceName": "EDWH_LOAD_L0",
+												"referenceName": "EDWH_LOAD_L0_PROD",
 												"type": "DatasetReference",
 												"parameters": {
-													"DN_TARGET": {
-														"value": "@item().DN_TARGET",
-														"type": "Expression"
-													}
+													"DN_TARGET": "@item().DN_TARGET"
 												}
 											}
 										]
@@ -405,7 +402,7 @@
 											}
 										},
 										"linkedServiceName": {
-											"referenceName": "CSP_EDWH_LINKED_SERVER",
+											"referenceName": "CSP_EDWH_PROD_LINKED_SERVER",
 											"type": "LinkedServiceReference"
 										}
 									},
@@ -448,7 +445,7 @@
 											}
 										},
 										"linkedServiceName": {
-											"referenceName": "CSP_EDWH_LINKED_SERVER",
+											"referenceName": "CSP_EDWH_PROD_LINKED_SERVER",
 											"type": "LinkedServiceReference"
 										}
 									}
