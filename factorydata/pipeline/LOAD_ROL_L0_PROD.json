@@ -56,7 +56,7 @@
 									}
 								},
 								"dataset": {
-									"referenceName": "EDWH_DB",
+									"referenceName": "EDWH_PROD_DB",
 									"type": "DatasetReference"
 								}
 							}
