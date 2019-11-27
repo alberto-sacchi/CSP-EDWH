@@ -485,7 +485,7 @@
 						}
 					},
 					"dataset": {
-						"referenceName": "CSP_INCREMENTAL_LOAD",
+						"referenceName": "CSP_PROD_INCREMENTAL_LOAD",
 						"type": "DatasetReference"
 					},
 					"firstRowOnly": false
