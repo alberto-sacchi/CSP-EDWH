@@ -279,6 +279,10 @@
 														}
 													}
 												}
+											},
+											"dataset": {
+												"referenceName": "CSP_INCREMENTAL_LOAD",
+												"type": "DatasetReference"
 											}
 										}
 									}
