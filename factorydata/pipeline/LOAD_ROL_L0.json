@@ -324,7 +324,7 @@
 										},
 										"inputs": [
 											{
-												"referenceName": "DS_L0_TABLE_ROL_PROD",
+												"referenceName": "DS_L0_TABLE_ROL",
 												"type": "DatasetReference"
 											}
 										],
