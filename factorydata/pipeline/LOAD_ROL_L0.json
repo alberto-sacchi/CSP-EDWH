@@ -318,6 +318,12 @@
 											"enableStaging": false,
 											"parallelCopies": 1
 										},
+										"inputs": [
+											{
+												"referenceName": "DS_L0_TABLE_ROL",
+												"type": "DatasetReference"
+											}
+										],
 										"outputs": [
 											{
 												"referenceName": "EDWH_LOAD_L0",
