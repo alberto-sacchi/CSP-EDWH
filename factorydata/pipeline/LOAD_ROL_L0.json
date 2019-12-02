@@ -56,7 +56,7 @@
 									}
 								},
 								"dataset": {
-									"referenceName": "EDWH_DB",
+									"referenceName": "CSP_INCREMENTAL_LOAD",
 									"type": "DatasetReference"
 								}
 							}
@@ -281,10 +281,6 @@
 														}
 													}
 												}
-											},
-											"dataset": {
-												"referenceName": "EDWH_DB",
-												"type": "DatasetReference"
 											}
 										}
 									}
@@ -322,12 +318,6 @@
 											"enableStaging": false,
 											"parallelCopies": 1
 										},
-										"inputs": [
-											{
-												"referenceName": "DS_L0_TABLE_ROL_PROD",
-												"type": "DatasetReference"
-											}
-										],
 										"outputs": [
 											{
 												"referenceName": "EDWH_LOAD_L0",
