@@ -5,13 +5,17 @@
 			"referenceName": "CSP_EDWH_LINKED_SERVER",
 			"type": "LinkedServiceReference",
 			"parameters": {
-				"DBName": "EDWH",
-				"ServerName": "tcp:edwh-svil-sql-srv.database.windows.net,1433",
-				"UserName": "cspdbo"
+				"ServerName": {
+					"value": "@dataset().serverName",
+					"type": "Expression"
+				}
 			}
 		},
 		"parameters": {
 			"DN_TARGET": {
+				"type": "string"
+			},
+			"serverName": {
 				"type": "string"
 			}
 		},
