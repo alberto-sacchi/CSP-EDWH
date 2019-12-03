@@ -587,7 +587,7 @@
 				"type": "String",
 				"defaultValue": "STRSRV-SQLALFAB\\ALFA2016"
 			},
-			"EDWH_Server_Name": {
+			"EDWHServer_Name": {
 				"type": "String",
 				"defaultValue": "@if (equals(pipeline().parameters.EXEC_ENV,'svil'),variables('EDWH_SVIL_Server_Name'),variables('EDWH_PROD_Server_Name'))"
 			}
