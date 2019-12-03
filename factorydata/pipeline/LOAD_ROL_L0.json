@@ -436,7 +436,6 @@
 											"referenceName": "CSP_EDWH_LINKED_SERVER",
 											"type": "LinkedServiceReference",
 											"parameters": {
-												"DBName": "EDWH",
 												"ServerName": {
 													"value": "@variables('EDWHServerName')",
 													"type": "Expression"
@@ -521,7 +520,7 @@
 							"DN_SOURCE": {
 								"type": "String",
 								"value": {
-									"value": "@pipeline().parameters.DN_SOURCE",
+									"value": "@variables('DN_SOURCE')",
 									"type": "Expression"
 								}
 							}
@@ -542,10 +541,6 @@
 			}
 		],
 		"parameters": {
-			"DN_SOURCE": {
-				"type": "string",
-				"defaultValue": "ROL"
-			},
 			"EXEC_ENV": {
 				"type": "string",
 				"defaultValue": "svil"
@@ -555,6 +550,10 @@
 			"EDWHServerName": {
 				"type": "String",
 				"defaultValue": "@concat('tcp:edwh-' ,pipeline().parameters.EXEC_ENV,'-sql-srv.database.windows.net,1433')"
+			},
+			"DN_SOURCE": {
+				"type": "String",
+				"defaultValue": "ROL"
 			}
 		},
 		"annotations": []
