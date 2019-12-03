@@ -362,7 +362,7 @@
 												"type": "DatasetReference",
 												"parameters": {
 													"serverName": {
-														"value": "@variables('ROLServerName')",
+														"value": "@activity('GetDbConfig').output.FirstRow.DN_SERVER_NAME",
 														"type": "Expression"
 													}
 												}
@@ -546,13 +546,6 @@
 									"value": "@variables('DN_SOURCE')",
 									"type": "Expression"
 								}
-							},
-							"DN_EXEC_ENV": {
-								"type": "String",
-								"value": {
-									"value": "@pipeline().parameters.EXEC_ENV",
-									"type": "Expression"
-								}
 							}
 						}
 					},
@@ -590,6 +583,13 @@
 								"type": "String",
 								"value": {
 									"value": "@variables('DN_SOURCE')",
+									"type": "Expression"
+								}
+							},
+							"DN_EXEC_ENV": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.EXEC_ENV",
 									"type": "Expression"
 								}
 							}
