@@ -34,7 +34,10 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "@item().DN_STORED_NAME"
+								"storedProcedureName": {
+									"value": "@item().DN_STORED_NAME",
+									"type": "Expression"
+								}
 							},
 							"linkedServiceName": {
 								"referenceName": "CSP_EDWH_LINKED_SERVER",
