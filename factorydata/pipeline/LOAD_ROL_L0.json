@@ -496,6 +496,10 @@
 			"DN_SOURCE": {
 				"type": "string",
 				"defaultValue": "ROL"
+			},
+			"EXEC_ENV": {
+				"type": "string",
+				"defaultValue": "svil"
 			}
 		},
 		"annotations": []
