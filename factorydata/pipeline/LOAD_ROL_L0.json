@@ -519,7 +519,14 @@
 			{
 				"name": "GetExecParam",
 				"type": "Lookup",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "GetDbConfig",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -532,6 +539,52 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderStoredProcedureName": "[dbo].[MD_LOAD_L0_PARAMS]",
+						"storedProcedureParameters": {
+							"DN_SOURCE": {
+								"type": "String",
+								"value": {
+									"value": "@variables('DN_SOURCE')",
+									"type": "Expression"
+								}
+							},
+							"DN_EXEC_ENV": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.EXEC_ENV",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"dataset": {
+						"referenceName": "CSP_INCREMENTAL_LOAD",
+						"type": "DatasetReference",
+						"parameters": {
+							"serverName": {
+								"value": "@variables('EDWHServerName')",
+								"type": "Expression"
+							}
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "GetDbConfig",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].MD_GET_DB_CONFIG",
 						"storedProcedureParameters": {
 							"DN_SOURCE": {
 								"type": "String",
