@@ -565,7 +565,7 @@
 		"variables": {
 			"EDWHServerName": {
 				"type": "String",
-				"defaultValue": "@concat('tcp:edwh-' ,pipeline().parameters.EXEC_ENV,'-sql-srv.database.windows.net,1433')"
+				"defaultValue": "@if (equals(pipeline().parameters.EXEC_ENV,'svil'),variables('EDWH_SVIL_Server_Name'),variables('EDWH_PROD_Server_Name'))"
 			},
 			"DN_SOURCE": {
 				"type": "String",
