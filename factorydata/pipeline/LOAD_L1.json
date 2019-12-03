@@ -41,7 +41,13 @@
 							},
 							"linkedServiceName": {
 								"referenceName": "CSP_EDWH_LINKED_SERVER",
-								"type": "LinkedServiceReference"
+								"type": "LinkedServiceReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@variables('EDWHServer_Name')",
+										"type": "Expression"
+									}
+								}
 							}
 						}
 					]
@@ -66,12 +72,30 @@
 					},
 					"dataset": {
 						"referenceName": "CSP_INCREMENTAL_LOAD",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"serverName": {
+								"value": "@variables('EDWHServer_Name')",
+								"type": "Expression"
+							}
+						}
 					},
 					"firstRowOnly": false
 				}
 			}
 		],
+		"parameters": {
+			"EXEC_ENV": {
+				"type": "string",
+				"defaultValue": "svil"
+			}
+		},
+		"variables": {
+			"EDWHServer_Name": {
+				"type": "String",
+				"defaultValue": "@concat('tcp:edwh-' ,pipeline().parameters.EXEC_ENV,'-sql-srv.database.windows.net,1433')"
+			}
+		},
 		"annotations": []
 	}
 }
