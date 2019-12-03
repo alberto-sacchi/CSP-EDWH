@@ -362,7 +362,7 @@
 												"type": "DatasetReference",
 												"parameters": {
 													"serverName": {
-														"value": "@activity('GetDbConfig').output.value[0].DN_SERVER_NAME",
+														"value": "@if (equals(pipeline().parameters.EXEC_ENV,'svil'),variables('ROL_SVIL_Server_Name'),variables('ROL_PROD_Server_Name'))",
 														"type": "Expression"
 													}
 												}
@@ -627,6 +627,22 @@
 			"ROLServerName": {
 				"type": "String",
 				"defaultValue": "\"if(equals(@pipeline().parameters.EXEC_ENV,'svil'),'STRSRV-SQLALFAB\\ALFA2016','DB02')\""
+			},
+			"EDWH_PROD_Server_Name": {
+				"type": "String",
+				"defaultValue": "tcp:edwh-prod-sql-srv.database.windows.net,1433"
+			},
+			"EDWH_SVIL_Server_Name": {
+				"type": "String",
+				"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
+			},
+			"ROL_PROD_Server_Name": {
+				"type": "String",
+				"defaultValue": "DB02"
+			},
+			"ROL_SVIL_Server_Name": {
+				"type": "String",
+				"defaultValue": "STRSRV-SQLALFAB\\ALFA2016"
 			}
 		},
 		"annotations": []
