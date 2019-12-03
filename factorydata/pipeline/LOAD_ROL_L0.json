@@ -131,7 +131,7 @@
 												"type": "DatasetReference",
 												"parameters": {
 													"serverName": {
-														"value": "@if (equals(pipeline().parameters.EXEC_ENV,'svil'),variables('ROL_SVIL_Server_Name'),variables('ROL_PROD_Server_Name'))",
+														"value": "@variables('ROLServerName')",
 														"type": "Expression"
 													}
 												}
@@ -362,7 +362,7 @@
 												"type": "DatasetReference",
 												"parameters": {
 													"serverName": {
-														"value": "@if (equals(pipeline().parameters.EXEC_ENV,'svil'),variables('ROL_SVIL_Server_Name'),variables('ROL_PROD_Server_Name'))",
+														"value": "@variables('ROLServerName')",
 														"type": "Expression"
 													}
 												}
@@ -525,6 +525,12 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
+					},
+					{
+						"activity": "Set ROL Server Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
 					}
 				],
 				"policy": {
@@ -570,7 +576,20 @@
 				"typeProperties": {
 					"variableName": "EDWHServerName",
 					"value": {
-						"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('EDWH_SVIL_Server_Name'),variables('ROL_PROD_Server_Name'))",
+						"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('EDWH_SVIL_Server_Name'),variables('EDWH_PROD_Server_Name'))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set ROL Server Name",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "EDWHServerName",
+					"value": {
+						"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('ROL_SVIL_Server_Name'),variables('ROL_PROD_Server_Name'))",
 						"type": "Expression"
 					}
 				}
@@ -588,8 +607,7 @@
 				"defaultValue": "ROL"
 			},
 			"ROLServerName": {
-				"type": "String",
-				"defaultValue": "\"if(equals(@pipeline().parameters.EXEC_ENV,'svil'),'STRSRV-SQLALFAB\\ALFA2016','DB02')\""
+				"type": "String"
 			},
 			"EDWH_PROD_Server_Name": {
 				"type": "String",
