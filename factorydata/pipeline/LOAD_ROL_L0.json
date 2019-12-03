@@ -573,7 +573,7 @@
 			},
 			"ROLServerName": {
 				"type": "String",
-				"defaultValue": "\"@if(@equals(pipeline().parameters.EXEC_ENV,'svil'),'STRSRV-SQLALFAB\\ALFA2016','DB02')\""
+				"defaultValue": "@if(@equals(pipeline().parameters.EXEC_ENV,'svil'),'STRSRV-SQLALFAB\\ALFA2016','DB02')"
 			}
 		},
 		"annotations": []
