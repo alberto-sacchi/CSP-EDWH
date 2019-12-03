@@ -587,7 +587,7 @@
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "EDWHServerName",
+					"variableName": "ROLServerName",
 					"value": {
 						"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('ROL_SVIL_Server_Name'),variables('ROL_PROD_Server_Name'))",
 						"type": "Expression"
