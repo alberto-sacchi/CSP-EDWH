@@ -1,0 +1,12 @@
+{
+	"name": "CSP_PROD_INCREMENTAL_LOAD",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CSP_EDWH_LINKED_SERVER",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	}
+}
