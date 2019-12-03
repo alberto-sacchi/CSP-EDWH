@@ -211,12 +211,10 @@
 											"referenceName": "CSP_EDWH_LINKED_SERVER",
 											"type": "LinkedServiceReference",
 											"parameters": {
-												"DBName": "EDWH",
 												"ServerName": {
 													"value": "@variables('EDWHServerName')",
 													"type": "Expression"
-												},
-												"UserName": "cspdbo"
+												}
 											}
 										}
 									},
@@ -262,12 +260,10 @@
 											"referenceName": "CSP_EDWH_LINKED_SERVER",
 											"type": "LinkedServiceReference",
 											"parameters": {
-												"DBName": "EDWH",
 												"ServerName": {
 													"value": "@variables('EDWHServerName')",
 													"type": "Expression"
-												},
-												"UserName": "cspdbo"
+												}
 											}
 										}
 									},
@@ -298,7 +294,7 @@
 													},
 													"pDN_SOURCE": {
 														"value": {
-															"value": "@pipeline().parameters.DN_SOURCE",
+															"value": "@variables('DN_SOURCE')",
 															"type": "Expression"
 														}
 													}
