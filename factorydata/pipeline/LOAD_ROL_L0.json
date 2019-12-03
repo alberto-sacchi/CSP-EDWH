@@ -59,8 +59,8 @@
 									"referenceName": "CSP_INCREMENTAL_LOAD",
 									"type": "DatasetReference",
 									"parameters": {
-										"EXEC_ENV": {
-											"value": "@pipeline().parameters.EXEC_ENV",
+										"serverName": {
+											"value": "@variables('EDWHServerName')",
 											"type": "Expression"
 										}
 									}
@@ -209,7 +209,15 @@
 										},
 										"linkedServiceName": {
 											"referenceName": "CSP_EDWH_LINKED_SERVER",
-											"type": "LinkedServiceReference"
+											"type": "LinkedServiceReference",
+											"parameters": {
+												"DBName": "EDWH",
+												"ServerName": {
+													"value": "@variables('EDWHServerName')",
+													"type": "Expression"
+												},
+												"UserName": "cspdbo"
+											}
 										}
 									},
 									{
@@ -252,7 +260,15 @@
 										},
 										"linkedServiceName": {
 											"referenceName": "CSP_EDWH_LINKED_SERVER",
-											"type": "LinkedServiceReference"
+											"type": "LinkedServiceReference",
+											"parameters": {
+												"DBName": "EDWH",
+												"ServerName": {
+													"value": "@variables('EDWHServerName')",
+													"type": "Expression"
+												},
+												"UserName": "cspdbo"
+											}
 										}
 									},
 									{
@@ -290,7 +306,13 @@
 											},
 											"dataset": {
 												"referenceName": "CSP_INCREMENTAL_LOAD",
-												"type": "DatasetReference"
+												"type": "DatasetReference",
+												"parameters": {
+													"serverName": {
+														"value": "@variables('EDWHServerName')",
+														"type": "Expression"
+													}
+												}
 											}
 										}
 									}
@@ -416,7 +438,7 @@
 											"parameters": {
 												"DBName": "EDWH",
 												"ServerName": {
-													"value": "@concat('tcp:edwh-' ,pipeline().parameters.EXEC_ENV,'-sql-srv.database.windows.net,1433')",
+													"value": "@variables('EDWHServerName')",
 													"type": "Expression"
 												}
 											}
@@ -465,7 +487,10 @@
 											"type": "LinkedServiceReference",
 											"parameters": {
 												"DBName": "EDWH",
-												"ServerName": "@concat('tcp:edwh-' ,pipeline().parameters.EXEC_ENV,'-sql-srv.database.windows.net,1433')",
+												"ServerName": {
+													"value": "@variables('EDWHServerName')",
+													"type": "Expression"
+												},
 												"UserName": "cspdbo"
 											}
 										}
@@ -506,8 +531,8 @@
 						"referenceName": "CSP_INCREMENTAL_LOAD",
 						"type": "DatasetReference",
 						"parameters": {
-							"EXEC_ENV": {
-								"value": "@pipeline().parameters.EXEC_ENV",
+							"serverName": {
+								"value": "@variables('EDWHServerName')",
 								"type": "Expression"
 							}
 						}
@@ -524,6 +549,12 @@
 			"EXEC_ENV": {
 				"type": "string",
 				"defaultValue": "svil"
+			}
+		},
+		"variables": {
+			"EDWHServerName": {
+				"type": "String",
+				"defaultValue": "@concat('tcp:edwh-' ,pipeline().parameters.EXEC_ENV,'-sql-srv.database.windows.net,1433')"
 			}
 		},
 		"annotations": []

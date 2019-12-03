@@ -7,14 +7,14 @@
 			"parameters": {
 				"DBName": "EDWH",
 				"ServerName": {
-					"value": "@concat('tcp:edwh-' ,dataset().EXEC_ENV,'-sql-srv.database.windows.net,1433')",
+					"value": "@dataset().serverName",
 					"type": "Expression"
 				},
 				"UserName": "cspdbo"
 			}
 		},
 		"parameters": {
-			"EXEC_ENV": {
+			"serverName": {
 				"type": "string",
 				"defaultValue": "svil"
 			}
