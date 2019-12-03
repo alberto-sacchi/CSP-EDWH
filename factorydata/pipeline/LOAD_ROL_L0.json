@@ -131,7 +131,7 @@
 												"type": "DatasetReference",
 												"parameters": {
 													"serverName": {
-														"value": "@activity('GetDbConfig').output.FirstRow.DN_SERVER_NAME",
+														"value": "@activity('GetDbConfig').output.value.FirstRow.DN_SERVER_NAME",
 														"type": "Expression"
 													}
 												}
@@ -362,7 +362,7 @@
 												"type": "DatasetReference",
 												"parameters": {
 													"serverName": {
-														"value": "@activity('GetDbConfig').output.FirstRow.DN_SERVER_NAME",
+														"value": "@activity('GetDbConfig').output.value.FirstRow.DN_SERVER_NAME",
 														"type": "Expression"
 													}
 												}
