@@ -3,7 +3,19 @@
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LS_CSPTO",
-			"type": "LinkedServiceReference"
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"ServerName": {
+					"value": "@dataset().serverName",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"serverName": {
+				"type": "string",
+				"defaultValue": "STRSRV-SQLALFAB\\ALFA2016"
+			}
 		},
 		"annotations": [],
 		"type": "SqlServerTable",
