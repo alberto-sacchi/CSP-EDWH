@@ -589,7 +589,7 @@
 			},
 			"EDWHServerName": {
 				"type": "String",
-				"defaultValue": "variables('EDWH_SVIL_Server_Name')"
+				"defaultValue": "@variables('EDWH_SVIL_Server_Name')"
 			}
 		},
 		"annotations": []
