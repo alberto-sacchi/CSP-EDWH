@@ -3,7 +3,12 @@
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "CSP_EDWH_LINKED_SERVER",
-			"type": "LinkedServiceReference"
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"DBName": "EDWH",
+				"ServerName": "tcp:edwh-svil-sql-srv.database.windows.net,1433",
+				"UserName": "cspdbo"
+			}
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
