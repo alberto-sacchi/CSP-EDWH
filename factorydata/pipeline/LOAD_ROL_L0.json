@@ -496,6 +496,10 @@
 			"DN_SOURCE": {
 				"type": "string",
 				"defaultValue": "ROL"
+			},
+			"DBName": {
+				"type": "string",
+				"defaultValue": "EDWH"
 			}
 		},
 		"annotations": []
