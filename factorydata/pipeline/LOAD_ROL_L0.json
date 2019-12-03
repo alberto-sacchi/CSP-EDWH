@@ -554,6 +554,12 @@
 					},
 					"firstRowOnly": false
 				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": []
 			}
 		],
 		"parameters": {
@@ -588,8 +594,7 @@
 				"defaultValue": "STRSRV-SQLALFAB\\ALFA2016"
 			},
 			"EDWHServerName": {
-				"type": "String",
-				"defaultValue": "@variables('EDWH_SVIL_Server_Name')"
+				"type": "String"
 			}
 		},
 		"annotations": []
