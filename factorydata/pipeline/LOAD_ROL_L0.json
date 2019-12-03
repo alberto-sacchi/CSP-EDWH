@@ -521,7 +521,7 @@
 				"type": "Lookup",
 				"dependsOn": [
 					{
-						"activity": "Set variable1",
+						"activity": "Set EDWH Server Name",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -563,7 +563,7 @@
 				}
 			},
 			{
-				"name": "Set variable1",
+				"name": "Set EDWH Server Name",
 				"type": "SetVariable",
 				"dependsOn": [],
 				"userProperties": [],
