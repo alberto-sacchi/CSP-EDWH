@@ -128,7 +128,13 @@
 										"inputs": [
 											{
 												"referenceName": "DS_L0_TABLE_ROL",
-												"type": "DatasetReference"
+												"type": "DatasetReference",
+												"parameters": {
+													"serverName": {
+														"value": "@variables('ROLServerName')",
+														"type": "Expression"
+													}
+												}
 											}
 										],
 										"outputs": [
@@ -353,7 +359,13 @@
 										"inputs": [
 											{
 												"referenceName": "DS_L0_TABLE_ROL",
-												"type": "DatasetReference"
+												"type": "DatasetReference",
+												"parameters": {
+													"serverName": {
+														"value": "@variables('ROLServerName')",
+														"type": "Expression"
+													}
+												}
 											}
 										],
 										"outputs": [
@@ -558,6 +570,10 @@
 			"DN_SOURCE": {
 				"type": "String",
 				"defaultValue": "ROL"
+			},
+			"ROLServerName": {
+				"type": "String",
+				"defaultValue": "STRSRV-SQLALFAB\\ALFA2016"
 			}
 		},
 		"annotations": []
