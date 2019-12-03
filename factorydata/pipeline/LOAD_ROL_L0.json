@@ -501,12 +501,10 @@
 											"referenceName": "CSP_EDWH_LINKED_SERVER",
 											"type": "LinkedServiceReference",
 											"parameters": {
-												"DBName": "EDWH",
 												"ServerName": {
 													"value": "@variables('EDWHServerName')",
 													"type": "Expression"
-												},
-												"UserName": "cspdbo"
+												}
 											}
 										}
 									}
@@ -591,6 +589,56 @@
 					"value": {
 						"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('ROL_SVIL_Server_Name'),variables('ROL_PROD_Server_Name'))",
 						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Get_Param_KO",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "GetExecParam",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "dbo.MD_ERROR_END_SINGLE_KO",
+					"storedProcedureParameters": {
+						"pErrorMessage": {
+							"value": {
+								"value": "@activity('GetExecParam').output.errors[0].message",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"pDN_STEP": {
+							"value": "GetExecParam",
+							"type": "String"
+						},
+						"pDN_STEP_DETAIL": {
+							"value": "GetExecParam",
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "CSP_EDWH_LINKED_SERVER",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ServerName": {
+							"value": "@variables('EDWHServerName')",
+							"type": "Expression"
+						}
 					}
 				}
 			}
