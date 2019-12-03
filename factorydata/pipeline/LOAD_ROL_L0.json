@@ -414,7 +414,7 @@
 											"referenceName": "CSP_EDWH_LINKED_SERVER",
 											"type": "LinkedServiceReference",
 											"parameters": {
-												"DBName": "EDWHH",
+												"DBName": "EDWH",
 												"ServerName": {
 													"value": "@concat('tcp:edwh-' ,pipeline().parameters.EXEC_ENV,'-sql-srv.database.windows.net,1433')",
 													"type": "Expression"
