@@ -131,7 +131,7 @@
 												"type": "DatasetReference",
 												"parameters": {
 													"serverName": {
-														"value": "@variables('ROLServerName')",
+														"value": "@activity('GetDbConfig').output.FirstRow.DN_SERVER_NAME",
 														"type": "Expression"
 													}
 												}
