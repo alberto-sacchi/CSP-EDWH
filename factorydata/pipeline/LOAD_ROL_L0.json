@@ -9,7 +9,7 @@
 					{
 						"activity": "GetExecParam",
 						"dependencyConditions": [
-							"Failed"
+							"Succeeded"
 						]
 					}
 				],
@@ -599,7 +599,7 @@
 					{
 						"activity": "GetExecParam",
 						"dependencyConditions": [
-							"Succeeded"
+							"Failed"
 						]
 					}
 				],
