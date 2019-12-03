@@ -139,6 +139,10 @@
 													"DN_TARGET": {
 														"value": "@item().DN_TARGET",
 														"type": "Expression"
+													},
+													"serverName": {
+														"value": "@variables('EDWHServerName')",
+														"type": "Expression"
 													}
 												}
 											}
@@ -359,6 +363,10 @@
 												"parameters": {
 													"DN_TARGET": {
 														"value": "@item().DN_TARGET",
+														"type": "Expression"
+													},
+													"serverName": {
+														"value": "@variables('EDWHServerName')",
 														"type": "Expression"
 													}
 												}
