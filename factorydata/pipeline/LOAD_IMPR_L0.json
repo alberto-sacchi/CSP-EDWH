@@ -347,7 +347,13 @@
 										"inputs": [
 											{
 												"referenceName": "DS_L0_TABLE_IMPROVE",
-												"type": "DatasetReference"
+												"type": "DatasetReference",
+												"parameters": {
+													"serverName": {
+														"value": "@variables('IMPRServer_Name')",
+														"type": "Expression"
+													}
+												}
 											}
 										],
 										"outputs": [
@@ -357,6 +363,10 @@
 												"parameters": {
 													"DN_TARGET": {
 														"value": "@item().DN_TARGET",
+														"type": "Expression"
+													},
+													"serverName": {
+														"value": "@variables('EDWHServer_Name')",
 														"type": "Expression"
 													}
 												}
