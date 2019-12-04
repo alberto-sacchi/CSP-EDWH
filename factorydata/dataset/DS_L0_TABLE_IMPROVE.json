@@ -3,7 +3,10 @@
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ImproveSource",
-			"type": "LinkedServiceReference"
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"ServerName": "@dataset().serverName"
+			}
 		},
 		"annotations": [
 			"LOAD L0 TABLE FROM IMPROVE"
