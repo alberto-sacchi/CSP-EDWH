@@ -5,7 +5,16 @@
 			"referenceName": "ImproveSource",
 			"type": "LinkedServiceReference",
 			"parameters": {
-				"ServerName": "@dataset().serverName"
+				"ServerName": {
+					"value": "@dataset().serverName",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"serverName": {
+				"type": "string",
+				"defaultValue": "tcp:improve-beta-sql-srv.database.windows.net, 1433"
 			}
 		},
 		"annotations": [
