@@ -495,7 +495,20 @@
 			{
 				"name": "GetExecParam",
 				"type": "Lookup",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set IMPR Server Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Set EDWH Server Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -530,16 +543,66 @@
 					},
 					"firstRowOnly": false
 				}
+			},
+			{
+				"name": "Set EDWH Server Name",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "EDWHServer_Name",
+					"value": {
+						"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('EDWH_SVIL_Server_Name'),variables('EDWH_PROD_Server_Name'))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set IMPR Server Name",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "IMPRServer_Name",
+					"value": {
+						"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('IMPR_SVIL_Server_Name'),variables('IMPR_PROD_Server_Name'))",
+						"type": "Expression"
+					}
+				}
 			}
 		],
+		"parameters": {
+			"EXEC_ENV": {
+				"type": "string",
+				"defaultValue": "svil"
+			}
+		},
 		"variables": {
 			"EDWHServer_Name": {
-				"type": "String",
-				"defaultValue": "@concat('tcp:edwh-' ,pipeline().parameters.EXEC_ENV,'-sql-srv.database.windows.net,1433')"
+				"type": "String"
 			},
 			"DN_SOURCE": {
 				"type": "String",
 				"defaultValue": "IMPR"
+			},
+			"EDWH_PROD_Server_Name": {
+				"type": "String",
+				"defaultValue": "tcp:edwh-prod-sql-srv.database.windows.net,1433"
+			},
+			"EDWH_SVIL_Server_Name": {
+				"type": "String",
+				"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
+			},
+			"IMPR_SVIL_Server_Name": {
+				"type": "String",
+				"defaultValue": "tcp:improve-beta-sql-srv.database.windows.net, 1433"
+			},
+			"IMPR_PROD_Server_Name": {
+				"type": "String",
+				"defaultValue": "tcp:improve-beta-sql-srv.database.windows.net, 1433"
+			},
+			"IMPRServer_Name": {
+				"type": "String"
 			}
 		},
 		"annotations": []
