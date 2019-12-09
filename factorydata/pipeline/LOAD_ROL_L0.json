@@ -55,10 +55,7 @@
 										},
 										"pDN_SOURCE": {
 											"type": "String",
-											"value": {
-												"value": "@variables('DN_SOURCE')",
-												"type": "Expression"
-											}
+											"value": null
 										}
 									}
 								},
