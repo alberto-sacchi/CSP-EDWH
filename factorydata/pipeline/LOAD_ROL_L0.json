@@ -344,7 +344,7 @@
 											"source": {
 												"type": "SqlServerSource",
 												"sqlReaderQuery": {
-													"value": "@concat('select * from ',item().DN_TABLE_NAME,'where isnull(',item().DN_WHERE_CONDITION,'1=1)')\n",
+													"value": "@concat('select * from ',item().DN_TABLE_NAME,' where isnull(',item().DN_WHERE_CONDITION,'1=1)')\n",
 													"type": "Expression"
 												}
 											},
