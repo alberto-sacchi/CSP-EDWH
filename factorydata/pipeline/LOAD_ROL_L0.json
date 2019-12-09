@@ -113,7 +113,7 @@
 											"source": {
 												"type": "SqlServerSource",
 												"sqlReaderQuery": {
-													"value": "select * from @{item().DN_TABLE_NAME} where @{item().DN_RIF_COLUMN} > \n '@{activity('GET_REF_DATE').output.firstRow.DT_START}'",
+													"value": "select * from @{item().DN_TABLE_NAME} where @{item().DN_RIF_COLUMN} > \n '@{activity('GET_REF_DATE').output.firstRow.DT_START}' and isnull(item().DN_WHERE_CONDITION,1=1)",
 													"type": "Expression"
 												}
 											},
@@ -344,7 +344,7 @@
 											"source": {
 												"type": "SqlServerSource",
 												"sqlReaderQuery": {
-													"value": "@concat('select * from ' ,item().DN_TABLE_NAME,item().DN_WHERE_CONDITION)\n",
+													"value": "@concat('select * from ' ,item().DN_TABLE_NAME,'where isnull(',item().DN_WHERE_CONDITION,'1=1')\n",
 													"type": "Expression"
 												}
 											},
