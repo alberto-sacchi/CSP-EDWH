@@ -52,6 +52,13 @@
 												"value": "@item().DN_TARGET",
 												"type": "Expression"
 											}
+										},
+										"pDN_SOURCE": {
+											"type": "String",
+											"value": {
+												"value": "@variables('DN_SOURCE')",
+												"type": "Expression"
+											}
 										}
 									}
 								},
@@ -340,7 +347,7 @@
 											"source": {
 												"type": "SqlServerSource",
 												"sqlReaderQuery": {
-													"value": "select * from @{item().DN_TABLE_NAME} \n",
+													"value": "@concat('select * from ' ,item().DN_TABLE_NAME,item().DN_WHERE_CONDITION)\n",
 													"type": "Expression"
 												}
 											},
