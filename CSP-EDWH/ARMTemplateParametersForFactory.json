@@ -8,9 +8,6 @@
 		"AS_SQL_SERVER_LIKED_SERVER_connectionString": {
 			"value": ""
 		},
-		"AS_SQL_SERVER_LIKED_SERVER_password": {
-			"value": ""
-		},
 		"CSP_EDWH_LINKED_SERVER_connectionString": {
 			"value": ""
 		},
@@ -26,14 +23,8 @@
 		"LS_CSPTO_PROD_connectionString": {
 			"value": ""
 		},
-		"LS_CSPTO_PROD_password": {
-			"value": ""
-		},
-		"AS_SQL_SERVER_LIKED_SERVER_properties_typeProperties_userName": {
-			"value": "ITAdmin"
-		},
-		"LS_CSPTO_PROD_properties_typeProperties_userName": {
-			"value": "SICLOUD\\stanco"
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://EDWH-PASSWORD.vault.azure.net/"
 		}
 	}
 }

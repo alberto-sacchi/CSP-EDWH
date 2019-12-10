@@ -11,10 +11,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AS_SQL_SERVER_LIKED_SERVER'"
 		},
-		"AS_SQL_SERVER_LIKED_SERVER_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'AS_SQL_SERVER_LIKED_SERVER'"
-		},
 		"CSP_EDWH_LINKED_SERVER_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'CSP_EDWH_LINKED_SERVER'"
@@ -35,17 +31,9 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_CSPTO_PROD'"
 		},
-		"LS_CSPTO_PROD_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'LS_CSPTO_PROD'"
-		},
-		"AS_SQL_SERVER_LIKED_SERVER_properties_typeProperties_userName": {
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
 			"type": "string",
-			"defaultValue": "ITAdmin"
-		},
-		"LS_CSPTO_PROD_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "SICLOUD\\stanco"
+			"defaultValue": "https://EDWH-PASSWORD.vault.azure.net/"
 		}
 	},
 	"variables": {
@@ -97,7 +85,7 @@
 												"pDN_STEP": {
 													"type": "String",
 													"value": {
-														"value": "@concat('LOAD_' ,pipeline().parameters.DN_SOURCE,'_',item().DN_TABLE_NAME)",
+														"value": "@concat('LOAD_' ,variables('DN_SOURCE'),'_',item().DN_TABLE_NAME)",
 														"type": "Expression"
 													}
 												},
@@ -111,9 +99,14 @@
 											}
 										},
 										"dataset": {
-											"referenceName": "EDWH_DB",
+											"referenceName": "CSP_INCREMENTAL_LOAD",
 											"type": "DatasetReference",
-											"parameters": {}
+											"parameters": {
+												"serverName": {
+													"value": "@variables('EDWHServer_Name')",
+													"type": "Expression"
+												}
+											}
 										}
 									}
 								},
@@ -178,7 +171,9 @@
 													{
 														"referenceName": "DS_L0_TABLE_IMPROVE",
 														"type": "DatasetReference",
-														"parameters": {}
+														"parameters": {
+															"serverName": "tcp:improve-beta-sql-srv.database.windows.net, 1433"
+														}
 													}
 												],
 												"outputs": [
@@ -188,6 +183,10 @@
 														"parameters": {
 															"DN_TARGET": {
 																"value": "@item().DN_TARGET",
+																"type": "Expression"
+															},
+															"serverName": {
+																"value": "@variables('EDWHServer_Name')",
 																"type": "Expression"
 															}
 														}
@@ -259,7 +258,13 @@
 												},
 												"linkedServiceName": {
 													"referenceName": "CSP_EDWH_LINKED_SERVER",
-													"type": "LinkedServiceReference"
+													"type": "LinkedServiceReference",
+													"parameters": {
+														"ServerName": {
+															"value": "@variables('EDWHServer_Name')",
+															"type": "Expression"
+														}
+													}
 												}
 											},
 											{
@@ -302,7 +307,13 @@
 												},
 												"linkedServiceName": {
 													"referenceName": "CSP_EDWH_LINKED_SERVER",
-													"type": "LinkedServiceReference"
+													"type": "LinkedServiceReference",
+													"parameters": {
+														"ServerName": {
+															"value": "@variables('EDWHServer_Name')",
+															"type": "Expression"
+														}
+													}
 												}
 											},
 											{
@@ -332,16 +343,21 @@
 															},
 															"pDN_SOURCE": {
 																"value": {
-																	"value": "@pipeline().parameters.DN_SOURCE",
+																	"value": "@variables('DN_SOURCE')",
 																	"type": "Expression"
 																}
 															}
 														}
 													},
 													"dataset": {
-														"referenceName": "EDWH_DB",
+														"referenceName": "CSP_INCREMENTAL_LOAD",
 														"type": "DatasetReference",
-														"parameters": {}
+														"parameters": {
+															"serverName": {
+																"value": "@variables('EDWHServer_Name')",
+																"type": "Expression"
+															}
+														}
 													}
 												}
 											}
@@ -383,7 +399,12 @@
 													{
 														"referenceName": "DS_L0_TABLE_IMPROVE",
 														"type": "DatasetReference",
-														"parameters": {}
+														"parameters": {
+															"serverName": {
+																"value": "@variables('IMPRServer_Name')",
+																"type": "Expression"
+															}
+														}
 													}
 												],
 												"outputs": [
@@ -393,6 +414,10 @@
 														"parameters": {
 															"DN_TARGET": {
 																"value": "@item().DN_TARGET",
+																"type": "Expression"
+															},
+															"serverName": {
+																"value": "@variables('EDWHServer_Name')",
 																"type": "Expression"
 															}
 														}
@@ -464,7 +489,13 @@
 												},
 												"linkedServiceName": {
 													"referenceName": "CSP_EDWH_LINKED_SERVER",
-													"type": "LinkedServiceReference"
+													"type": "LinkedServiceReference",
+													"parameters": {
+														"ServerName": {
+															"value": "@variables('EDWHServer_Name')",
+															"type": "Expression"
+														}
+													}
 												}
 											},
 											{
@@ -507,7 +538,13 @@
 												},
 												"linkedServiceName": {
 													"referenceName": "CSP_EDWH_LINKED_SERVER",
-													"type": "LinkedServiceReference"
+													"type": "LinkedServiceReference",
+													"parameters": {
+														"ServerName": {
+															"value": "@variables('EDWHServer_Name')",
+															"type": "Expression"
+														}
+													}
 												}
 											}
 										]
@@ -519,7 +556,20 @@
 					{
 						"name": "GetExecParam",
 						"type": "Lookup",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Set IMPR Server Name",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Set EDWH Server Name",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -536,7 +586,7 @@
 									"DN_SOURCE": {
 										"type": "String",
 										"value": {
-											"value": "@pipeline().parameters.DN_SOURCE",
+											"value": "@variables('DN_SOURCE')",
 											"type": "Expression"
 										}
 									}
@@ -545,23 +595,81 @@
 							"dataset": {
 								"referenceName": "CSP_INCREMENTAL_LOAD",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"serverName": {
+										"value": "@variables('EDWHServer_Name')",
+										"type": "Expression"
+									}
+								}
 							},
 							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "Set EDWH Server Name",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "EDWHServer_Name",
+							"value": {
+								"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('EDWH_SVIL_Server_Name'),variables('EDWH_PROD_Server_Name'))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set IMPR Server Name",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "IMPRServer_Name",
+							"value": {
+								"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('IMPR_SVIL_Server_Name'),variables('IMPR_PROD_Server_Name'))",
+								"type": "Expression"
+							}
 						}
 					}
 				],
 				"parameters": {
-					"DN_SOURCE": {
+					"EXEC_ENV": {
 						"type": "string",
+						"defaultValue": "svil"
+					}
+				},
+				"variables": {
+					"EDWHServer_Name": {
+						"type": "String"
+					},
+					"DN_SOURCE": {
+						"type": "String",
 						"defaultValue": "IMPR"
+					},
+					"EDWH_PROD_Server_Name": {
+						"type": "String",
+						"defaultValue": "tcp:edwh-prod-sql-srv.database.windows.net,1433"
+					},
+					"EDWH_SVIL_Server_Name": {
+						"type": "String",
+						"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
+					},
+					"IMPR_SVIL_Server_Name": {
+						"type": "String",
+						"defaultValue": "tcp:improve-beta-sql-srv.database.windows.net, 1433"
+					},
+					"IMPR_PROD_Server_Name": {
+						"type": "String",
+						"defaultValue": "tcp:improve-beta-sql-srv.database.windows.net, 1433"
+					},
+					"IMPRServer_Name": {
+						"type": "String"
 					}
 				},
 				"annotations": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/CSP_INCREMENTAL_LOAD')]",
-				"[concat(variables('factoryId'), '/datasets/EDWH_DB')]",
 				"[concat(variables('factoryId'), '/datasets/DS_L0_TABLE_IMPROVE')]",
 				"[concat(variables('factoryId'), '/datasets/EDWH_LOAD_L0')]",
 				"[concat(variables('factoryId'), '/linkedServices/CSP_EDWH_LINKED_SERVER')]"
@@ -612,7 +720,13 @@
 									},
 									"linkedServiceName": {
 										"referenceName": "CSP_EDWH_LINKED_SERVER",
-										"type": "LinkedServiceReference"
+										"type": "LinkedServiceReference",
+										"parameters": {
+											"ServerName": {
+												"value": "@variables('EDWHServer_Name')",
+												"type": "Expression"
+											}
+										}
 									}
 								}
 							]
@@ -621,7 +735,14 @@
 					{
 						"name": "GET_STORED_NAMES",
 						"type": "Lookup",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Set EDWH Server Name",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -638,12 +759,49 @@
 							"dataset": {
 								"referenceName": "CSP_INCREMENTAL_LOAD",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"serverName": {
+										"value": "@variables('EDWHServer_Name')",
+										"type": "Expression"
+									}
+								}
 							},
 							"firstRowOnly": false
 						}
+					},
+					{
+						"name": "Set EDWH Server Name",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "EDWHServer_Name",
+							"value": {
+								"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('EDWH_SVIL_Server_Name'),variables('EDWH_PROD_Server_Name'))",
+								"type": "Expression"
+							}
+						}
 					}
 				],
+				"parameters": {
+					"EXEC_ENV": {
+						"type": "string",
+						"defaultValue": "svil"
+					}
+				},
+				"variables": {
+					"EDWHServer_Name": {
+						"type": "String"
+					},
+					"EDWH_PROD_Server_Name": {
+						"type": "String",
+						"defaultValue": "tcp:edwh-prod-sql-srv.database.windows.net,1433"
+					},
+					"EDWH_SVIL_Server_Name": {
+						"type": "String",
+						"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
+					}
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -697,7 +855,7 @@
 												"pDN_STEP": {
 													"type": "String",
 													"value": {
-														"value": "@concat('LOAD_' ,pipeline().parameters.DN_SOURCE,'_',item().DN_TABLE_NAME)",
+														"value": "@concat('LOAD_' ,variables('DN_SOURCE'),'_',item().DN_TABLE_NAME)",
 														"type": "Expression"
 													}
 												},
@@ -707,13 +865,22 @@
 														"value": "@item().DN_TARGET",
 														"type": "Expression"
 													}
+												},
+												"pDN_SOURCE": {
+													"type": "String",
+													"value": null
 												}
 											}
 										},
 										"dataset": {
-											"referenceName": "EDWH_DB",
+											"referenceName": "CSP_INCREMENTAL_LOAD",
 											"type": "DatasetReference",
-											"parameters": {}
+											"parameters": {
+												"serverName": {
+													"value": "@variables('EDWHServerName')",
+													"type": "Expression"
+												}
+											}
 										}
 									}
 								},
@@ -759,7 +926,7 @@
 													"source": {
 														"type": "SqlServerSource",
 														"sqlReaderQuery": {
-															"value": "select * from @{item().DN_TABLE_NAME} where @{item().DN_RIF_COLUMN} > \n '@{activity('GET_REF_DATE').output.firstRow.DT_START}'",
+															"value": "@concat('select * from ',item().DN_TABLE_NAME, ' where ' , item().DN_RIF_COLUMN, ' > ''', activity('GET_REF_DATE').output.firstRow.DT_START,'''',item().DN_WHERE_CONDITION)",
 															"type": "Expression"
 														}
 													},
@@ -779,7 +946,12 @@
 													{
 														"referenceName": "DS_L0_TABLE_ROL",
 														"type": "DatasetReference",
-														"parameters": {}
+														"parameters": {
+															"serverName": {
+																"value": "@variables('ROLServerName')",
+																"type": "Expression"
+															}
+														}
 													}
 												],
 												"outputs": [
@@ -789,6 +961,10 @@
 														"parameters": {
 															"DN_TARGET": {
 																"value": "@item().DN_TARGET",
+																"type": "Expression"
+															},
+															"serverName": {
+																"value": "@variables('EDWHServerName')",
 																"type": "Expression"
 															}
 														}
@@ -860,7 +1036,13 @@
 												},
 												"linkedServiceName": {
 													"referenceName": "CSP_EDWH_LINKED_SERVER",
-													"type": "LinkedServiceReference"
+													"type": "LinkedServiceReference",
+													"parameters": {
+														"ServerName": {
+															"value": "@variables('EDWHServerName')",
+															"type": "Expression"
+														}
+													}
 												}
 											},
 											{
@@ -903,7 +1085,13 @@
 												},
 												"linkedServiceName": {
 													"referenceName": "CSP_EDWH_LINKED_SERVER",
-													"type": "LinkedServiceReference"
+													"type": "LinkedServiceReference",
+													"parameters": {
+														"ServerName": {
+															"value": "@variables('EDWHServerName')",
+															"type": "Expression"
+														}
+													}
 												}
 											},
 											{
@@ -933,16 +1121,21 @@
 															},
 															"pDN_SOURCE": {
 																"value": {
-																	"value": "@pipeline().parameters.DN_SOURCE",
+																	"value": "@variables('DN_SOURCE')",
 																	"type": "Expression"
 																}
 															}
 														}
 													},
 													"dataset": {
-														"referenceName": "EDWH_DB",
+														"referenceName": "CSP_INCREMENTAL_LOAD",
 														"type": "DatasetReference",
-														"parameters": {}
+														"parameters": {
+															"serverName": {
+																"value": "@variables('EDWHServerName')",
+																"type": "Expression"
+															}
+														}
 													}
 												}
 											}
@@ -964,7 +1157,7 @@
 													"source": {
 														"type": "SqlServerSource",
 														"sqlReaderQuery": {
-															"value": "select * from @{item().DN_TABLE_NAME} \n",
+															"value": "@concat('select * from ',item().DN_TABLE_NAME,item().DN_WHERE_CONDITION)\n",
 															"type": "Expression"
 														}
 													},
@@ -982,9 +1175,14 @@
 												},
 												"inputs": [
 													{
-														"referenceName": "DS_L0_TABLE_ROL_PROD",
+														"referenceName": "DS_L0_TABLE_ROL",
 														"type": "DatasetReference",
-														"parameters": {}
+														"parameters": {
+															"serverName": {
+																"value": "@variables('ROLServerName')",
+																"type": "Expression"
+															}
+														}
 													}
 												],
 												"outputs": [
@@ -994,6 +1192,10 @@
 														"parameters": {
 															"DN_TARGET": {
 																"value": "@item().DN_TARGET",
+																"type": "Expression"
+															},
+															"serverName": {
+																"value": "@variables('EDWHServerName')",
 																"type": "Expression"
 															}
 														}
@@ -1065,7 +1267,13 @@
 												},
 												"linkedServiceName": {
 													"referenceName": "CSP_EDWH_LINKED_SERVER",
-													"type": "LinkedServiceReference"
+													"type": "LinkedServiceReference",
+													"parameters": {
+														"ServerName": {
+															"value": "@variables('EDWHServerName')",
+															"type": "Expression"
+														}
+													}
 												}
 											},
 											{
@@ -1108,7 +1316,13 @@
 												},
 												"linkedServiceName": {
 													"referenceName": "CSP_EDWH_LINKED_SERVER",
-													"type": "LinkedServiceReference"
+													"type": "LinkedServiceReference",
+													"parameters": {
+														"ServerName": {
+															"value": "@variables('EDWHServerName')",
+															"type": "Expression"
+														}
+													}
 												}
 											}
 										]
@@ -1120,7 +1334,20 @@
 					{
 						"name": "GetExecParam",
 						"type": "Lookup",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Set EDWH Server Name",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Set ROL Server Name",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -1137,7 +1364,7 @@
 									"DN_SOURCE": {
 										"type": "String",
 										"value": {
-											"value": "@pipeline().parameters.DN_SOURCE",
+											"value": "@variables('DN_SOURCE')",
 											"type": "Expression"
 										}
 									}
@@ -1146,587 +1373,83 @@
 							"dataset": {
 								"referenceName": "CSP_INCREMENTAL_LOAD",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"serverName": {
+										"value": "@variables('EDWHServerName')",
+										"type": "Expression"
+									}
+								}
 							},
 							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "Set EDWH Server Name",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "EDWHServerName",
+							"value": {
+								"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('EDWH_SVIL_Server_Name'),variables('EDWH_PROD_Server_Name'))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set ROL Server Name",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "ROLServerName",
+							"value": {
+								"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('ROL_SVIL_Server_Name'),variables('ROL_PROD_Server_Name'))",
+								"type": "Expression"
+							}
 						}
 					}
 				],
 				"parameters": {
-					"DN_SOURCE": {
+					"EXEC_ENV": {
 						"type": "string",
+						"defaultValue": "svil"
+					}
+				},
+				"variables": {
+					"DN_SOURCE": {
+						"type": "String",
 						"defaultValue": "ROL"
+					},
+					"ROLServerName": {
+						"type": "String"
+					},
+					"EDWH_PROD_Server_Name": {
+						"type": "String",
+						"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
+					},
+					"EDWH_SVIL_Server_Name": {
+						"type": "String",
+						"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
+					},
+					"ROL_PROD_Server_Name": {
+						"type": "String",
+						"defaultValue": "192.168.15.16"
+					},
+					"ROL_SVIL_Server_Name": {
+						"type": "String",
+						"defaultValue": "STRSRV-SQLALFAB\\ALFA2016"
+					},
+					"EDWHServerName": {
+						"type": "String"
 					}
 				},
 				"annotations": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/CSP_INCREMENTAL_LOAD')]",
-				"[concat(variables('factoryId'), '/datasets/EDWH_DB')]",
 				"[concat(variables('factoryId'), '/datasets/DS_L0_TABLE_ROL')]",
 				"[concat(variables('factoryId'), '/datasets/EDWH_LOAD_L0')]",
-				"[concat(variables('factoryId'), '/linkedServices/CSP_EDWH_LINKED_SERVER')]",
-				"[concat(variables('factoryId'), '/datasets/DS_L0_TABLE_ROL_PROD')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LOAD_ROL_L0_PROD')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Loop_Load_Tables",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "GetExecParam",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('GetExecParam').output.value",
-								"type": "Expression"
-							},
-							"isSequential": true,
-							"activities": [
-								{
-									"name": "SET_START",
-									"description": "Inserisce un'occorrenza sulla tabella di LOG impostando DT_START con getdate()",
-									"type": "Lookup",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "AzureSqlSource",
-											"sqlReaderStoredProcedureName": "[[dbo].[MD_ERROR_SET_START]",
-											"storedProcedureParameters": {
-												"pDN_STEP": {
-													"type": "String",
-													"value": {
-														"value": "@concat('LOAD_' ,pipeline().parameters.DN_SOURCE,'_',item().DN_TABLE_NAME)",
-														"type": "Expression"
-													}
-												},
-												"pDN_STEP_DETAIL": {
-													"type": "String",
-													"value": {
-														"value": "@item().DN_TARGET",
-														"type": "Expression"
-													}
-												}
-											}
-										},
-										"dataset": {
-											"referenceName": "EDWH_PROD_DB",
-											"type": "DatasetReference",
-											"parameters": {}
-										}
-									}
-								},
-								{
-									"name": "LOAD_ROL_TARGET",
-									"description": "Processo di caricamento dei dati sulle tabelle di staging (L0) del source ROL",
-									"type": "IfCondition",
-									"dependsOn": [
-										{
-											"activity": "SET_START",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"userProperties": [],
-									"typeProperties": {
-										"expression": {
-											"value": "@equals(item().DN_RIF_COLUMN,'ALL')",
-											"type": "Expression"
-										},
-										"ifFalseActivities": [
-											{
-												"name": "LOAD_ROL_TARGET_TABLES",
-												"type": "Copy",
-												"dependsOn": [
-													{
-														"activity": "GET_REF_DATE",
-														"dependencyConditions": [
-															"Succeeded"
-														]
-													}
-												],
-												"policy": {
-													"timeout": "7.00:00:00",
-													"retry": 0,
-													"retryIntervalInSeconds": 30,
-													"secureOutput": false,
-													"secureInput": false
-												},
-												"userProperties": [],
-												"typeProperties": {
-													"source": {
-														"type": "SqlServerSource",
-														"sqlReaderQuery": {
-															"value": "select * from @{item().DN_TABLE_NAME} where @{item().DN_RIF_COLUMN} > \n '@{activity('GET_REF_DATE').output.firstRow.DT_START}'",
-															"type": "Expression"
-														}
-													},
-													"sink": {
-														"type": "AzureSqlSink",
-														"preCopyScript": {
-															"value": "delete from @{item().DN_TARGET}",
-															"type": "Expression"
-														},
-														"tableOption": "autoCreate",
-														"disableMetricsCollection": false
-													},
-													"enableStaging": false,
-													"parallelCopies": 1
-												},
-												"inputs": [
-													{
-														"referenceName": "DS_L0_TABLE_ROL_PROD",
-														"type": "DatasetReference",
-														"parameters": {}
-													}
-												],
-												"outputs": [
-													{
-														"referenceName": "EDWH_LOAD_L0_PROD",
-														"type": "DatasetReference",
-														"parameters": {
-															"DN_TARGET": "@item().DN_TARGET"
-														}
-													}
-												]
-											},
-											{
-												"name": "SET_END_OK",
-												"type": "SqlServerStoredProcedure",
-												"dependsOn": [
-													{
-														"activity": "LOAD_ROL_TARGET_TABLES",
-														"dependencyConditions": [
-															"Succeeded"
-														]
-													}
-												],
-												"policy": {
-													"timeout": "7.00:00:00",
-													"retry": 0,
-													"retryIntervalInSeconds": 30,
-													"secureOutput": false,
-													"secureInput": false
-												},
-												"userProperties": [],
-												"typeProperties": {
-													"storedProcedureName": "[[dbo].[MD_ERROR_END_OK]",
-													"storedProcedureParameters": {
-														"pID_RUN": {
-															"value": {
-																"value": "@activity('SET_START').output.FirstRow.ID_RUN",
-																"type": "Expression"
-															},
-															"type": "int"
-														},
-														"pROWS_READ": {
-															"value": {
-																"value": "@activity('LOAD_ROL_TARGET_TABLES').output.rowsRead",
-																"type": "Expression"
-															},
-															"type": "int"
-														},
-														"pROWS_WRITTEN": {
-															"value": {
-																"value": "@activity('LOAD_ROL_TARGET_TABLES').output.rowsCopied",
-																"type": "Expression"
-															},
-															"type": "int"
-														},
-														"pCOPY_DURATION": {
-															"value": {
-																"value": "@activity('LOAD_ROL_TARGET_TABLES').output.copyDuration",
-																"type": "Expression"
-															},
-															"type": "int"
-														},
-														"pDATA_WRITTEN": {
-															"value": {
-																"value": "@activity('LOAD_ROL_TARGET_TABLES').output.dataWritten",
-																"type": "Expression"
-															},
-															"type": "Int64"
-														},
-														"pDESCR": {
-															"value": null,
-															"type": "String"
-														}
-													}
-												},
-												"linkedServiceName": {
-													"referenceName": "CSP_EDWH_PROD_LINKED_SERVER",
-													"type": "LinkedServiceReference"
-												}
-											},
-											{
-												"name": "SET_END_KO",
-												"type": "SqlServerStoredProcedure",
-												"dependsOn": [
-													{
-														"activity": "LOAD_ROL_TARGET_TABLES",
-														"dependencyConditions": [
-															"Failed"
-														]
-													}
-												],
-												"policy": {
-													"timeout": "7.00:00:00",
-													"retry": 0,
-													"retryIntervalInSeconds": 30,
-													"secureOutput": false,
-													"secureInput": false
-												},
-												"userProperties": [],
-												"typeProperties": {
-													"storedProcedureName": "[[dbo].[MD_ERROR_END_KO]",
-													"storedProcedureParameters": {
-														"pID_RUN": {
-															"value": {
-																"value": "@activity('SET_START').output.FirstRow.ID_RUN",
-																"type": "Expression"
-															},
-															"type": "int"
-														},
-														"pErrorMessage": {
-															"value": {
-																"value": "@activity('LOAD_ROL_TARGET_TABLES').output.errors[0].message",
-																"type": "Expression"
-															},
-															"type": "string"
-														}
-													}
-												},
-												"linkedServiceName": {
-													"referenceName": "CSP_EDWH_PROD_LINKED_SERVER",
-													"type": "LinkedServiceReference"
-												}
-											},
-											{
-												"name": "GET_REF_DATE",
-												"description": "Estrae dal DB la data di riferimento per l'estrazione del passo successivo",
-												"type": "Lookup",
-												"dependsOn": [],
-												"policy": {
-													"timeout": "7.00:00:00",
-													"retry": 0,
-													"retryIntervalInSeconds": 30,
-													"secureOutput": false,
-													"secureInput": false
-												},
-												"userProperties": [],
-												"typeProperties": {
-													"source": {
-														"type": "AzureSqlSource",
-														"sqlReaderStoredProcedureName": "[[dbo].[MD_GET_START_DATE]",
-														"storedProcedureParameters": {
-															"pDN_TABLE_NAME": {
-																"type": "String",
-																"value": {
-																	"value": "@item().DN_TABLE_NAME",
-																	"type": "Expression"
-																}
-															},
-															"pDN_SOURCE": {
-																"value": {
-																	"value": "@pipeline().parameters.DN_SOURCE",
-																	"type": "Expression"
-																}
-															}
-														}
-													},
-													"dataset": {
-														"referenceName": "EDWH_PROD_DB",
-														"type": "DatasetReference",
-														"parameters": {}
-													}
-												}
-											}
-										],
-										"ifTrueActivities": [
-											{
-												"name": "LOAD_ROL_ALL_TARGET_TABLES",
-												"type": "Copy",
-												"dependsOn": [],
-												"policy": {
-													"timeout": "7.00:00:00",
-													"retry": 0,
-													"retryIntervalInSeconds": 30,
-													"secureOutput": false,
-													"secureInput": false
-												},
-												"userProperties": [],
-												"typeProperties": {
-													"source": {
-														"type": "SqlServerSource",
-														"sqlReaderQuery": {
-															"value": "select * from @{item().DN_TABLE_NAME} \n",
-															"type": "Expression"
-														}
-													},
-													"sink": {
-														"type": "AzureSqlSink",
-														"preCopyScript": {
-															"value": "delete from @{item().DN_TARGET}",
-															"type": "Expression"
-														},
-														"tableOption": "autoCreate",
-														"disableMetricsCollection": false
-													},
-													"enableStaging": false,
-													"parallelCopies": 1
-												},
-												"inputs": [
-													{
-														"referenceName": "DS_L0_TABLE_ROL_PROD",
-														"type": "DatasetReference",
-														"parameters": {}
-													}
-												],
-												"outputs": [
-													{
-														"referenceName": "EDWH_LOAD_L0_PROD",
-														"type": "DatasetReference",
-														"parameters": {
-															"DN_TARGET": "@item().DN_TARGET"
-														}
-													}
-												]
-											},
-											{
-												"name": "SET_END_OK_ALL",
-												"type": "SqlServerStoredProcedure",
-												"dependsOn": [
-													{
-														"activity": "LOAD_ROL_ALL_TARGET_TABLES",
-														"dependencyConditions": [
-															"Succeeded"
-														]
-													}
-												],
-												"policy": {
-													"timeout": "7.00:00:00",
-													"retry": 0,
-													"retryIntervalInSeconds": 30,
-													"secureOutput": false,
-													"secureInput": false
-												},
-												"userProperties": [],
-												"typeProperties": {
-													"storedProcedureName": "[[dbo].[MD_ERROR_END_OK]",
-													"storedProcedureParameters": {
-														"pID_RUN": {
-															"value": {
-																"value": "@activity('SET_START').output.FirstRow.ID_RUN",
-																"type": "Expression"
-															},
-															"type": "int"
-														},
-														"pROWS_READ": {
-															"value": {
-																"value": "@activity('LOAD_ROL_ALL_TARGET_TABLES').output.rowsRead",
-																"type": "Expression"
-															},
-															"type": "int"
-														},
-														"pROWS_WRITTEN": {
-															"value": {
-																"value": "@activity('LOAD_ROL_ALL_TARGET_TABLES').output.rowsCopied",
-																"type": "Expression"
-															},
-															"type": "int"
-														},
-														"pCOPY_DURATION": {
-															"value": {
-																"value": "@activity('LOAD_ROL_ALL_TARGET_TABLES').output.copyDuration",
-																"type": "Expression"
-															},
-															"type": "int"
-														},
-														"pDATA_WRITTEN": {
-															"value": {
-																"value": "@activity('LOAD_ROL_ALL_TARGET_TABLES').output.dataWritten",
-																"type": "Expression"
-															},
-															"type": "Int64"
-														},
-														"pDESCR": {
-															"value": null,
-															"type": "String"
-														}
-													}
-												},
-												"linkedServiceName": {
-													"referenceName": "CSP_EDWH_PROD_LINKED_SERVER",
-													"type": "LinkedServiceReference"
-												}
-											},
-											{
-												"name": "SET_END_KO_ALL",
-												"type": "SqlServerStoredProcedure",
-												"dependsOn": [
-													{
-														"activity": "LOAD_ROL_ALL_TARGET_TABLES",
-														"dependencyConditions": [
-															"Failed"
-														]
-													}
-												],
-												"policy": {
-													"timeout": "7.00:00:00",
-													"retry": 0,
-													"retryIntervalInSeconds": 30,
-													"secureOutput": false,
-													"secureInput": false
-												},
-												"userProperties": [],
-												"typeProperties": {
-													"storedProcedureName": "[[dbo].[MD_ERROR_END_KO]",
-													"storedProcedureParameters": {
-														"pID_RUN": {
-															"value": {
-																"value": "@activity('SET_START').output.FirstRow.ID_RUN",
-																"type": "Expression"
-															},
-															"type": "int"
-														},
-														"pErrorMessage": {
-															"value": {
-																"value": "@activity('LOAD_ROL_ALL_TARGET_TABLES').output.errors[0].message",
-																"type": "Expression"
-															},
-															"type": "string"
-														}
-													}
-												},
-												"linkedServiceName": {
-													"referenceName": "CSP_EDWH_PROD_LINKED_SERVER",
-													"type": "LinkedServiceReference"
-												}
-											}
-										]
-									}
-								}
-							]
-						}
-					},
-					{
-						"name": "GetExecParam",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderStoredProcedureName": "[[dbo].[MD_LOAD_L0_PARAMS]",
-								"storedProcedureParameters": {
-									"DN_SOURCE": {
-										"type": "String",
-										"value": {
-											"value": "@pipeline().parameters.DN_SOURCE",
-											"type": "Expression"
-										}
-									}
-								}
-							},
-							"dataset": {
-								"referenceName": "CSP_PROD_INCREMENTAL_LOAD",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
-					}
-				],
-				"parameters": {
-					"DN_SOURCE": {
-						"type": "string",
-						"defaultValue": "ROL"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CSP_PROD_INCREMENTAL_LOAD')]",
-				"[concat(variables('factoryId'), '/datasets/EDWH_PROD_DB')]",
-				"[concat(variables('factoryId'), '/datasets/DS_L0_TABLE_ROL_PROD')]",
-				"[concat(variables('factoryId'), '/datasets/EDWH_LOAD_L0_PROD')]",
-				"[concat(variables('factoryId'), '/linkedServices/CSP_EDWH_PROD_LINKED_SERVER')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AS_SQL_SERVER_DATA_SET')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AS_SQL_SERVER_LIKED_SERVER",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [],
-				"typeProperties": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AS_SQL_SERVER_LIKED_SERVER')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CSP_EDWH_DATA_SET')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CSP_EDWH_LINKED_SERVER",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"ImproveTableName": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": {
-						"value": "@dataset().ImproveTableName",
-						"type": "Expression"
-					},
-					"table": {
-						"value": "@{pipeline().parameters.DN_OUT_TABLE_NAME}",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/CSP_EDWH_LINKED_SERVER')]"
 			]
 		},
@@ -1737,118 +1460,35 @@
 			"properties": {
 				"linkedServiceName": {
 					"referenceName": "CSP_EDWH_LINKED_SERVER",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "TableName",
-						"type": "varchar"
-					},
-					{
-						"name": "WatermarkValue",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ServerName": {
+							"value": "@dataset().serverName",
+							"type": "Expression"
+						}
 					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "watermarktable"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CSP_EDWH_LINKED_SERVER')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CSP_PROD_INCREMENTAL_LOAD')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CSP_EDWH_PROD_LINKED_SERVER",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "TableName",
-						"type": "varchar"
-					},
-					{
-						"name": "WatermarkValue",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "watermarktable"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CSP_EDWH_PROD_LINKED_SERVER')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_L0_INCREMENTAL_LOAD_TABLE')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CSP_EDWH_LINKED_SERVER",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "DN_SOURCE_TABLE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DT_LAST_LOAD",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "MD_IMPROVE_STAG_TABLES"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CSP_EDWH_LINKED_SERVER')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_L0_TABLE_EDWH')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CSP_EDWH_LINKED_SERVER",
-					"type": "LinkedServiceReference"
 				},
 				"parameters": {
-					"ImproveTableName": {
-						"type": "string"
+					"serverName": {
+						"type": "string",
+						"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
 					}
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": {
-						"value": "@dataset().ImproveTableName",
-						"type": "Expression"
+				"schema": [
+					{
+						"name": "TableName",
+						"type": "varchar"
+					},
+					{
+						"name": "WatermarkValue",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
 					}
-				}
+				],
+				"typeProperties": {}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/CSP_EDWH_LINKED_SERVER')]"
@@ -1861,7 +1501,19 @@
 			"properties": {
 				"linkedServiceName": {
 					"referenceName": "ImproveSource",
-					"type": "LinkedServiceReference"
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ServerName": {
+							"value": "@dataset().serverName",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"serverName": {
+						"type": "string",
+						"defaultValue": "tcp:improve-beta-sql-srv.database.windows.net, 1433"
+					}
 				},
 				"annotations": [
 					"LOAD L0 TABLE FROM IMPROVE"
@@ -1881,7 +1533,19 @@
 			"properties": {
 				"linkedServiceName": {
 					"referenceName": "LS_CSPTO",
-					"type": "LinkedServiceReference"
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ServerName": {
+							"value": "@dataset().serverName",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"serverName": {
+						"type": "string",
+						"defaultValue": "STRSRV-SQLALFAB\\ALFA2016"
+					}
 				},
 				"annotations": [],
 				"type": "SqlServerTable",
@@ -1893,52 +1557,25 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DS_L0_TABLE_ROL_PROD')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_CSPTO_PROD",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [],
-				"typeProperties": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_CSPTO_PROD')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/EDWH_DB')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CSP_EDWH_LINKED_SERVER",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CSP_EDWH_LINKED_SERVER')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/EDWH_LOAD_L0')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
 					"referenceName": "CSP_EDWH_LINKED_SERVER",
-					"type": "LinkedServiceReference"
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ServerName": {
+							"value": "@dataset().serverName",
+							"type": "Expression"
+						}
+					}
 				},
 				"parameters": {
 					"DN_TARGET": {
+						"type": "string"
+					},
+					"serverName": {
 						"type": "string"
 					}
 				},
@@ -2012,110 +1649,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/CSP_EDWH_LINKED_SERVER')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/EDWH_LOAD_L0_PROD')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CSP_EDWH_PROD_LINKED_SERVER",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"DN_TARGET": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "Id",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "TenantId",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "IsActive",
-						"type": "bit"
-					},
-					{
-						"name": "LastModificationTime",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "LastModifierUserId",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "CreationTime",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "CreatorUserId",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "EmployeeId",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "TimeFlowId",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "SignedByEmployee",
-						"type": "bit"
-					},
-					{
-						"name": "SignedByEmployeeInDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": {
-						"value": "@dataset().DN_TARGET",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CSP_EDWH_PROD_LINKED_SERVER')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/EDWH_PROD_DB')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CSP_EDWH_PROD_LINKED_SERVER",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CSP_EDWH_PROD_LINKED_SERVER')]"
 			]
 		},
 		{
@@ -2126,27 +1659,35 @@
 				"annotations": [],
 				"type": "SqlServer",
 				"typeProperties": {
-					"connectionString": "[parameters('AS_SQL_SERVER_LIKED_SERVER_connectionString')]",
-					"userName": "[parameters('AS_SQL_SERVER_LIKED_SERVER_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('AS_SQL_SERVER_LIKED_SERVER_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "AS-PC-IR",
-					"type": "IntegrationRuntimeReference"
+					"connectionString": "[parameters('AS_SQL_SERVER_LIKED_SERVER_connectionString')]"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/AS-PC-IR')]"
-			]
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureKeyVault1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/CSP_EDWH_LINKED_SERVER')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"parameters": {
+					"ServerName": {
+						"type": "String",
+						"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
+					}
+				},
 				"annotations": [],
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
@@ -2173,6 +1714,12 @@
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"parameters": {
+					"ServerName": {
+						"type": "string",
+						"defaultValue": "tcp:improve-beta-sql-srv.database.windows.net, 1433"
+					}
+				},
 				"annotations": [],
 				"type": "SqlServer",
 				"typeProperties": {
@@ -2186,6 +1733,12 @@
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"parameters": {
+					"ServerName": {
+						"type": "String",
+						"defaultValue": "STRSRV-SQLALFAB\\ALFA2016"
+					}
+				},
 				"annotations": [],
 				"type": "SqlServer",
 				"typeProperties": {
@@ -2208,12 +1761,7 @@
 				"annotations": [],
 				"type": "SqlServer",
 				"typeProperties": {
-					"connectionString": "[parameters('LS_CSPTO_PROD_connectionString')]",
-					"userName": "[parameters('LS_CSPTO_PROD_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('LS_CSPTO_PROD_password')]"
-					}
+					"connectionString": "[parameters('LS_CSPTO_PROD_connectionString')]"
 				},
 				"connectVia": {
 					"referenceName": "IR-SOURCE-CSPTO-PROD",
