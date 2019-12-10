@@ -34,6 +34,10 @@
 		"AzureKeyVault1_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://EDWH-PASSWORD.vault.azure.net/"
+		},
+		"trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV": {
+			"type": "string",
+			"defaultValue": "prod"
 		}
 	},
 	"variables": {
@@ -1820,6 +1824,38 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger1')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "LOAD_ROL_L0",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"EXEC_ENV": "[parameters('trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 1,
+						"startTime": "2019-12-10T15:55:00.000Z",
+						"timeZone": "UTC"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/LOAD_ROL_L0')]"
+			]
 		}
 	]
 }

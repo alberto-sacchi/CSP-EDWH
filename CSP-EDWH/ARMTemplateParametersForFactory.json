@@ -25,6 +25,9 @@
 		},
 		"AzureKeyVault1_properties_typeProperties_baseUrl": {
 			"value": "https://EDWH-PASSWORD.vault.azure.net/"
+		},
+		"trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV": {
+			"value": "prod"
 		}
 	}
 }
