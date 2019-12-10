@@ -126,7 +126,10 @@
 										"inputs": [
 											{
 												"referenceName": "DS_L0_TABLE_IMPROVE",
-												"type": "DatasetReference"
+												"type": "DatasetReference",
+												"parameters": {
+													"serverName": "tcp:improve-beta-sql-srv.database.windows.net, 1433"
+												}
 											}
 										],
 										"outputs": [
@@ -136,6 +139,10 @@
 												"parameters": {
 													"DN_TARGET": {
 														"value": "@item().DN_TARGET",
+														"type": "Expression"
+													},
+													"serverName": {
+														"value": "@variables('EDWHServer_Name')",
 														"type": "Expression"
 													}
 												}
