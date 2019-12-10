@@ -23,7 +23,7 @@
 				"timeZone": "UTC",
 				"schedule": {
 					"minutes": [
-						5
+						10
 					],
 					"hours": [
 						16
