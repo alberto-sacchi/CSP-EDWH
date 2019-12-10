@@ -1,0 +1,27 @@
+{
+	"name": "trigger1",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "LOAD_ROL_L0",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"EXEC_ENV": "prod"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 1,
+				"startTime": "2019-12-10T15:52:00.000Z",
+				"timeZone": "UTC"
+			}
+		}
+	}
+}
