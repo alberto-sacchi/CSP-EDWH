@@ -617,15 +617,15 @@
 			},
 			"EDWH_SVIL_Server_Name": {
 				"type": "String",
-				"defaultValue": "tcp:edwh-prod-sql-srv.database.windows.net,1433"
+				"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
 			},
 			"ROL_PROD_Server_Name": {
 				"type": "String",
-				"defaultValue": "DB02"
+				"defaultValue": "192.168.15.16"
 			},
 			"ROL_SVIL_Server_Name": {
 				"type": "String",
-				"defaultValue": "192.168.15.16"
+				"defaultValue": "STRSRV-SQLALFAB\\ALFA2016"
 			},
 			"EDWHServerName": {
 				"type": "String"
