@@ -613,7 +613,7 @@
 			},
 			"EDWH_PROD_Server_Name": {
 				"type": "String",
-				"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
+				"defaultValue": "tcp:edwh-prod-sql-srv.database.windows.net,1433"
 			},
 			"EDWH_SVIL_Server_Name": {
 				"type": "String",
