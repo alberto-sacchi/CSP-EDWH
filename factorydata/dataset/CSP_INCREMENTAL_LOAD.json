@@ -3,7 +3,19 @@
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "CSP_EDWH_LINKED_SERVER",
-			"type": "LinkedServiceReference"
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"ServerName": {
+					"value": "@dataset().serverName",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"serverName": {
+				"type": "string",
+				"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
+			}
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
@@ -18,10 +30,6 @@
 				"precision": 23,
 				"scale": 3
 			}
-		],
-		"typeProperties": {
-			"schema": "dbo",
-			"table": "watermarktable"
-		}
+		]
 	}
 }

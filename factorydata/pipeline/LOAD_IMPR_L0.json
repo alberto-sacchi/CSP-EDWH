@@ -41,7 +41,7 @@
 										"pDN_STEP": {
 											"type": "String",
 											"value": {
-												"value": "@concat('LOAD_' ,pipeline().parameters.DN_SOURCE,'_',item().DN_TABLE_NAME)",
+												"value": "@concat('LOAD_' ,variables('DN_SOURCE'),'_',item().DN_TABLE_NAME)",
 												"type": "Expression"
 											}
 										},
@@ -55,8 +55,14 @@
 									}
 								},
 								"dataset": {
-									"referenceName": "EDWH_DB",
-									"type": "DatasetReference"
+									"referenceName": "CSP_INCREMENTAL_LOAD",
+									"type": "DatasetReference",
+									"parameters": {
+										"serverName": {
+											"value": "@variables('EDWHServer_Name')",
+											"type": "Expression"
+										}
+									}
 								}
 							}
 						},
@@ -201,7 +207,13 @@
 										},
 										"linkedServiceName": {
 											"referenceName": "CSP_EDWH_LINKED_SERVER",
-											"type": "LinkedServiceReference"
+											"type": "LinkedServiceReference",
+											"parameters": {
+												"ServerName": {
+													"value": "@variables('EDWHServer_Name')",
+													"type": "Expression"
+												}
+											}
 										}
 									},
 									{
@@ -244,7 +256,13 @@
 										},
 										"linkedServiceName": {
 											"referenceName": "CSP_EDWH_LINKED_SERVER",
-											"type": "LinkedServiceReference"
+											"type": "LinkedServiceReference",
+											"parameters": {
+												"ServerName": {
+													"value": "@variables('EDWHServer_Name')",
+													"type": "Expression"
+												}
+											}
 										}
 									},
 									{
@@ -274,15 +292,21 @@
 													},
 													"pDN_SOURCE": {
 														"value": {
-															"value": "@pipeline().parameters.DN_SOURCE",
+															"value": "@variables('DN_SOURCE')",
 															"type": "Expression"
 														}
 													}
 												}
 											},
 											"dataset": {
-												"referenceName": "EDWH_DB",
-												"type": "DatasetReference"
+												"referenceName": "CSP_INCREMENTAL_LOAD",
+												"type": "DatasetReference",
+												"parameters": {
+													"serverName": {
+														"value": "@variables('EDWHServer_Name')",
+														"type": "Expression"
+													}
+												}
 											}
 										}
 									}
@@ -323,7 +347,13 @@
 										"inputs": [
 											{
 												"referenceName": "DS_L0_TABLE_IMPROVE",
-												"type": "DatasetReference"
+												"type": "DatasetReference",
+												"parameters": {
+													"serverName": {
+														"value": "@variables('IMPRServer_Name')",
+														"type": "Expression"
+													}
+												}
 											}
 										],
 										"outputs": [
@@ -333,6 +363,10 @@
 												"parameters": {
 													"DN_TARGET": {
 														"value": "@item().DN_TARGET",
+														"type": "Expression"
+													},
+													"serverName": {
+														"value": "@variables('EDWHServer_Name')",
 														"type": "Expression"
 													}
 												}
@@ -404,7 +438,13 @@
 										},
 										"linkedServiceName": {
 											"referenceName": "CSP_EDWH_LINKED_SERVER",
-											"type": "LinkedServiceReference"
+											"type": "LinkedServiceReference",
+											"parameters": {
+												"ServerName": {
+													"value": "@variables('EDWHServer_Name')",
+													"type": "Expression"
+												}
+											}
 										}
 									},
 									{
@@ -447,7 +487,13 @@
 										},
 										"linkedServiceName": {
 											"referenceName": "CSP_EDWH_LINKED_SERVER",
-											"type": "LinkedServiceReference"
+											"type": "LinkedServiceReference",
+											"parameters": {
+												"ServerName": {
+													"value": "@variables('EDWHServer_Name')",
+													"type": "Expression"
+												}
+											}
 										}
 									}
 								]
@@ -459,7 +505,20 @@
 			{
 				"name": "GetExecParam",
 				"type": "Lookup",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set IMPR Server Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Set EDWH Server Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -476,7 +535,7 @@
 							"DN_SOURCE": {
 								"type": "String",
 								"value": {
-									"value": "@pipeline().parameters.DN_SOURCE",
+									"value": "@variables('DN_SOURCE')",
 									"type": "Expression"
 								}
 							}
@@ -484,16 +543,76 @@
 					},
 					"dataset": {
 						"referenceName": "CSP_INCREMENTAL_LOAD",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"serverName": {
+								"value": "@variables('EDWHServer_Name')",
+								"type": "Expression"
+							}
+						}
 					},
 					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Set EDWH Server Name",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "EDWHServer_Name",
+					"value": {
+						"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('EDWH_SVIL_Server_Name'),variables('EDWH_PROD_Server_Name'))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set IMPR Server Name",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "IMPRServer_Name",
+					"value": {
+						"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('IMPR_SVIL_Server_Name'),variables('IMPR_PROD_Server_Name'))",
+						"type": "Expression"
+					}
 				}
 			}
 		],
 		"parameters": {
-			"DN_SOURCE": {
+			"EXEC_ENV": {
 				"type": "string",
+				"defaultValue": "svil"
+			}
+		},
+		"variables": {
+			"EDWHServer_Name": {
+				"type": "String"
+			},
+			"DN_SOURCE": {
+				"type": "String",
 				"defaultValue": "IMPR"
+			},
+			"EDWH_PROD_Server_Name": {
+				"type": "String",
+				"defaultValue": "tcp:edwh-prod-sql-srv.database.windows.net,1433"
+			},
+			"EDWH_SVIL_Server_Name": {
+				"type": "String",
+				"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
+			},
+			"IMPR_SVIL_Server_Name": {
+				"type": "String",
+				"defaultValue": "tcp:improve-beta-sql-srv.database.windows.net, 1433"
+			},
+			"IMPR_PROD_Server_Name": {
+				"type": "String",
+				"defaultValue": "tcp:improve-beta-sql-srv.database.windows.net, 1433"
+			},
+			"IMPRServer_Name": {
+				"type": "String"
 			}
 		},
 		"annotations": []

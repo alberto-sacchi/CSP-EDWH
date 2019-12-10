@@ -2,11 +2,17 @@
 	"name": "LS_CSPTO",
 	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
+		"parameters": {
+			"ServerName": {
+				"type": "String",
+				"defaultValue": "STRSRV-SQLALFAB\\ALFA2016"
+			}
+		},
 		"annotations": [],
 		"type": "SqlServer",
 		"typeProperties": {
-			"connectionString": "integrated security=False;data source=192.168.15.16;initial catalog=SISime_cspto;user id=csptostanco",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJhNDVhNmZhMy04ZTljLTQ1YTktYjAwMi01MzMxNzZhNDZkMTYiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"connectionString": "integrated security=False;data source=@{linkedService().ServerName};initial catalog=SISime_cspto;user id=csptostanco",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJkZWI0NWZhYi1kMDQxLTQyZGEtYTE3NS1jMDc2OTM4NDIxNzMiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "IR-SOURCE-CSPTO",

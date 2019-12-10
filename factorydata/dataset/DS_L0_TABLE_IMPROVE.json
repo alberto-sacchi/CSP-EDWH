@@ -3,7 +3,19 @@
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ImproveSource",
-			"type": "LinkedServiceReference"
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"ServerName": {
+					"value": "@dataset().serverName",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"serverName": {
+				"type": "string",
+				"defaultValue": "tcp:improve-beta-sql-srv.database.windows.net, 1433"
+			}
 		},
 		"annotations": [
 			"LOAD L0 TABLE FROM IMPROVE"

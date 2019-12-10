@@ -42,7 +42,7 @@
 										"pDN_STEP": {
 											"type": "String",
 											"value": {
-												"value": "@concat('LOAD_' ,pipeline().parameters.DN_SOURCE,'_',item().DN_TABLE_NAME)",
+												"value": "@concat('LOAD_' ,variables('DN_SOURCE'),'_',item().DN_TABLE_NAME)",
 												"type": "Expression"
 											}
 										},
@@ -52,12 +52,22 @@
 												"value": "@item().DN_TARGET",
 												"type": "Expression"
 											}
+										},
+										"pDN_SOURCE": {
+											"type": "String",
+											"value": null
 										}
 									}
 								},
 								"dataset": {
-									"referenceName": "EDWH_DB",
-									"type": "DatasetReference"
+									"referenceName": "CSP_INCREMENTAL_LOAD",
+									"type": "DatasetReference",
+									"parameters": {
+										"serverName": {
+											"value": "@variables('EDWHServerName')",
+											"type": "Expression"
+										}
+									}
 								}
 							}
 						},
@@ -103,7 +113,7 @@
 											"source": {
 												"type": "SqlServerSource",
 												"sqlReaderQuery": {
-													"value": "select * from @{item().DN_TABLE_NAME} where @{item().DN_RIF_COLUMN} > \n '@{activity('GET_REF_DATE').output.firstRow.DT_START}'",
+													"value": "@concat('select * from ',item().DN_TABLE_NAME, ' where ' , item().DN_RIF_COLUMN, ' > ''', activity('GET_REF_DATE').output.firstRow.DT_START,'''',item().DN_WHERE_CONDITION)",
 													"type": "Expression"
 												}
 											},
@@ -122,7 +132,13 @@
 										"inputs": [
 											{
 												"referenceName": "DS_L0_TABLE_ROL",
-												"type": "DatasetReference"
+												"type": "DatasetReference",
+												"parameters": {
+													"serverName": {
+														"value": "@variables('ROLServerName')",
+														"type": "Expression"
+													}
+												}
 											}
 										],
 										"outputs": [
@@ -132,6 +148,10 @@
 												"parameters": {
 													"DN_TARGET": {
 														"value": "@item().DN_TARGET",
+														"type": "Expression"
+													},
+													"serverName": {
+														"value": "@variables('EDWHServerName')",
 														"type": "Expression"
 													}
 												}
@@ -203,7 +223,13 @@
 										},
 										"linkedServiceName": {
 											"referenceName": "CSP_EDWH_LINKED_SERVER",
-											"type": "LinkedServiceReference"
+											"type": "LinkedServiceReference",
+											"parameters": {
+												"ServerName": {
+													"value": "@variables('EDWHServerName')",
+													"type": "Expression"
+												}
+											}
 										}
 									},
 									{
@@ -246,7 +272,13 @@
 										},
 										"linkedServiceName": {
 											"referenceName": "CSP_EDWH_LINKED_SERVER",
-											"type": "LinkedServiceReference"
+											"type": "LinkedServiceReference",
+											"parameters": {
+												"ServerName": {
+													"value": "@variables('EDWHServerName')",
+													"type": "Expression"
+												}
+											}
 										}
 									},
 									{
@@ -276,15 +308,21 @@
 													},
 													"pDN_SOURCE": {
 														"value": {
-															"value": "@pipeline().parameters.DN_SOURCE",
+															"value": "@variables('DN_SOURCE')",
 															"type": "Expression"
 														}
 													}
 												}
 											},
 											"dataset": {
-												"referenceName": "EDWH_DB",
-												"type": "DatasetReference"
+												"referenceName": "CSP_INCREMENTAL_LOAD",
+												"type": "DatasetReference",
+												"parameters": {
+													"serverName": {
+														"value": "@variables('EDWHServerName')",
+														"type": "Expression"
+													}
+												}
 											}
 										}
 									}
@@ -306,7 +344,7 @@
 											"source": {
 												"type": "SqlServerSource",
 												"sqlReaderQuery": {
-													"value": "select * from @{item().DN_TABLE_NAME} \n",
+													"value": "@concat('select * from ',item().DN_TABLE_NAME,item().DN_WHERE_CONDITION)\n",
 													"type": "Expression"
 												}
 											},
@@ -325,7 +363,13 @@
 										"inputs": [
 											{
 												"referenceName": "DS_L0_TABLE_ROL",
-												"type": "DatasetReference"
+												"type": "DatasetReference",
+												"parameters": {
+													"serverName": {
+														"value": "@variables('ROLServerName')",
+														"type": "Expression"
+													}
+												}
 											}
 										],
 										"outputs": [
@@ -335,6 +379,10 @@
 												"parameters": {
 													"DN_TARGET": {
 														"value": "@item().DN_TARGET",
+														"type": "Expression"
+													},
+													"serverName": {
+														"value": "@variables('EDWHServerName')",
 														"type": "Expression"
 													}
 												}
@@ -406,7 +454,13 @@
 										},
 										"linkedServiceName": {
 											"referenceName": "CSP_EDWH_LINKED_SERVER",
-											"type": "LinkedServiceReference"
+											"type": "LinkedServiceReference",
+											"parameters": {
+												"ServerName": {
+													"value": "@variables('EDWHServerName')",
+													"type": "Expression"
+												}
+											}
 										}
 									},
 									{
@@ -449,7 +503,13 @@
 										},
 										"linkedServiceName": {
 											"referenceName": "CSP_EDWH_LINKED_SERVER",
-											"type": "LinkedServiceReference"
+											"type": "LinkedServiceReference",
+											"parameters": {
+												"ServerName": {
+													"value": "@variables('EDWHServerName')",
+													"type": "Expression"
+												}
+											}
 										}
 									}
 								]
@@ -461,7 +521,20 @@
 			{
 				"name": "GetExecParam",
 				"type": "Lookup",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set EDWH Server Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Set ROL Server Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -478,7 +551,7 @@
 							"DN_SOURCE": {
 								"type": "String",
 								"value": {
-									"value": "@pipeline().parameters.DN_SOURCE",
+									"value": "@variables('DN_SOURCE')",
 									"type": "Expression"
 								}
 							}
@@ -486,16 +559,76 @@
 					},
 					"dataset": {
 						"referenceName": "CSP_INCREMENTAL_LOAD",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"serverName": {
+								"value": "@variables('EDWHServerName')",
+								"type": "Expression"
+							}
+						}
 					},
 					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Set EDWH Server Name",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "EDWHServerName",
+					"value": {
+						"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('EDWH_SVIL_Server_Name'),variables('EDWH_PROD_Server_Name'))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set ROL Server Name",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "ROLServerName",
+					"value": {
+						"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('ROL_SVIL_Server_Name'),variables('ROL_PROD_Server_Name'))",
+						"type": "Expression"
+					}
 				}
 			}
 		],
 		"parameters": {
-			"DN_SOURCE": {
+			"EXEC_ENV": {
 				"type": "string",
+				"defaultValue": "svil"
+			}
+		},
+		"variables": {
+			"DN_SOURCE": {
+				"type": "String",
 				"defaultValue": "ROL"
+			},
+			"ROLServerName": {
+				"type": "String"
+			},
+			"EDWH_PROD_Server_Name": {
+				"type": "String",
+				"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
+			},
+			"EDWH_SVIL_Server_Name": {
+				"type": "String",
+				"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
+			},
+			"ROL_PROD_Server_Name": {
+				"type": "String",
+				"defaultValue": "192.168.15.16"
+			},
+			"ROL_SVIL_Server_Name": {
+				"type": "String",
+				"defaultValue": "STRSRV-SQLALFAB\\ALFA2016"
+			},
+			"EDWHServerName": {
+				"type": "String"
 			}
 		},
 		"annotations": []
