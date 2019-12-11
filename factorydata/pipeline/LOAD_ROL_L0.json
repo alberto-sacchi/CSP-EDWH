@@ -595,6 +595,32 @@
 						"type": "Expression"
 					}
 				}
+			},
+			{
+				"name": "EXEC LOAD L1",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Loop_Load_Tables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "LOAD_L1",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"EXEC_ENV": {
+							"value": "@pipeline().parameters.EXEC_ENV",
+							"type": "Expression"
+						}
+					}
+				}
 			}
 		],
 		"parameters": {
