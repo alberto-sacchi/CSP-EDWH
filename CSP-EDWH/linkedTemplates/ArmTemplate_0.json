@@ -1780,6 +1780,32 @@
 								"type": "Expression"
 							}
 						}
+					},
+					{
+						"name": "EXEC LOAD L1",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Loop_Load_Tables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "LOAD_L1",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"EXEC_ENV": {
+									"value": "@pipeline().parameters.EXEC_ENV",
+									"type": "Expression"
+								}
+							}
+						}
 					}
 				],
 				"parameters": {
@@ -1820,6 +1846,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/CSP_INCREMENTAL_LOAD')]",
+				"[concat(variables('factoryId'), '/pipelines/LOAD_L1')]",
 				"[concat(variables('factoryId'), '/datasets/DS_L0_TABLE_ROL')]",
 				"[concat(variables('factoryId'), '/datasets/EDWH_LOAD_L0')]",
 				"[concat(variables('factoryId'), '/linkedServices/CSP_EDWH_LINKED_SERVER')]"

@@ -1,0 +1,681 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "CSP-EDWH"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/LOAD_ROL_L0')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Loop_Load_Tables",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "GetExecParam",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetExecParam').output.value",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "SET_START",
+									"description": "Inserisce un'occorrenza sulla tabella di LOG impostando DT_START con getdate()",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderStoredProcedureName": "[[dbo].[MD_ERROR_SET_START]",
+											"storedProcedureParameters": {
+												"pDN_STEP": {
+													"type": "String",
+													"value": {
+														"value": "@concat('LOAD_' ,variables('DN_SOURCE'),'_',item().DN_TABLE_NAME)",
+														"type": "Expression"
+													}
+												},
+												"pDN_STEP_DETAIL": {
+													"type": "String",
+													"value": {
+														"value": "@item().DN_TARGET",
+														"type": "Expression"
+													}
+												},
+												"pDN_SOURCE": {
+													"type": "String",
+													"value": null
+												}
+											}
+										},
+										"dataset": {
+											"referenceName": "CSP_INCREMENTAL_LOAD",
+											"type": "DatasetReference",
+											"parameters": {
+												"serverName": {
+													"value": "@variables('EDWHServerName')",
+													"type": "Expression"
+												}
+											}
+										}
+									}
+								},
+								{
+									"name": "LOAD_ROL_TARGET",
+									"description": "Processo di caricamento dei dati sulle tabelle di staging (L0) del source ROL",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "SET_START",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@equals(item().DN_RIF_COLUMN,'ALL')",
+											"type": "Expression"
+										},
+										"ifFalseActivities": [
+											{
+												"name": "LOAD_ROL_TARGET_TABLES",
+												"type": "Copy",
+												"dependsOn": [
+													{
+														"activity": "GET_REF_DATE",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "SqlServerSource",
+														"sqlReaderQuery": {
+															"value": "@concat('select * from ',item().DN_TABLE_NAME, ' where ' , item().DN_RIF_COLUMN, ' > ''', activity('GET_REF_DATE').output.firstRow.DT_START,'''',item().DN_WHERE_CONDITION)",
+															"type": "Expression"
+														}
+													},
+													"sink": {
+														"type": "AzureSqlSink",
+														"preCopyScript": {
+															"value": "delete from @{item().DN_TARGET}",
+															"type": "Expression"
+														},
+														"tableOption": "autoCreate",
+														"disableMetricsCollection": false
+													},
+													"enableStaging": false,
+													"parallelCopies": 1
+												},
+												"inputs": [
+													{
+														"referenceName": "DS_L0_TABLE_ROL",
+														"type": "DatasetReference",
+														"parameters": {
+															"serverName": {
+																"value": "@variables('ROLServerName')",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "EDWH_LOAD_L0",
+														"type": "DatasetReference",
+														"parameters": {
+															"DN_TARGET": {
+																"value": "@item().DN_TARGET",
+																"type": "Expression"
+															},
+															"serverName": {
+																"value": "@variables('EDWHServerName')",
+																"type": "Expression"
+															}
+														}
+													}
+												]
+											},
+											{
+												"name": "SET_END_OK",
+												"type": "SqlServerStoredProcedure",
+												"dependsOn": [
+													{
+														"activity": "LOAD_ROL_TARGET_TABLES",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"storedProcedureName": "[[dbo].[MD_ERROR_END_OK]",
+													"storedProcedureParameters": {
+														"pID_RUN": {
+															"value": {
+																"value": "@activity('SET_START').output.FirstRow.ID_RUN",
+																"type": "Expression"
+															},
+															"type": "int"
+														},
+														"pROWS_READ": {
+															"value": {
+																"value": "@activity('LOAD_ROL_TARGET_TABLES').output.rowsRead",
+																"type": "Expression"
+															},
+															"type": "int"
+														},
+														"pROWS_WRITTEN": {
+															"value": {
+																"value": "@activity('LOAD_ROL_TARGET_TABLES').output.rowsCopied",
+																"type": "Expression"
+															},
+															"type": "int"
+														},
+														"pCOPY_DURATION": {
+															"value": {
+																"value": "@activity('LOAD_ROL_TARGET_TABLES').output.copyDuration",
+																"type": "Expression"
+															},
+															"type": "int"
+														},
+														"pDATA_WRITTEN": {
+															"value": {
+																"value": "@activity('LOAD_ROL_TARGET_TABLES').output.dataWritten",
+																"type": "Expression"
+															},
+															"type": "Int64"
+														},
+														"pDESCR": {
+															"value": null,
+															"type": "String"
+														}
+													}
+												},
+												"linkedServiceName": {
+													"referenceName": "CSP_EDWH_LINKED_SERVER",
+													"type": "LinkedServiceReference",
+													"parameters": {
+														"ServerName": {
+															"value": "@variables('EDWHServerName')",
+															"type": "Expression"
+														}
+													}
+												}
+											},
+											{
+												"name": "SET_END_KO",
+												"type": "SqlServerStoredProcedure",
+												"dependsOn": [
+													{
+														"activity": "LOAD_ROL_TARGET_TABLES",
+														"dependencyConditions": [
+															"Failed"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"storedProcedureName": "[[dbo].[MD_ERROR_END_KO]",
+													"storedProcedureParameters": {
+														"pID_RUN": {
+															"value": {
+																"value": "@activity('SET_START').output.FirstRow.ID_RUN",
+																"type": "Expression"
+															},
+															"type": "int"
+														},
+														"pErrorMessage": {
+															"value": {
+																"value": "@activity('LOAD_ROL_TARGET_TABLES').output.errors[0].message",
+																"type": "Expression"
+															},
+															"type": "string"
+														}
+													}
+												},
+												"linkedServiceName": {
+													"referenceName": "CSP_EDWH_LINKED_SERVER",
+													"type": "LinkedServiceReference",
+													"parameters": {
+														"ServerName": {
+															"value": "@variables('EDWHServerName')",
+															"type": "Expression"
+														}
+													}
+												}
+											},
+											{
+												"name": "GET_REF_DATE",
+												"description": "Estrae dal DB la data di riferimento per l'estrazione del passo successivo",
+												"type": "Lookup",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "AzureSqlSource",
+														"sqlReaderStoredProcedureName": "[[dbo].[MD_GET_START_DATE]",
+														"storedProcedureParameters": {
+															"pDN_TABLE_NAME": {
+																"type": "String",
+																"value": {
+																	"value": "@item().DN_TABLE_NAME",
+																	"type": "Expression"
+																}
+															},
+															"pDN_SOURCE": {
+																"value": {
+																	"value": "@variables('DN_SOURCE')",
+																	"type": "Expression"
+																}
+															}
+														}
+													},
+													"dataset": {
+														"referenceName": "CSP_INCREMENTAL_LOAD",
+														"type": "DatasetReference",
+														"parameters": {
+															"serverName": {
+																"value": "@variables('EDWHServerName')",
+																"type": "Expression"
+															}
+														}
+													}
+												}
+											}
+										],
+										"ifTrueActivities": [
+											{
+												"name": "LOAD_ROL_ALL_TARGET_TABLES",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "SqlServerSource",
+														"sqlReaderQuery": {
+															"value": "@concat('select * from ',item().DN_TABLE_NAME,item().DN_WHERE_CONDITION)\n",
+															"type": "Expression"
+														}
+													},
+													"sink": {
+														"type": "AzureSqlSink",
+														"preCopyScript": {
+															"value": "delete from @{item().DN_TARGET}",
+															"type": "Expression"
+														},
+														"tableOption": "autoCreate",
+														"disableMetricsCollection": false
+													},
+													"enableStaging": false,
+													"parallelCopies": 1
+												},
+												"inputs": [
+													{
+														"referenceName": "DS_L0_TABLE_ROL",
+														"type": "DatasetReference",
+														"parameters": {
+															"serverName": {
+																"value": "@variables('ROLServerName')",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "EDWH_LOAD_L0",
+														"type": "DatasetReference",
+														"parameters": {
+															"DN_TARGET": {
+																"value": "@item().DN_TARGET",
+																"type": "Expression"
+															},
+															"serverName": {
+																"value": "@variables('EDWHServerName')",
+																"type": "Expression"
+															}
+														}
+													}
+												]
+											},
+											{
+												"name": "SET_END_OK_ALL",
+												"type": "SqlServerStoredProcedure",
+												"dependsOn": [
+													{
+														"activity": "LOAD_ROL_ALL_TARGET_TABLES",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"storedProcedureName": "[[dbo].[MD_ERROR_END_OK]",
+													"storedProcedureParameters": {
+														"pID_RUN": {
+															"value": {
+																"value": "@activity('SET_START').output.FirstRow.ID_RUN",
+																"type": "Expression"
+															},
+															"type": "int"
+														},
+														"pROWS_READ": {
+															"value": {
+																"value": "@activity('LOAD_ROL_ALL_TARGET_TABLES').output.rowsRead",
+																"type": "Expression"
+															},
+															"type": "int"
+														},
+														"pROWS_WRITTEN": {
+															"value": {
+																"value": "@activity('LOAD_ROL_ALL_TARGET_TABLES').output.rowsCopied",
+																"type": "Expression"
+															},
+															"type": "int"
+														},
+														"pCOPY_DURATION": {
+															"value": {
+																"value": "@activity('LOAD_ROL_ALL_TARGET_TABLES').output.copyDuration",
+																"type": "Expression"
+															},
+															"type": "int"
+														},
+														"pDATA_WRITTEN": {
+															"value": {
+																"value": "@activity('LOAD_ROL_ALL_TARGET_TABLES').output.dataWritten",
+																"type": "Expression"
+															},
+															"type": "Int64"
+														},
+														"pDESCR": {
+															"value": null,
+															"type": "String"
+														}
+													}
+												},
+												"linkedServiceName": {
+													"referenceName": "CSP_EDWH_LINKED_SERVER",
+													"type": "LinkedServiceReference",
+													"parameters": {
+														"ServerName": {
+															"value": "@variables('EDWHServerName')",
+															"type": "Expression"
+														}
+													}
+												}
+											},
+											{
+												"name": "SET_END_KO_ALL",
+												"type": "SqlServerStoredProcedure",
+												"dependsOn": [
+													{
+														"activity": "LOAD_ROL_ALL_TARGET_TABLES",
+														"dependencyConditions": [
+															"Failed"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"storedProcedureName": "[[dbo].[MD_ERROR_END_KO]",
+													"storedProcedureParameters": {
+														"pID_RUN": {
+															"value": {
+																"value": "@activity('SET_START').output.FirstRow.ID_RUN",
+																"type": "Expression"
+															},
+															"type": "int"
+														},
+														"pErrorMessage": {
+															"value": {
+																"value": "@activity('LOAD_ROL_ALL_TARGET_TABLES').output.errors[0].message",
+																"type": "Expression"
+															},
+															"type": "string"
+														}
+													}
+												},
+												"linkedServiceName": {
+													"referenceName": "CSP_EDWH_LINKED_SERVER",
+													"type": "LinkedServiceReference",
+													"parameters": {
+														"ServerName": {
+															"value": "@variables('EDWHServerName')",
+															"type": "Expression"
+														}
+													}
+												}
+											}
+										]
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "GetExecParam",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "Set EDWH Server Name",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Set ROL Server Name",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderStoredProcedureName": "[[dbo].[MD_LOAD_L0_PARAMS]",
+								"storedProcedureParameters": {
+									"DN_SOURCE": {
+										"type": "String",
+										"value": {
+											"value": "@variables('DN_SOURCE')",
+											"type": "Expression"
+										}
+									}
+								}
+							},
+							"dataset": {
+								"referenceName": "CSP_INCREMENTAL_LOAD",
+								"type": "DatasetReference",
+								"parameters": {
+									"serverName": {
+										"value": "@variables('EDWHServerName')",
+										"type": "Expression"
+									}
+								}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "Set EDWH Server Name",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "EDWHServerName",
+							"value": {
+								"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('EDWH_SVIL_Server_Name'),variables('EDWH_PROD_Server_Name'))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set ROL Server Name",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "ROLServerName",
+							"value": {
+								"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('ROL_SVIL_Server_Name'),variables('ROL_PROD_Server_Name'))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "EXEC LOAD L1",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Loop_Load_Tables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "LOAD_L1",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"EXEC_ENV": {
+									"value": "@pipeline().parameters.EXEC_ENV",
+									"type": "Expression"
+								}
+							}
+						}
+					}
+				],
+				"parameters": {
+					"EXEC_ENV": {
+						"type": "string",
+						"defaultValue": "svil"
+					}
+				},
+				"variables": {
+					"DN_SOURCE": {
+						"type": "String",
+						"defaultValue": "ROL"
+					},
+					"ROLServerName": {
+						"type": "String"
+					},
+					"EDWH_PROD_Server_Name": {
+						"type": "String",
+						"defaultValue": "tcp:edwh-prod-sql-srv.database.windows.net,1433"
+					},
+					"EDWH_SVIL_Server_Name": {
+						"type": "String",
+						"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
+					},
+					"ROL_PROD_Server_Name": {
+						"type": "String",
+						"defaultValue": "192.168.15.16"
+					},
+					"ROL_SVIL_Server_Name": {
+						"type": "String",
+						"defaultValue": "STRSRV-SQLALFAB\\ALFA2016"
+					},
+					"EDWHServerName": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		}
+	]
+}

@@ -1412,6 +1412,32 @@
 								"type": "Expression"
 							}
 						}
+					},
+					{
+						"name": "EXEC LOAD L1",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Loop_Load_Tables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "LOAD_L1",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"EXEC_ENV": {
+									"value": "@pipeline().parameters.EXEC_ENV",
+									"type": "Expression"
+								}
+							}
+						}
 					}
 				],
 				"parameters": {
@@ -1452,6 +1478,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/CSP_INCREMENTAL_LOAD')]",
+				"[concat(variables('factoryId'), '/pipelines/LOAD_L1')]",
 				"[concat(variables('factoryId'), '/datasets/DS_L0_TABLE_ROL')]",
 				"[concat(variables('factoryId'), '/datasets/EDWH_LOAD_L0')]",
 				"[concat(variables('factoryId'), '/linkedServices/CSP_EDWH_LINKED_SERVER')]"
@@ -1777,6 +1804,46 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/trigger1')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "LOAD_ROL_L0",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"EXEC_ENV": "[parameters('trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2019-12-10T16:05:00.000Z",
+						"timeZone": "UTC",
+						"schedule": {
+							"minutes": [
+								10
+							],
+							"hours": [
+								3
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/LOAD_ROL_L0')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AS-PC-IR')]",
 			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
 			"apiVersion": "2018-06-01",
@@ -1824,46 +1891,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/trigger1')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "LOAD_ROL_L0",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"EXEC_ENV": "[parameters('trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV')]"
-						}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2019-12-10T16:05:00.000Z",
-						"timeZone": "UTC",
-						"schedule": {
-							"minutes": [
-								10
-							],
-							"hours": [
-								3
-							]
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/LOAD_ROL_L0')]"
-			]
 		}
 	]
 }
