@@ -1,0 +1,84 @@
+{
+	"name": "EXEC_ETL",
+	"properties": {
+		"activities": [
+			{
+				"name": "CALL_ROL_L0",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "LOAD_ROL_L0",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"EXEC_ENV": {
+							"value": "@pipeline().parameters.EXEC_ENV",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "CALL_IMPR_L0",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "LOAD_IMPR_L0",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"EXEC_ENV": {
+							"value": "@pipeline().parameters.EXEC_ENV",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "CALL_LOAD_L1",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "CALL_ROL_L0",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "CALL_IMPR_L0",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "LOAD_L1",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"EXEC_ENV": {
+							"value": "@pipeline().parameters.EXEC_ENV",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"parameters": {
+			"EXEC_ENV": {
+				"type": "string",
+				"defaultValue": "svil"
+			}
+		},
+		"annotations": []
+	}
+}
