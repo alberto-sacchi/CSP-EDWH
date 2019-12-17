@@ -330,7 +330,7 @@
 									},
 									{
 										"name": "GET_WHERE_CONDITION",
-										"description": "Estrae dal DB la data di riferimento per l'estrazione del passo successivo",
+										"description": "Estrae dal DB la condizione sulla colonna TENANT_ID",
 										"type": "Lookup",
 										"dependsOn": [],
 										"policy": {
@@ -568,7 +568,7 @@
 									},
 									{
 										"name": "GET_WHERE_CONDITIONS",
-										"description": "Estrae dal DB la data di riferimento per l'estrazione del passo successivo",
+										"description": "Estrae dal DB la condizione sulla colonna TENANT_ID",
 										"type": "Lookup",
 										"dependsOn": [],
 										"policy": {
