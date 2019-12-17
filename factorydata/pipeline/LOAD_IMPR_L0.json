@@ -387,7 +387,7 @@
 										"type": "Copy",
 										"dependsOn": [
 											{
-												"activity": "GET_WHERE_CONDITION",
+												"activity": "GET_WHERE_CONDITIONS",
 												"dependencyConditions": [
 													"Succeeded"
 												]
@@ -405,7 +405,7 @@
 											"source": {
 												"type": "SqlServerSource",
 												"sqlReaderQuery": {
-													"value": "@concat('select * from ',item().DN_TABLE_NAME,item().DN_WHERE_CONDITION,activity('GET_WHERE_CONDITION').output.firstRow.DN_TENANTS)",
+													"value": "@concat('select * from ',item().DN_TABLE_NAME,item().DN_WHERE_CONDITION,activity('GET_WHERE_CONDITIONS').output.firstRow.DN_TENANTS)",
 													"type": "Expression"
 												}
 											},
@@ -574,7 +574,7 @@
 										}
 									},
 									{
-										"name": "GET_WHERE_CONDITION",
+										"name": "GET_WHERE_CONDITIONS",
 										"description": "Estrae dal DB la data di riferimento per l'estrazione del passo successivo",
 										"type": "Lookup",
 										"dependsOn": [],
