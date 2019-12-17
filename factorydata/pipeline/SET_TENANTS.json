@@ -37,7 +37,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"serverName": {
-								"value": "@pipeline().parameters.ServerName",
+								"value": "@pipeline().parameters.IMPRServerName",
 								"type": "Expression"
 							}
 						}
@@ -99,7 +99,7 @@
 				"type": "string",
 				"defaultValue": "svil"
 			},
-			"ServerName": {
+			"IMPRServerName": {
 				"type": "string"
 			},
 			"EDWHServerName": {
