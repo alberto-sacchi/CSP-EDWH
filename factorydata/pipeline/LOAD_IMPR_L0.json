@@ -24,7 +24,14 @@
 						{
 							"name": "SET_START",
 							"type": "Lookup",
-							"dependsOn": [],
+							"dependsOn": [
+								{
+									"activity": "GetExecParam",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
 							"policy": {
 								"timeout": "7.00:00:00",
 								"retry": 0,
@@ -280,7 +287,14 @@
 										"name": "GET_REF_DATE",
 										"description": "Estrae dal DB la data di riferimento per l'estrazione del passo successivo",
 										"type": "Lookup",
-										"dependsOn": [],
+										"dependsOn": [
+											{
+												"activity": "GET_WHERE_CONDITION",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
 										"policy": {
 											"timeout": "7.00:00:00",
 											"retry": 0,
@@ -293,6 +307,51 @@
 											"source": {
 												"type": "AzureSqlSource",
 												"sqlReaderStoredProcedureName": "[dbo].[MD_GET_START_DATE]",
+												"storedProcedureParameters": {
+													"pDN_TABLE_NAME": {
+														"type": "String",
+														"value": {
+															"value": "@item().DN_TABLE_NAME",
+															"type": "Expression"
+														}
+													},
+													"pDN_SOURCE": {
+														"value": {
+															"value": "@variables('DN_SOURCE')",
+															"type": "Expression"
+														}
+													}
+												}
+											},
+											"dataset": {
+												"referenceName": "CSP_INCREMENTAL_LOAD",
+												"type": "DatasetReference",
+												"parameters": {
+													"serverName": {
+														"value": "@variables('EDWHServer_Name')",
+														"type": "Expression"
+													}
+												}
+											}
+										}
+									},
+									{
+										"name": "GET_WHERE_CONDITION",
+										"description": "Estrae dal DB la data di riferimento per l'estrazione del passo successivo",
+										"type": "Lookup",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "AzureSqlSource",
+												"sqlReaderStoredProcedureName": "[dbo].[MD_GET_TENANTS_ID]",
 												"storedProcedureParameters": {
 													"pDN_TABLE_NAME": {
 														"type": "String",
@@ -508,6 +567,45 @@
 										}
 									}
 								]
+							}
+						},
+						{
+							"name": "GetExecParam",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderStoredProcedureName": "[dbo].[MD_LOAD_L0_PARAMS]",
+									"storedProcedureParameters": {
+										"DN_SOURCE": {
+											"type": "String",
+											"value": {
+												"value": "@variables('DN_SOURCE')",
+												"type": "Expression"
+											}
+										}
+									}
+								},
+								"dataset": {
+									"referenceName": "CSP_INCREMENTAL_LOAD",
+									"type": "DatasetReference",
+									"parameters": {
+										"serverName": {
+											"value": "@variables('EDWHServer_Name')",
+											"type": "Expression"
+										}
+									}
+								},
+								"firstRowOnly": false
 							}
 						}
 					]
