@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "LOAD_IMPR_ALL_TARGET_TABLES",
+				"name": "COPY_L0_TENANTS",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -61,11 +61,11 @@
 				]
 			},
 			{
-				"name": "Stored Procedure1",
+				"name": "MERGE MD TENANTS",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "LOAD_IMPR_ALL_TARGET_TABLES",
+						"activity": "COPY_L0_TENANTS",
 						"dependencyConditions": [
 							"Succeeded"
 						]
