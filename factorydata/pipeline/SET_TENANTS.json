@@ -59,6 +59,39 @@
 						}
 					}
 				]
+			},
+			{
+				"name": "Stored Procedure1",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "LOAD_IMPR_ALL_TARGET_TABLES",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "dbo.MD_LOAD_TENANTS"
+				},
+				"linkedServiceName": {
+					"referenceName": "CSP_EDWH_LINKED_SERVER",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ServerName": {
+							"value": "@pipeline().parameters.EDWHServerName",
+							"type": "Expression"
+						}
+					}
+				}
 			}
 		],
 		"parameters": {
