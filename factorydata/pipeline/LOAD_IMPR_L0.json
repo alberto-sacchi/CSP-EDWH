@@ -111,7 +111,7 @@
 											"source": {
 												"type": "SqlServerSource",
 												"sqlReaderQuery": {
-													"value": "select * from @{item().DN_TABLE_NAME} where @{item().DN_RIF_COLUMN} > \n '@{activity('GET_REF_DATE').output.firstRow.DT_START}'",
+													"value": "@concat('select * from ',item().DN_TABLE_NAME, ' where ' , item().DN_RIF_COLUMN, ' > ''', activity('GET_REF_DATE').output.firstRow.DT_START,'''',item().DN_WHERE_CONDITION)",
 													"type": "Expression"
 												}
 											},
@@ -339,7 +339,7 @@
 											"source": {
 												"type": "SqlServerSource",
 												"sqlReaderQuery": {
-													"value": "select * from @{item().DN_TABLE_NAME} ",
+													"value": "@concat('select * from ',item().DN_TABLE_NAME,item().DN_WHERE_CONDITION)",
 													"type": "Expression"
 												}
 											},
@@ -518,13 +518,7 @@
 				"type": "Lookup",
 				"dependsOn": [
 					{
-						"activity": "Set IMPR Server Name",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					},
-					{
-						"activity": "Set EDWH Server Name",
+						"activity": "SET_TENANTS",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -588,6 +582,46 @@
 					"value": {
 						"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('IMPR_SVIL_Server_Name'),variables('IMPR_PROD_Server_Name'))",
 						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "SET_TENANTS",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Set EDWH Server Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Set IMPR Server Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "SET_TENANTS",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"EXEC_ENV": {
+							"value": "@pipeline().parameters.EXEC_ENV",
+							"type": "Expression"
+						},
+						"IMPRServerName": {
+							"value": "@variables('IMPRServer_Name')",
+							"type": "Expression"
+						},
+						"EDWHServerName": {
+							"value": "@variables('EDWHServer_Name')",
+							"type": "Expression"
+						}
 					}
 				}
 			}
