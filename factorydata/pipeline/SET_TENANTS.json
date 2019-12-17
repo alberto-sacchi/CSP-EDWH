@@ -1,0 +1,78 @@
+{
+	"name": "SET_TENANTS",
+	"properties": {
+		"activities": [
+			{
+				"name": "LOAD_IMPR_ALL_TARGET_TABLES",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": {
+							"value": "select * from dbo.AbpTenants",
+							"type": "Expression"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "delete from dbo.L0_IMPR_AbpTenants",
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"parallelCopies": 1
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_L0_TABLE_IMPROVE",
+						"type": "DatasetReference",
+						"parameters": {
+							"serverName": {
+								"value": "@pipeline().parameters.ServerName",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "EDWH_LOAD_L0",
+						"type": "DatasetReference",
+						"parameters": {
+							"DN_TARGET": {
+								"value": "L0_IMPR_AbpTenants",
+								"type": "Expression"
+							},
+							"serverName": {
+								"value": "@pipeline().parameters.EDWHServerName",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"EXEC_ENV": {
+				"type": "string",
+				"defaultValue": "svil"
+			},
+			"ServerName": {
+				"type": "string"
+			},
+			"EDWHServerName": {
+				"type": "string"
+			}
+		},
+		"annotations": []
+	}
+}
