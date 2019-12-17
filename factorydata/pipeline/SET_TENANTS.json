@@ -100,10 +100,12 @@
 				"defaultValue": "svil"
 			},
 			"IMPRServerName": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "tcp:improve-beta-sql-srv.database.windows.net, 1433"
 			},
 			"EDWHServerName": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
 			}
 		},
 		"annotations": []
