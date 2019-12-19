@@ -1,0 +1,106 @@
+{
+	"name": "SET TENANTS",
+	"properties": {
+		"activities": [
+			{
+				"name": "COPY_L0_TENANTS",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "select * from dbo.AbpTenants",
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "delete from dbo.L0_IMPR_AbpTenants",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_L0_TABLE_IMPROVE",
+						"type": "DatasetReference",
+						"parameters": {
+							"serverName": {
+								"value": "@pipeline().parameters.IMPRServerName",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "EDWH_LOAD_L0",
+						"type": "DatasetReference",
+						"parameters": {
+							"DN_TARGET": "L0_IMPR_AbpTenants",
+							"serverName": {
+								"value": "@pipeline().parameters.EDWHServerName",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "MERGE MD TENANTS",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "COPY_L0_TENANTS",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "dbo.MD_LOAD_TENANTS"
+				},
+				"linkedServiceName": {
+					"referenceName": "CSP_EDWH_LINKED_SERVER",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ServerName": {
+							"value": "@pipeline().parameters.EDWHServerName",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"parameters": {
+			"EXEC_ENV": {
+				"type": "string",
+				"defaultValue": "svil"
+			},
+			"IMPRServerName": {
+				"type": "string",
+				"defaultValue": "tcp:improve-beta-sql-srv.database.windows.net, 1433"
+			},
+			"EDWHServerName": {
+				"type": "string",
+				"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
+			}
+		},
+		"annotations": []
+	}
+}
