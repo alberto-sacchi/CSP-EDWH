@@ -129,11 +129,8 @@
 										},
 										"inputs": [
 											{
-												"referenceName": "DS_L0_TABLE_IMPROVE",
-												"type": "DatasetReference",
-												"parameters": {
-													"serverName": "tcp:improve-beta-sql-srv.database.windows.net, 1433"
-												}
+												"referenceName": "DS_L0_TABLE_IMPROVE_PROD",
+												"type": "DatasetReference"
 											}
 										],
 										"outputs": [
@@ -416,14 +413,8 @@
 										},
 										"inputs": [
 											{
-												"referenceName": "DS_L0_TABLE_IMPROVE",
-												"type": "DatasetReference",
-												"parameters": {
-													"serverName": {
-														"value": "@variables('IMPRServer_Name')",
-														"type": "Expression"
-													}
-												}
+												"referenceName": "DS_L0_TABLE_IMPROVE_PROD",
+												"type": "DatasetReference"
 											}
 										],
 										"outputs": [
