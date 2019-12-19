@@ -2212,10 +2212,10 @@
 						"timeZone": "UTC",
 						"schedule": {
 							"minutes": [
-								30
+								10
 							],
 							"hours": [
-								13
+								2
 							]
 						}
 					}
