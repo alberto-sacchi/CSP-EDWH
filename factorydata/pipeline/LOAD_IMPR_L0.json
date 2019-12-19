@@ -322,7 +322,14 @@
 									{
 										"name": "LOAD_IMPR_ALL_TARGET_TABLES",
 										"type": "Copy",
-										"dependsOn": [],
+										"dependsOn": [
+											{
+												"activity": "GET_WHERE_CONDITIONS",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
 										"policy": {
 											"timeout": "7.00:00:00",
 											"retry": 0,
@@ -335,7 +342,7 @@
 											"source": {
 												"type": "SqlServerSource",
 												"sqlReaderQuery": {
-													"value": "select * from @{item().DN_TABLE_NAME} ",
+													"value": "@concat('select * from ',item().DN_TABLE_NAME,item().DN_WHERE_CONDITION,activity('GET_WHERE_CONDITIONS').output.firstRow.DN_TENANTS)",
 													"type": "Expression"
 												}
 											},
@@ -502,6 +509,50 @@
 												}
 											}
 										}
+									},
+									{
+										"name": "GET_WHERE_CONDITIONS",
+										"description": "Estrae dal DB la condizione sulla colonna TENANT_ID",
+										"type": "Lookup",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "AzureSqlSource",
+												"sqlReaderStoredProcedureName": "[dbo].[MD_GET_TENANTS_ID]",
+												"storedProcedureParameters": {
+													"pDN_TABLE_NAME": {
+														"type": "String",
+														"value": "@item().DN_TABLE_NAME"
+													},
+													"pDN_SOURCE": {
+														"type": "String",
+														"value": {
+															"value": "@variables('DN_SOURCE')",
+															"type": "Expression"
+														}
+													}
+												},
+												"queryTimeout": "02:00:00"
+											},
+											"dataset": {
+												"referenceName": "CSP_INCREMENTAL_LOAD",
+												"type": "DatasetReference",
+												"parameters": {
+													"serverName": {
+														"value": "@variables('EDWHServer_Name')",
+														"type": "Expression"
+													}
+												}
+											}
+										}
 									}
 								]
 							}
@@ -514,13 +565,7 @@
 				"type": "Lookup",
 				"dependsOn": [
 					{
-						"activity": "Set IMPR Server Name",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					},
-					{
-						"activity": "Set EDWH Server Name",
+						"activity": "SET_TENANTS",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -584,6 +629,46 @@
 					"value": {
 						"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('IMPR_SVIL_Server_Name'),variables('IMPR_PROD_Server_Name'))",
 						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "SET_TENANTS",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Set EDWH Server Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Set IMPR Server Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "SET TENANTS",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"EXEC_ENV": {
+							"value": "@pipeline().parameters.EXEC_ENV",
+							"type": "Expression"
+						},
+						"IMPRServerName": {
+							"value": "@variables('IMPRServer_Name')",
+							"type": "Expression"
+						},
+						"EDWHServerName": {
+							"value": "@variables('EDWHServer_Name')",
+							"type": "Expression"
+						}
 					}
 				}
 			}
