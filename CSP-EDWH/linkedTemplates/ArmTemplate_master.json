@@ -43,6 +43,10 @@
 			"type": "string",
 			"defaultValue": "prod"
 		},
+		"Sched_Load_IMPR_L0_properties_LOAD_IMPR_L0_parameters_EXEC_ENV": {
+			"type": "string",
+			"defaultValue": "prod"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -114,6 +118,9 @@
 					},
 					"trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV": {
 						"value": "[parameters('trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV')]"
+					},
+					"Sched_Load_IMPR_L0_properties_LOAD_IMPR_L0_parameters_EXEC_ENV": {
+						"value": "[parameters('Sched_Load_IMPR_L0_properties_LOAD_IMPR_L0_parameters_EXEC_ENV')]"
 					}
 				}
 			},

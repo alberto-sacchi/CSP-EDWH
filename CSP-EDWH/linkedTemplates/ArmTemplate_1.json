@@ -10,6 +10,10 @@
 		"trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV": {
 			"type": "string",
 			"defaultValue": "prod"
+		},
+		"Sched_Load_IMPR_L0_properties_LOAD_IMPR_L0_parameters_EXEC_ENV": {
+			"type": "string",
+			"defaultValue": "prod"
 		}
 	},
 	"variables": {
@@ -720,6 +724,44 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/LOAD_ROL_L0')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sched_Load_IMPR_L0')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "LOAD_IMPR_L0",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"EXEC_ENV": "[parameters('Sched_Load_IMPR_L0_properties_LOAD_IMPR_L0_parameters_EXEC_ENV')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2019-12-19T13:25:00.000Z",
+						"timeZone": "UTC",
+						"schedule": {
+							"minutes": [
+								30
+							],
+							"hours": [
+								13
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": []
 		}
 	]
 }

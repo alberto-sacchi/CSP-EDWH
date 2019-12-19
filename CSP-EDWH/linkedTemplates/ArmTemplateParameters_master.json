@@ -32,6 +32,9 @@
 		"trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV": {
 			"value": "prod"
 		},
+		"Sched_Load_IMPR_L0_properties_LOAD_IMPR_L0_parameters_EXEC_ENV": {
+			"value": "prod"
+		},
 		"containerUri": {
 			"value": ""
 		},
