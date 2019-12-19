@@ -17,6 +17,9 @@
 		"ImproveSource_connectionString": {
 			"value": ""
 		},
+		"ImproveSourcePROD_connectionString": {
+			"value": ""
+		},
 		"LS_CSPTO_connectionString": {
 			"value": ""
 		},

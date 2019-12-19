@@ -23,6 +23,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ImproveSource'"
 		},
+		"ImproveSourcePROD_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ImproveSourcePROD'"
+		},
 		"LS_CSPTO_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_CSPTO'"
@@ -78,6 +82,9 @@
 					"ImproveSource_connectionString": {
 						"value": "[parameters('ImproveSource_connectionString')]"
 					},
+					"ImproveSourcePROD_connectionString": {
+						"value": "[parameters('ImproveSourcePROD_connectionString')]"
+					},
 					"LS_CSPTO_connectionString": {
 						"value": "[parameters('LS_CSPTO_connectionString')]"
 					},
@@ -86,13 +93,33 @@
 					},
 					"AzureKeyVault1_properties_typeProperties_baseUrl": {
 						"value": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
 					},
 					"trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV": {
 						"value": "[parameters('trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV')]"
 					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_0')]"
+			]
 		}
 	]
 }

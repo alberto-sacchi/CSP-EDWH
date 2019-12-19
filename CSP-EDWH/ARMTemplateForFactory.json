@@ -23,6 +23,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ImproveSource'"
 		},
+		"ImproveSourcePROD_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ImproveSourcePROD'"
+		},
 		"LS_CSPTO_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_CSPTO'"
@@ -99,6 +103,10 @@
 														"value": "@item().DN_TARGET",
 														"type": "Expression"
 													}
+												},
+												"pDN_SOURCE": {
+													"type": "String",
+													"value": null
 												}
 											}
 										},
@@ -155,7 +163,7 @@
 													"source": {
 														"type": "SqlServerSource",
 														"sqlReaderQuery": {
-															"value": "select * from @{item().DN_TABLE_NAME} where @{item().DN_RIF_COLUMN} > \n '@{activity('GET_REF_DATE').output.firstRow.DT_START}'",
+															"value": "@concat('select * from ',item().DN_TABLE_NAME, ' where ' , item().DN_RIF_COLUMN, ' > ''', activity('GET_REF_DATE').output.firstRow.DT_START,'''',item().DN_WHERE_CONDITION,activity('GET_WHERE_CONDITION').output.firstRow.DN_TENANTS)",
 															"type": "Expression"
 														}
 													},
@@ -173,11 +181,9 @@
 												},
 												"inputs": [
 													{
-														"referenceName": "DS_L0_TABLE_IMPROVE",
+														"referenceName": "DS_L0_TABLE_IMPROVE_PROD",
 														"type": "DatasetReference",
-														"parameters": {
-															"serverName": "tcp:improve-beta-sql-srv.database.windows.net, 1433"
-														}
+														"parameters": {}
 													}
 												],
 												"outputs": [
@@ -324,7 +330,14 @@
 												"name": "GET_REF_DATE",
 												"description": "Estrae dal DB la data di riferimento per l'estrazione del passo successivo",
 												"type": "Lookup",
-												"dependsOn": [],
+												"dependsOn": [
+													{
+														"activity": "GET_WHERE_CONDITION",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
 												"policy": {
 													"timeout": "7.00:00:00",
 													"retry": 0,
@@ -346,6 +359,7 @@
 																}
 															},
 															"pDN_SOURCE": {
+																"type": "String",
 																"value": {
 																	"value": "@variables('DN_SOURCE')",
 																	"type": "Expression"
@@ -364,13 +378,67 @@
 														}
 													}
 												}
+											},
+											{
+												"name": "GET_WHERE_CONDITION",
+												"description": "Estrae dal DB la condizione sulla colonna TENANT_ID",
+												"type": "Lookup",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "AzureSqlSource",
+														"sqlReaderStoredProcedureName": "[[dbo].[MD_GET_TENANTS_ID]",
+														"storedProcedureParameters": {
+															"pDN_TABLE_NAME": {
+																"type": "String",
+																"value": {
+																	"value": "@item().DN_TABLE_NAME",
+																	"type": "Expression"
+																}
+															},
+															"pDN_SOURCE": {
+																"type": "String",
+																"value": {
+																	"value": "@variables('DN_SOURCE')",
+																	"type": "Expression"
+																}
+															}
+														},
+														"queryTimeout": "02:00:00"
+													},
+													"dataset": {
+														"referenceName": "CSP_INCREMENTAL_LOAD",
+														"type": "DatasetReference",
+														"parameters": {
+															"serverName": {
+																"value": "@variables('EDWHServer_Name')",
+																"type": "Expression"
+															}
+														}
+													}
+												}
 											}
 										],
 										"ifTrueActivities": [
 											{
 												"name": "LOAD_IMPR_ALL_TARGET_TABLES",
 												"type": "Copy",
-												"dependsOn": [],
+												"dependsOn": [
+													{
+														"activity": "GET_WHERE_CONDITIONS",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
 												"policy": {
 													"timeout": "7.00:00:00",
 													"retry": 0,
@@ -383,7 +451,7 @@
 													"source": {
 														"type": "SqlServerSource",
 														"sqlReaderQuery": {
-															"value": "select * from @{item().DN_TABLE_NAME} ",
+															"value": "@concat('select * from ',item().DN_TABLE_NAME,item().DN_WHERE_CONDITION,activity('GET_WHERE_CONDITIONS').output.firstRow.DN_TENANTS)",
 															"type": "Expression"
 														}
 													},
@@ -401,14 +469,9 @@
 												},
 												"inputs": [
 													{
-														"referenceName": "DS_L0_TABLE_IMPROVE",
+														"referenceName": "DS_L0_TABLE_IMPROVE_PROD",
 														"type": "DatasetReference",
-														"parameters": {
-															"serverName": {
-																"value": "@variables('IMPRServer_Name')",
-																"type": "Expression"
-															}
-														}
+														"parameters": {}
 													}
 												],
 												"outputs": [
@@ -550,6 +613,53 @@
 														}
 													}
 												}
+											},
+											{
+												"name": "GET_WHERE_CONDITIONS",
+												"description": "Estrae dal DB la condizione sulla colonna TENANT_ID",
+												"type": "Lookup",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "AzureSqlSource",
+														"sqlReaderStoredProcedureName": "[[dbo].[MD_GET_TENANTS_ID]",
+														"storedProcedureParameters": {
+															"pDN_TABLE_NAME": {
+																"type": "String",
+																"value": {
+																	"value": "@item().DN_TABLE_NAME",
+																	"type": "Expression"
+																}
+															},
+															"pDN_SOURCE": {
+																"type": "String",
+																"value": {
+																	"value": "@variables('DN_SOURCE')",
+																	"type": "Expression"
+																}
+															}
+														},
+														"queryTimeout": "02:00:00"
+													},
+													"dataset": {
+														"referenceName": "CSP_INCREMENTAL_LOAD",
+														"type": "DatasetReference",
+														"parameters": {
+															"serverName": {
+																"value": "@variables('EDWHServer_Name')",
+																"type": "Expression"
+															}
+														}
+													}
+												}
 											}
 										]
 									}
@@ -562,13 +672,7 @@
 						"type": "Lookup",
 						"dependsOn": [
 							{
-								"activity": "Set IMPR Server Name",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							},
-							{
-								"activity": "Set EDWH Server Name",
+								"activity": "SET_TENANTS",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -634,6 +738,46 @@
 								"type": "Expression"
 							}
 						}
+					},
+					{
+						"name": "SET_TENANTS",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Set EDWH Server Name",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Set IMPR Server Name",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "SET TENANTS",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"EXEC_ENV": {
+									"value": "@pipeline().parameters.EXEC_ENV",
+									"type": "Expression"
+								},
+								"IMPRServerName": {
+									"value": "@variables('IMPRServer_Name')",
+									"type": "Expression"
+								},
+								"EDWHServerName": {
+									"value": "@variables('EDWHServer_Name')",
+									"type": "Expression"
+								}
+							}
+						}
 					}
 				],
 				"parameters": {
@@ -674,7 +818,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/CSP_INCREMENTAL_LOAD')]",
-				"[concat(variables('factoryId'), '/datasets/DS_L0_TABLE_IMPROVE')]",
+				"[concat(variables('factoryId'), '/pipelines/SET TENANTS')]",
+				"[concat(variables('factoryId'), '/datasets/DS_L0_TABLE_IMPROVE_PROD')]",
 				"[concat(variables('factoryId'), '/datasets/EDWH_LOAD_L0')]",
 				"[concat(variables('factoryId'), '/linkedServices/CSP_EDWH_LINKED_SERVER')]"
 			]
@@ -1485,6 +1630,119 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/SET TENANTS')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "COPY_L0_TENANTS",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": "select * from dbo.AbpTenants",
+								"queryTimeout": "02:00:00"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "delete from dbo.L0_IMPR_AbpTenants",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_L0_TABLE_IMPROVE",
+								"type": "DatasetReference",
+								"parameters": {
+									"serverName": {
+										"value": "@pipeline().parameters.IMPRServerName",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "EDWH_LOAD_L0",
+								"type": "DatasetReference",
+								"parameters": {
+									"DN_TARGET": "L0_IMPR_AbpTenants",
+									"serverName": {
+										"value": "@pipeline().parameters.EDWHServerName",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "MERGE MD TENANTS",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "COPY_L0_TENANTS",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "dbo.MD_LOAD_TENANTS"
+						},
+						"linkedServiceName": {
+							"referenceName": "CSP_EDWH_LINKED_SERVER",
+							"type": "LinkedServiceReference",
+							"parameters": {
+								"ServerName": {
+									"value": "@pipeline().parameters.EDWHServerName",
+									"type": "Expression"
+								}
+							}
+						}
+					}
+				],
+				"parameters": {
+					"EXEC_ENV": {
+						"type": "string",
+						"defaultValue": "svil"
+					},
+					"IMPRServerName": {
+						"type": "string",
+						"defaultValue": "tcp:improve-beta-sql-srv.database.windows.net, 1433"
+					},
+					"EDWHServerName": {
+						"type": "string",
+						"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_L0_TABLE_IMPROVE')]",
+				"[concat(variables('factoryId'), '/datasets/EDWH_LOAD_L0')]",
+				"[concat(variables('factoryId'), '/linkedServices/CSP_EDWH_LINKED_SERVER')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/CSP_INCREMENTAL_LOAD')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1555,6 +1813,24 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/ImproveSource')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_L0_TABLE_IMPROVE_PROD')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ImproveSourcePROD",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ImproveSourcePROD')]"
 			]
 		},
 		{
@@ -1755,6 +2031,19 @@
 				"type": "SqlServer",
 				"typeProperties": {
 					"connectionString": "[parameters('ImproveSource_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ImproveSourcePROD')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('ImproveSourcePROD_connectionString')]"
 				}
 			},
 			"dependsOn": []
