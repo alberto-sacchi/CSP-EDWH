@@ -1,0 +1,32 @@
+{
+	"name": "trigger2",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "EXEC_ETL",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2019-12-20T14:13:00.000Z",
+				"timeZone": "UTC",
+				"schedule": {
+					"minutes": [
+						16
+					],
+					"hours": [
+						14
+					]
+				}
+			}
+		}
+	}
+}
