@@ -8,6 +8,9 @@
 				"pipelineReference": {
 					"referenceName": "EXEC_ETL",
 					"type": "PipelineReference"
+				},
+				"parameters": {
+					"EXEC_ENV": "prod"
 				}
 			}
 		],
