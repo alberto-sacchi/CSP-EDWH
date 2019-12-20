@@ -39,11 +39,11 @@
 			"type": "string",
 			"defaultValue": "https://EDWH-PASSWORD.vault.azure.net/"
 		},
-		"trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV": {
+		"Sched_Load_IMPR_L0_properties_LOAD_IMPR_L0_parameters_EXEC_ENV": {
 			"type": "string",
 			"defaultValue": "prod"
 		},
-		"Sched_Load_IMPR_L0_properties_LOAD_IMPR_L0_parameters_EXEC_ENV": {
+		"trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV": {
 			"type": "string",
 			"defaultValue": "prod"
 		}
@@ -1561,32 +1561,6 @@
 								"type": "Expression"
 							}
 						}
-					},
-					{
-						"name": "EXEC LOAD L1",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "Loop_Load_Tables",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "LOAD_L1",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"EXEC_ENV": {
-									"value": "@pipeline().parameters.EXEC_ENV",
-									"type": "Expression"
-								}
-							}
-						}
 					}
 				],
 				"parameters": {
@@ -1627,7 +1601,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/CSP_INCREMENTAL_LOAD')]",
-				"[concat(variables('factoryId'), '/pipelines/LOAD_L1')]",
 				"[concat(variables('factoryId'), '/datasets/DS_L0_TABLE_ROL')]",
 				"[concat(variables('factoryId'), '/datasets/EDWH_LOAD_L0')]",
 				"[concat(variables('factoryId'), '/linkedServices/CSP_EDWH_LINKED_SERVER')]"
@@ -2097,6 +2070,46 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Sched_Load_IMPR_L0')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "LOAD_IMPR_L0",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"EXEC_ENV": "[parameters('Sched_Load_IMPR_L0_properties_LOAD_IMPR_L0_parameters_EXEC_ENV')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2019-12-19T13:25:00.000Z",
+						"timeZone": "UTC",
+						"schedule": {
+							"minutes": [
+								10
+							],
+							"hours": [
+								2
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/LOAD_IMPR_L0')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/trigger1')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -2186,43 +2199,94 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Sched_Load_IMPR_L0')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
+			"name": "[concat(parameters('factoryName'), '/EXEC_ETL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
+				"activities": [
 					{
-						"pipelineReference": {
-							"referenceName": "LOAD_IMPR_L0",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"EXEC_ENV": "[parameters('Sched_Load_IMPR_L0_properties_LOAD_IMPR_L0_parameters_EXEC_ENV')]"
+						"name": "CALL_ROL_L0",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "LOAD_ROL_L0",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"EXEC_ENV": {
+									"value": "@pipeline().parameters.EXEC_ENV",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "CALL_IMPR_L0",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "LOAD_IMPR_L0",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"EXEC_ENV": {
+									"value": "@pipeline().parameters.EXEC_ENV",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "CALL_LOAD_L1",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "CALL_ROL_L0",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "CALL_IMPR_L0",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "LOAD_L1",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"EXEC_ENV": {
+									"value": "@pipeline().parameters.EXEC_ENV",
+									"type": "Expression"
+								}
+							}
 						}
 					}
 				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2019-12-19T13:25:00.000Z",
-						"timeZone": "UTC",
-						"schedule": {
-							"minutes": [
-								10
-							],
-							"hours": [
-								2
-							]
-						}
+				"parameters": {
+					"EXEC_ENV": {
+						"type": "string",
+						"defaultValue": "svil"
 					}
-				}
+				},
+				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/LOAD_IMPR_L0')]"
+				"[concat(variables('factoryId'), '/pipelines/LOAD_ROL_L0')]",
+				"[concat(variables('factoryId'), '/pipelines/LOAD_IMPR_L0')]",
+				"[concat(variables('factoryId'), '/pipelines/LOAD_L1')]"
 			]
 		}
 	]

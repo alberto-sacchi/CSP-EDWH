@@ -39,11 +39,11 @@
 			"type": "string",
 			"defaultValue": "https://EDWH-PASSWORD.vault.azure.net/"
 		},
-		"trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV": {
+		"Sched_Load_IMPR_L0_properties_LOAD_IMPR_L0_parameters_EXEC_ENV": {
 			"type": "string",
 			"defaultValue": "prod"
 		},
-		"Sched_Load_IMPR_L0_properties_LOAD_IMPR_L0_parameters_EXEC_ENV": {
+		"trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV": {
 			"type": "string",
 			"defaultValue": "prod"
 		},
@@ -116,11 +116,11 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV": {
-						"value": "[parameters('trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV')]"
-					},
 					"Sched_Load_IMPR_L0_properties_LOAD_IMPR_L0_parameters_EXEC_ENV": {
 						"value": "[parameters('Sched_Load_IMPR_L0_properties_LOAD_IMPR_L0_parameters_EXEC_ENV')]"
+					},
+					"trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV": {
+						"value": "[parameters('trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV')]"
 					}
 				}
 			},
