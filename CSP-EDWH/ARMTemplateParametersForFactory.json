@@ -4,36 +4,6 @@
 	"parameters": {
 		"factoryName": {
 			"value": "CSP-EDWH"
-		},
-		"AS_SQL_SERVER_LIKED_SERVER_connectionString": {
-			"value": ""
-		},
-		"CSP_EDWH_LINKED_SERVER_connectionString": {
-			"value": ""
-		},
-		"CSP_EDWH_PROD_LINKED_SERVER_connectionString": {
-			"value": ""
-		},
-		"ImproveSource_connectionString": {
-			"value": ""
-		},
-		"ImproveSourcePROD_connectionString": {
-			"value": ""
-		},
-		"LS_CSPTO_connectionString": {
-			"value": ""
-		},
-		"LS_CSPTO_PROD_connectionString": {
-			"value": ""
-		},
-		"AzureKeyVault1_properties_typeProperties_baseUrl": {
-			"value": "https://EDWH-PASSWORD.vault.azure.net/"
-		},
-		"Sched_Load_IMPR_L0_properties_LOAD_IMPR_L0_parameters_EXEC_ENV": {
-			"value": "prod"
-		},
-		"trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV": {
-			"value": "prod"
 		}
 	}
 }
