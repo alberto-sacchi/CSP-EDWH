@@ -47,6 +47,10 @@
 			"type": "string",
 			"defaultValue": "prod"
 		},
+		"trigger2_properties_EXEC_ETL_parameters_EXEC_ENV": {
+			"type": "string",
+			"defaultValue": "prod"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -121,6 +125,9 @@
 					},
 					"trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV": {
 						"value": "[parameters('trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV')]"
+					},
+					"trigger2_properties_EXEC_ETL_parameters_EXEC_ENV": {
+						"value": "[parameters('trigger2_properties_EXEC_ETL_parameters_EXEC_ENV')]"
 					}
 				}
 			},

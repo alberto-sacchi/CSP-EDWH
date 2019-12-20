@@ -35,6 +35,9 @@
 		"trigger1_properties_LOAD_ROL_L0_parameters_EXEC_ENV": {
 			"value": "prod"
 		},
+		"trigger2_properties_EXEC_ETL_parameters_EXEC_ENV": {
+			"value": "prod"
+		},
 		"containerUri": {
 			"value": ""
 		},
