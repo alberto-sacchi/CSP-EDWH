@@ -2271,10 +2271,10 @@
 						"timeZone": "UTC",
 						"schedule": {
 							"minutes": [
-								20
+								10
 							],
 							"hours": [
-								14
+								1
 							]
 						}
 					}
