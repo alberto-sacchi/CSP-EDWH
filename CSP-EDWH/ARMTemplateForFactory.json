@@ -107,13 +107,13 @@
 							{
 								"activity": "CALL_ROL_L0",
 								"dependencyConditions": [
-									"Succeeded"
+									"Completed"
 								]
 							},
 							{
 								"activity": "CALL_IMPR_L0",
 								"dependencyConditions": [
-									"Succeeded"
+									"Completed"
 								]
 							}
 						],

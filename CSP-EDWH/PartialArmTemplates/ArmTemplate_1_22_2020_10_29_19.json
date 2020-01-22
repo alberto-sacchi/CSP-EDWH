@@ -1,0 +1,103 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "CSP-EDWH"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/EXEC_ETL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CALL_ROL_L0",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "LOAD_ROL_L0",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"EXEC_ENV": {
+									"value": "@pipeline().parameters.EXEC_ENV",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "CALL_IMPR_L0",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "LOAD_IMPR_L0",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"EXEC_ENV": {
+									"value": "@pipeline().parameters.EXEC_ENV",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "CALL_LOAD_L1",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "CALL_ROL_L0",
+								"dependencyConditions": [
+									"Completed"
+								]
+							},
+							{
+								"activity": "CALL_IMPR_L0",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "LOAD_L1",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"EXEC_ENV": {
+									"value": "@pipeline().parameters.EXEC_ENV",
+									"type": "Expression"
+								}
+							}
+						}
+					}
+				],
+				"parameters": {
+					"EXEC_ENV": {
+						"type": "string",
+						"defaultValue": "svil"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		}
+	]
+}
