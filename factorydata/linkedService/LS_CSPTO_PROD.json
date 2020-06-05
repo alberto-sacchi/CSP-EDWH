@@ -5,8 +5,8 @@
 		"annotations": [],
 		"type": "SqlServer",
 		"typeProperties": {
-			"connectionString": "integrated security=False;data source=DB02;initial catalog=SISime_cspto;user id=csptostanco",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJiY2M4NTVjNi05NjM2LTQ5MDItOTMxNC0zZGQ0ZGM0ZjA0NjUiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"connectionString": "integrated security=False;data source=192.168.15.17;initial catalog=SISime_cspto;user id=csptostanco",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI0ODliZjUxNy05M2QyLTQ2YTAtYmIyMy1hZTY1ZDk1ZTJhNmQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "IR-SOURCE-CSPTO-PROD",
