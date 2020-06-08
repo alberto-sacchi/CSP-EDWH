@@ -377,7 +377,7 @@
 				"parameters": {
 					"ServerName": {
 						"type": "String",
-						"defaultValue": "STRSRV-SQLALFAB\\ALFA2016"
+						"defaultValue": "192.168.15.17"
 					}
 				},
 				"annotations": [],
@@ -991,23 +991,7 @@
 												"typeProperties": {
 													"source": {
 														"type": "AzureSqlSource",
-														"sqlReaderStoredProcedureName": "[[dbo].[MD_GET_START_DATE]",
-														"storedProcedureParameters": {
-															"pDN_TABLE_NAME": {
-																"type": "String",
-																"value": {
-																	"value": "@item().DN_TABLE_NAME",
-																	"type": "Expression"
-																}
-															},
-															"pDN_SOURCE": {
-																"type": "String",
-																"value": {
-																	"value": "@variables('DN_SOURCE')",
-																	"type": "Expression"
-																}
-															}
-														}
+														"sqlReaderStoredProcedureName": "[[dbo].[MD_GET_START_DATE]"
 													},
 													"dataset": {
 														"referenceName": "CSP_INCREMENTAL_LOAD",

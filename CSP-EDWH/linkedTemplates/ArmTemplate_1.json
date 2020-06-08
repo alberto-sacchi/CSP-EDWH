@@ -325,22 +325,7 @@
 												"typeProperties": {
 													"source": {
 														"type": "AzureSqlSource",
-														"sqlReaderStoredProcedureName": "[[dbo].[MD_GET_START_DATE]",
-														"storedProcedureParameters": {
-															"pDN_TABLE_NAME": {
-																"type": "String",
-																"value": {
-																	"value": "@item().DN_TABLE_NAME",
-																	"type": "Expression"
-																}
-															},
-															"pDN_SOURCE": {
-																"value": {
-																	"value": "@variables('DN_SOURCE')",
-																	"type": "Expression"
-																}
-															}
-														}
+														"sqlReaderStoredProcedureName": "[[dbo].[MD_GET_START_DATE]"
 													},
 													"dataset": {
 														"referenceName": "CSP_INCREMENTAL_LOAD",
