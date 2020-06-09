@@ -1,0 +1,520 @@
+{
+	"name": "DS_L0_TABLE_SIME",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SIME",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "Cod_Ente",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Denominazione_Sociale",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Indirizzo",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Localita",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cap",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Provincia",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Telefono",
+				"type": "nvarchar"
+			},
+			{
+				"name": "E_mail",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Sito_Web_richiedente",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Codice_Fiscale",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Partita_Iva",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IBAN_Paese",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IBAN_Euro_CIN",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IBAN_CIN",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IBAN_Abi",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IBAN_Cab",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IBAN_Conto_Corrente",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Banca",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Piazza",
+				"type": "nvarchar"
+			},
+			{
+				"name": "L_R_Carica",
+				"type": "nvarchar"
+			},
+			{
+				"name": "L_R_Cognome",
+				"type": "nvarchar"
+			},
+			{
+				"name": "L_R_Nome",
+				"type": "nvarchar"
+			},
+			{
+				"name": "L_R_Telefono",
+				"type": "nvarchar"
+			},
+			{
+				"name": "L_R_E_mail",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cod_Categoria",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Des_Categoria",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Ritenuta_S_N",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Detraibile_S_N",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cod_Centro_Costo",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Des_Centro_Costo",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Data_Costituzione",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "Cod_Forma_Giuridica",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Des_Forma_Giuridica",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Scopo_Ente",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Dati_sull_Attivita",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Organi",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Attivita_previste",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Anno_Pratica",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			},
+			{
+				"name": "Numero_Pratica",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			},
+			{
+				"name": "Data_Documento",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "Data_Chiusura",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "Data_Scadenza",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "Cod_Inammissibilita",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Des_Inammissibilita",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Data_inizio_Manifestaz",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "Data_fine_Manifestaz",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "Cod_Referente_Interno",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Des_Referente_interno",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Inc_Ric_Carica",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Inc_Ric_Cognome",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Inc_Ric_Nome",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Inc_Ric_Telefono",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Inc_Ric_Email",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Zona_Intervento",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Des_Zona_Intervento",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cod_Sintesi_Oggetto",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Des_Sintesi_Oggetto",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Titolo_progetto",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Note_staff_e_o_Esperto",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Soggetto_a_Ritenuta",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Detraibile",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Importo_Iniziativa",
+				"type": "decimal",
+				"precision": 20,
+				"scale": 2
+			},
+			{
+				"name": "Importo_Acquisito",
+				"type": "decimal",
+				"precision": 20,
+				"scale": 2
+			},
+			{
+				"name": "Importo_Risorse_proprie",
+				"type": "decimal",
+				"precision": 20,
+				"scale": 2
+			},
+			{
+				"name": "Importo_Richiesto",
+				"type": "decimal",
+				"precision": 20,
+				"scale": 2
+			},
+			{
+				"name": "Importo_Ipotizzato",
+				"type": "decimal",
+				"precision": 20,
+				"scale": 2
+			},
+			{
+				"name": "Importo_Proposto",
+				"type": "decimal",
+				"precision": 20,
+				"scale": 2
+			},
+			{
+				"name": "Stato",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			},
+			{
+				"name": "Des_Stato",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Identificativo_R_O_L",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Pratica_Plafond",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Plafond_madre",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Acri_Cod_Sogg_Beneficiario_1",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			},
+			{
+				"name": "Acri_Des_Sogg_Beneficiario_1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Acri_Cod_Sogg_Beneficiario_2",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			},
+			{
+				"name": "Acri_Des_Sogg_Beneficiario_2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Acri_Cod_Tipo_Intervento",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			},
+			{
+				"name": "Acri_Des_Tipo_Intervento",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Acri_Cod_Origine_prog",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			},
+			{
+				"name": "Acri_Des_Origine_Prog",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Acri_Cod_Gestione_Prog",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			},
+			{
+				"name": "Acri_Des_Gestione_Prog",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Acri_Cod_Valutazione_Prog",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			},
+			{
+				"name": "Acri_Des_Valutazione_Prog",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Acri_Prog_Pluriennale",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Acri_numero_Anni",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			},
+			{
+				"name": "Analisi_Costi_Benefici",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Valenza_Territoriale",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Acri_Prov_1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Anno_competenza",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			},
+			{
+				"name": "Cod_Settore",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Des_Settore",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cod_Filone",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Des_Filone",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cod_Finalita",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Des_Finalita",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cod_Categoria_Settore",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Des_Categoria_Settore",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cod_Categoria_Fondo",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Des_Categoria_Fondo",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cod_Sottoprog",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Des_Sottoprog",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Data_Delibera",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "Importo_Deliberato_netto",
+				"type": "decimal",
+				"precision": 20,
+				"scale": 2
+			},
+			{
+				"name": "Importo_Erogato",
+				"type": "decimal",
+				"precision": 20,
+				"scale": 2
+			},
+			{
+				"name": "Importo_Residuo",
+				"type": "decimal",
+				"precision": 20,
+				"scale": 2
+			},
+			{
+				"name": "Data_pagamento",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "Cod_Ambito",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Des_Ambito",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IDBNXLSTOM",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DateInsert",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "vW_BNXLSTOM"
+		}
+	}
+}
