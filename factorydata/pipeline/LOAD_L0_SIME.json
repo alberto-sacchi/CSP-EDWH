@@ -5,7 +5,14 @@
 			{
 				"name": "Copy data1",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set EDWH Server Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -33,15 +40,38 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "CSP_INCREMENTAL_LOAD",
+						"referenceName": "EDWH_LOAD_L0",
 						"type": "DatasetReference",
 						"parameters": {
-							"serverName": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
+							"DN_TARGET": "L0_SIME_COBOL_BNXLSTOM",
+							"serverName": "@variables('EDWHServer_Name')"
 						}
 					}
 				]
+			},
+			{
+				"name": "Set EDWH Server Name",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "EDWHServer_Name",
+					"value": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
+				}
 			}
 		],
+		"parameters": {
+			"EXEC_ENV": {
+				"type": "string",
+				"defaultValue": "svil"
+			}
+		},
+		"variables": {
+			"EDWHServer_Name": {
+				"type": "String",
+				"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
+			}
+		},
 		"annotations": []
 	}
 }
