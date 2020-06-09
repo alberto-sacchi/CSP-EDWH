@@ -44,7 +44,10 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"DN_TARGET": "L0_SIME_COBOL_BNXLSTOM",
-							"serverName": "@variables('EDWHServer_Name')"
+							"serverName": {
+								"value": "@variables('EDWHServerName')",
+								"type": "Expression"
+							}
 						}
 					}
 				]
