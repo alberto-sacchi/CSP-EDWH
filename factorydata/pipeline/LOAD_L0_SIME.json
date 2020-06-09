@@ -55,8 +55,8 @@
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "EDWHServer_Name",
-					"value": "edwh-svil-sql-srv.database.windows.net,1433"
+					"variableName": "EDWH_ProdServer_Name",
+					"value": "@if(equals(pipeline().parameters.EXEC_ENV,'svil'),variables('EDWH_Svil_Server_Name'),variables('EDWH_Prod_Server_Name'))"
 				}
 			}
 		],
@@ -67,7 +67,11 @@
 			}
 		},
 		"variables": {
-			"EDWHServer_Name": {
+			"EDWH_ProdServer_Name": {
+				"type": "String",
+				"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
+			},
+			"EDWH_SvilServer_Name": {
 				"type": "String",
 				"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
 			}
