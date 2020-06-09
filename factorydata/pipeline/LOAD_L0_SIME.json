@@ -74,6 +74,9 @@
 			"EDWH_SvilServer_Name": {
 				"type": "String",
 				"defaultValue": "tcp:edwh-svil-sql-srv.database.windows.net,1433"
+			},
+			"EDWHServerName": {
+				"type": "String"
 			}
 		},
 		"annotations": []
