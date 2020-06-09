@@ -6,10 +6,10 @@
 		"type": "SqlServer",
 		"typeProperties": {
 			"connectionString": "integrated security=False;data source=192.168.15.17;initial catalog=SimeCobol_CSPTO_EDWH;user id=\"csptostanco \"",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI5ODhmZjU0Zi1hNTc0LTRjODktYTk2MS0zZTk1OGQ4YzY2NjQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJmODMxOWM5My1kMzg0LTQ0ZDYtYWMzMy1kODU5OWJhYTY3N2YiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
-			"referenceName": "IR-SOURCE-CSPTO-PROD",
+			"referenceName": "IR-SOURCE-CSPTO",
 			"type": "IntegrationRuntimeReference"
 		}
 	}
